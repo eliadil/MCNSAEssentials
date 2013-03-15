@@ -1,16 +1,13 @@
 package com.mcnsa.essentials.utilities;
 
+import org.bukkit.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.fusesource.jansi.Ansi;
-import org.fusesource.jansi.Ansi.Attribute;
-import org.fusesource.jansi.AnsiConsole;
+import org.bukkit.craftbukkit.v1_4_R1.command.ColouredConsoleSender;
 
 public class ColourHandler {
-	static Integer nextColour = new Integer(0);
-	static boolean colourInitialized = false;
-	
+	static Integer nextColour = new Integer(0);	
 	// make it a static class) private constructor, static methods
 	private ColourHandler() {}
 
@@ -98,29 +95,29 @@ public class ColourHandler {
 		return processConsoleColours(str);
 	}
 	
-	public static String processConsoleColours(String str) {		
-		str = str.replaceAll("&0", Ansi.ansi().fg(Ansi.Color.BLACK).boldOff().toString());
-		str = str.replaceAll("&1", Ansi.ansi().fg(Ansi.Color.BLUE).boldOff().toString());
-		str = str.replaceAll("&2", Ansi.ansi().fg(Ansi.Color.GREEN).boldOff().toString());
-		str = str.replaceAll("&3", Ansi.ansi().fg(Ansi.Color.CYAN).boldOff().toString());
-		str = str.replaceAll("&4", Ansi.ansi().fg(Ansi.Color.RED).boldOff().toString());
-		str = str.replaceAll("&5", Ansi.ansi().fg(Ansi.Color.MAGENTA).boldOff().toString());
-		str = str.replaceAll("&6", Ansi.ansi().fg(Ansi.Color.YELLOW).boldOff().toString());
-		str = str.replaceAll("&7", Ansi.ansi().fg(Ansi.Color.WHITE).boldOff().toString());
-		str = str.replaceAll("&8", Ansi.ansi().fg(Ansi.Color.BLACK).bold().toString());
-		str = str.replaceAll("&9", Ansi.ansi().fg(Ansi.Color.BLUE).bold().toString());
-		str = str.replaceAll("&a", Ansi.ansi().fg(Ansi.Color.GREEN).bold().toString());
-		str = str.replaceAll("&b", Ansi.ansi().fg(Ansi.Color.CYAN).bold().toString());
-		str = str.replaceAll("&c", Ansi.ansi().fg(Ansi.Color.RED).bold().toString());
-		str = str.replaceAll("&d", Ansi.ansi().fg(Ansi.Color.MAGENTA).toString());
-		str = str.replaceAll("&e", Ansi.ansi().fg(Ansi.Color.YELLOW).bold().toString());
-		str = str.replaceAll("&f", Ansi.ansi().fg(Ansi.Color.WHITE).bold().toString());
-		str = str.replaceAll("&k", Ansi.ansi().a(Attribute.BLINK_SLOW).toString());
-		str = str.replaceAll("&l", Ansi.ansi().a(Attribute.UNDERLINE_DOUBLE).toString());
-		str = str.replaceAll("&m", Ansi.ansi().a(Attribute.STRIKETHROUGH_ON).toString());
-		str = str.replaceAll("&n", Ansi.ansi().a(Attribute.UNDERLINE).toString());
-		str = str.replaceAll("&o", Ansi.ansi().a(Attribute.ITALIC).toString());
-		str = str.replaceAll("&r", Ansi.ansi().a(Attribute.RESET).fg(Ansi.Color.DEFAULT).toString());
+	public static String processConsoleColours(String str) {
+		str = str.replaceAll("&0", ChatColor.BLACK.toString());
+		str = str.replaceAll("&1", ChatColor.DARK_BLUE.toString());
+		str = str.replaceAll("&2", ChatColor.DARK_GREEN.toString());
+		str = str.replaceAll("&3", ChatColor.DARK_AQUA.toString());
+		str = str.replaceAll("&4", ChatColor.DARK_RED.toString());
+		str = str.replaceAll("&5", ChatColor.DARK_PURPLE.toString());
+		str = str.replaceAll("&6", ChatColor.GOLD.toString());
+		str = str.replaceAll("&7", ChatColor.GRAY.toString());
+		str = str.replaceAll("&8", ChatColor.DARK_GRAY.toString());
+		str = str.replaceAll("&9", ChatColor.BLUE.toString());
+		str = str.replaceAll("&a", ChatColor.GREEN.toString());
+		str = str.replaceAll("&b", ChatColor.AQUA.toString());
+		str = str.replaceAll("&c", ChatColor.RED.toString());
+		str = str.replaceAll("&d", ChatColor.LIGHT_PURPLE.toString());
+		str = str.replaceAll("&e", ChatColor.YELLOW.toString());
+		str = str.replaceAll("&f", ChatColor.WHITE.toString());
+		str = str.replaceAll("&k", ChatColor.MAGIC.toString());
+		str = str.replaceAll("&l", ChatColor.BOLD.toString());
+		str = str.replaceAll("&m", ChatColor.STRIKETHROUGH.toString());
+		str = str.replaceAll("&n", ChatColor.UNDERLINE.toString());
+		str = str.replaceAll("&o", ChatColor.ITALIC.toString());
+		str = str.replaceAll("&r", ChatColor.RESET.toString());
 		return str;
 	}
 
@@ -162,12 +159,6 @@ public class ColourHandler {
 		if(message.length() < 1) {
 			return;
 		}
-		
-		if(!colourInitialized) {
-			AnsiConsole.systemInstall();
-		}
-		AnsiConsole.out.println(ColourHandler.processConsoleColours(message));
-		//ColouredConsoleSender.getInstance().sendMessage(ColourHandler.processConsoleColours(message));
-		//MCNSAEssentials.log(ColourHandler.processConsoleColours(message));
+		ColouredConsoleSender.getInstance().sendMessage(ColourHandler.processConsoleColours(message));
 	}
 }

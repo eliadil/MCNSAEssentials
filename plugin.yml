@@ -1,0 +1,4 @@
+name: MCNSAEssentials
+main: com.mcnsa.essentials.MCNSAEssentials
+version: 1.0pa
+depend: [PermissionsEx]

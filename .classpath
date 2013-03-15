@@ -5,6 +5,5 @@
 	<classpathentry kind="lib" path="lib/bukkit-1.4.7-R1.0.jar"/>
 	<classpathentry kind="lib" path="lib/craftbukkit-1.4.7-R1.0.jar"/>
 	<classpathentry kind="lib" path="lib/PermissionsEx.jar"/>
-	<classpathentry kind="lib" path="lib/jansi-1.9.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
