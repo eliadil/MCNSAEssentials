@@ -36,6 +36,16 @@ public class Teleport {
 		return true;
 	}
 	
+	@Command(command = "bring",
+			arguments = {"target player[s]"},
+			description = "teleports target player[s] to you",
+			permissions = { "teleport.bring" },
+			playerOnly = true)
+	public static boolean bring(CommandSender sender, String targetPlayer) {
+		teleport(sender, targetPlayer, sender.getName());
+		return true;
+	}
+	
 	@Command(command = "tp",
 			aliases = {"teleport"},
 			arguments = {"target player[s]", "destination player"},

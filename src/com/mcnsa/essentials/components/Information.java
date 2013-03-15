@@ -31,7 +31,6 @@ public class Information {
 	
 	@Command(command = "motd",
 			description = "tells you the message of the day!",
-			usage = "/motd",
 			playerOnly = true)
 	public static boolean motd(CommandSender sender) {
 		sendMOTD((Player)sender);

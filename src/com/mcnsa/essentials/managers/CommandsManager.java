@@ -421,11 +421,15 @@ public class CommandsManager implements CommandExecutor {
 				// finally, call the method
 				// the null is because the method must be static
 				try {
-					return (Boolean)ci.method.invoke(null, arguments);
+					boolean result = (Boolean)ci.method.invoke(null, arguments);
+					/*if(!result) {
+						ColourHandler.sendMessage(sender, "&cInvalid command! Type /help for some help!");
+					}*/
+					return result;
 				}
 				catch(Exception e) {
-					ColourHandler.sendMessage(sender, "&cCommand failed (" + e.getMessage() + ")!");
-					MCNSAEssentials.error("failed to execute command: " + label);
+					ColourHandler.sendMessage(sender, "&cInvalid command! Type /help for some help!");
+					MCNSAEssentials.error("failed to execute command: " + label + " (" + e.getMessage() + ")");
 					e.printStackTrace();
 					return false;
 				}

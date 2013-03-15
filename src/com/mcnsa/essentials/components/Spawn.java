@@ -64,7 +64,6 @@ public class Spawn implements Listener {
 	
 	@Command(command = "spawn",
 			description = "takes you to spawn",
-			usage = "/spawn",
 			permissions = {"spawn.set"},
 			playerOnly = true)
 	public static boolean spawn(CommandSender sender) {
@@ -78,7 +77,6 @@ public class Spawn implements Listener {
 
 	@Command(command = "setspawn",
 			description = "sets the spawn at your current location",
-			usage = "/setspawn",
 			permissions = {"spawn.set"},
 			playerOnly = true)
 	public static boolean setSpawn(CommandSender sender) {
@@ -97,7 +95,7 @@ public class Spawn implements Listener {
 
 	@Command(command = "setspawn",
 			description = "sets the spawn at the given coordinates",
-			usage = "/setspawn <x> <y> <z>",
+			arguments = {"x", "y", "z"},
 			permissions = {"spawn.set"})
 	public static boolean setSpawn(CommandSender sender, float x, float y, float z) {
 		return setSpawn(sender, Bukkit.getServer().getWorlds().get(0).getName(), x, y, z);
@@ -105,7 +103,7 @@ public class Spawn implements Listener {
 
 	@Command(command = "setspawn",
 			description = "sets the spawn at the given coordinates",
-			usage = "/setspawn <world> <x> <y> <z>",
+					arguments = {"world name", "x", "y", "z"},
 			permissions = {"spawn.set"})
 	public static boolean setSpawn(CommandSender sender, String world, float x, float y, float z) {
 		Location spawnLocation = new Location(Bukkit.getServer().getWorld(world), x, y, z, 0, 0);

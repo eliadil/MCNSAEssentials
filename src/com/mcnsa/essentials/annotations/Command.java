@@ -7,7 +7,7 @@ import java.lang.annotation.RetentionPolicy;
 public @interface Command {
 	String command();
 	String[] aliases() default {};
-	String usage();
+	String[] arguments() default {};
 	String description();
 	String[] permissions() default {};
 	boolean playerOnly() default false;
