@@ -11,6 +11,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import com.mcnsa.essentials.MCNSAEssentials;
 import com.mcnsa.essentials.annotations.Command;
 import com.mcnsa.essentials.utilities.ColourHandler;
+import com.mcnsa.essentials.utilities.TimeFormat;
 
 public class Information implements Listener {
 	public static String motd = "Hello, %name%, welcome to MCNSA!\nThe time is now %time% and you're in world '%world%'";
