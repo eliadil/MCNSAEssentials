@@ -29,10 +29,10 @@ public class TPSTimerTask implements Runnable {
 		long nowTicks = world.getFullTime();
 		
 		float elapsedSecs = (nowTime - startTime) / 1000.0f;
-		int elapsedTicks = (int)(nowTicks - startTicks);
+		int elapsedTicks = (int)(nowTicks - startTicks) + 1;
 		
 		float error = ((int)(((expectedTime - elapsedSecs) / elapsedSecs * 100) * 10)) / 10.0f;
-		float clockRate = elapsedTicks / elapsedSecs;
+		float clockRate = ((int)((elapsedTicks / elapsedSecs) * 10)) / 10.0f;
 		
 		// make sure the bukkit scheduler is working properly
 		if(expectedTicks != elapsedTicks) {
