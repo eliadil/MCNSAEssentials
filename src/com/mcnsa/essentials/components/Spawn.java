@@ -48,13 +48,10 @@ public class Spawn implements Listener {
 	}
 	
 	// bukkit event handler on player teleport
-	@EventHandler
+	@EventHandler(ignoreCancelled = true)
 	public void onTeleport(PlayerTeleportEvent event) {
 		// we have to do this to force bukkit to teleport them to the correct spawn
 		Location loc = event.getTo();
-		if(event.isCancelled()) {
-			return;
-		}
 		
 		// change it to the proper spawn location
 		if(loc.equals(loc.getWorld().getSpawnLocation())) {

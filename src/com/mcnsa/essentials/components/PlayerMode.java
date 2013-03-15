@@ -100,7 +100,7 @@ public class PlayerMode implements Listener {
 		}
 	}
 	
-	// our commands
+	// our commands	
 	@Command(command = "gamemode",
 			aliases = {"gm"},
 			arguments = {"mode name"},
@@ -117,67 +117,27 @@ public class PlayerMode implements Listener {
 			description = "changes the game mode of the target player[s]",
 			permissions = {"playermode.gamemode.others"})
 	public static boolean gameMode(CommandSender sender, String targetPlayer, String mode) {
-		int intMode = -1;
-		if(mode.equalsIgnoreCase("surival") || mode.equalsIgnoreCase("s")) {
-			intMode = 0;
+		GameMode targetMode = null;
+		if(mode.equalsIgnoreCase("survival") || mode.equalsIgnoreCase("s")) {
+			targetMode = GameMode.SURVIVAL;
 		}
 		else if(mode.equalsIgnoreCase("creative") || mode.equalsIgnoreCase("c")) {
-			intMode = 1;
+			targetMode = GameMode.CREATIVE;
 		}
 		else if(mode.equalsIgnoreCase("adventure") || mode.equalsIgnoreCase("a")) {
-			intMode = 2;
+			targetMode = GameMode.ADVENTURE;
 		}
-		
-		if(intMode < 0) {
-			ColourHandler.sendMessage(sender, "&cI don't know the gamemode `" + mode + "'!");
-			ColourHandler.sendMessage(sender, "&ePossible modes: &fsurvival&e, &fcreative, &fadventure");
+		else {
+			ColourHandler.sendMessage(sender, "&cI don't know the gamemode '" + mode + "'!");
 			return false;
 		}
 		
-		return gameMode(sender, targetPlayer, intMode);
-	}
-
-	@Command(command = "gamemode",
-			aliases = {"gm"},
-			arguments = {"int mode"},
-			description = "changes your game mode",
-			permissions = {"playermode.gamemode.self"},
-			playerOnly = true)
-	public static boolean gameMode(CommandSender sender, int mode) {
-		return gameMode(sender, sender.getName(), mode);
-	}
-
-	@Command(command = "gamemode",
-			aliases = {"gm"},
-			arguments = {"target player[s]", "int mode"},
-			description = "changes the game mode of the target player[s]",
-			permissions = {"playermode.gamemode.others"})
-	public static boolean gameMode(CommandSender sender, String targetPlayer, int mode) {
 		// get a list of all target players
 		ArrayList<Player> targetPlayers = PlayerSelector.selectPlayersExact(targetPlayer);
 		
 		// make sure we have at least one target player
 		if(targetPlayers.size() == 0) {
-			ColourHandler.sendMessage(sender, "&cI couldn't find / parse target player[s] `" + targetPlayer + "' to change the gamemode of!");
-			return false;
-		}
-		
-		GameMode targetMode = null;
-		switch(mode) {
-		case 0:
-			targetMode = GameMode.SURVIVAL;
-			break;
-			
-		case 1:
-			targetMode = GameMode.CREATIVE;
-			break;
-			
-		case 2:
-			targetMode = GameMode.ADVENTURE;
-			break;
-			
-		default:
-			ColourHandler.sendMessage(sender, "&cI don't know the game mode `" + mode + "'!");
+			ColourHandler.sendMessage(sender, "&cI couldn't find / parse target player[s] '" + targetPlayer + "' to change the gamemode of!");
 			return false;
 		}
 		
@@ -221,7 +181,7 @@ public class PlayerMode implements Listener {
 		
 		// make sure we have at least one target player
 		if(targetPlayers.size() == 0) {
-			ColourHandler.sendMessage(sender, "&cI couldn't find / parse target player[s] `" + targetPlayer + "' to change the gamemode of!");
+			ColourHandler.sendMessage(sender, "&cI couldn't find / parse target player[s] '" + targetPlayer + "' to change the gamemode of!");
 			return false;
 		}
 		
@@ -275,7 +235,7 @@ public class PlayerMode implements Listener {
 		
 		// make sure we have at least one target player
 		if(targetPlayers.size() == 0) {
-			ColourHandler.sendMessage(sender, "&cI couldn't find / parse target player[s] `" + targetPlayer + "' to change the gamemode of!");
+			ColourHandler.sendMessage(sender, "&cI couldn't find / parse target player[s] '" + targetPlayer + "' to change the gamemode of!");
 			return false;
 		}
 		
