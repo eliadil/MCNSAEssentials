@@ -94,7 +94,7 @@ public class Spawn implements Listener {
 	}
 
 	@Command(command = "setspawn",
-			description = "sets the spawn at the given coordinates",
+			description = "sets the spawn at the given coordinates in the default world",
 			arguments = {"x", "y", "z"},
 			permissions = {"spawn.set"})
 	public static boolean setSpawn(CommandSender sender, float x, float y, float z) {
@@ -102,7 +102,7 @@ public class Spawn implements Listener {
 	}
 
 	@Command(command = "setspawn",
-			description = "sets the spawn at the given coordinates",
+			description = "sets the spawn at the given coordinates in the given world",
 					arguments = {"world name", "x", "y", "z"},
 			permissions = {"spawn.set"})
 	public static boolean setSpawn(CommandSender sender, String world, float x, float y, float z) {
