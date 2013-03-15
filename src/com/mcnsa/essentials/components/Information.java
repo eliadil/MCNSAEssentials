@@ -21,18 +21,11 @@ public class Information implements Listener {
 		Bukkit.getServer().getPluginManager().registerEvents(this, MCNSAEssentials.getInstance());
 	}
 	
-	private static String formatTime(long time) {
-		int hours = (int) Math.floor(time / 1000);
-		int minutes = (int) ((time % 1000) / 1000.0 * 60);
-		
-		return new String(hours + ":" + minutes);
-	}
-	
 	private static void sendMOTD(CommandSender sender) {
 		World world = (sender instanceof Player) ? ((Player)sender).getWorld() : Bukkit.getServer().getWorlds().get(0);
 		String motd = new String(Information.motd);
 		motd = motd.replaceAll("%name%", sender.getName());
-		motd = motd.replaceAll("%time%", formatTime(world.getTime()));
+		motd = motd.replaceAll("%time%", TimeFormat.formatMinecraftTime(world.getTime()));
 		motd = motd.replaceAll("%world%", world.getName());
 		
 		String[] lines = motd.split("\n");
