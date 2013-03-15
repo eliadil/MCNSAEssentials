@@ -10,6 +10,9 @@ Kick logs
 Mail
 	|	id	|	recipient	|	sender	|	date	|	subject	|	contents	|	read status	|
 
+MOTD
+	|	id	|	MOTD	|
+
 Rules
 	|	id	|	rule	|
 
