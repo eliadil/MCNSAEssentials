@@ -168,9 +168,15 @@ public class CommandsManager implements CommandExecutor {
 	}
 	
 	private boolean commandIsRegistered(String command) {
+		// check if we have it as an alias
+		if(aliasMapping.containsKey(command)) {
+			return true;
+		}
+		
+		// no? Well maybe its the normal command then..
 		for(String registration: registeredCommands.keySet()) {
 			String[] parts = registration.split(":");
-			if(parts.length > 0 && parts[0].equals(command)) {
+			if(parts[0].equals(command)) {
 				return true;
 			}
 		}
@@ -289,13 +295,13 @@ public class CommandsManager implements CommandExecutor {
 				
 				// yay!
 				if(i == 0) {
-					MCNSAEssentials.log("&aregistered command: " + registrationString);
+					//MCNSAEssentials.log("&aregistered command: " + registrationString);
 				}
 				else {
 					// add it to the alias mapping
 					aliasMapping.put(commandAndAliases.get(i), commandAndAliases.get(0));
 					
-					MCNSAEssentials.log("\t&aregistered alias `" + commandAndAliases.get(i) + "' for: " + registrationString);
+					//MCNSAEssentials.log("\t&aregistered alias `" + commandAndAliases.get(i) + "' for: " + registrationString);
 				}
 			}
 		}
