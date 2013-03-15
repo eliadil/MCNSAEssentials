@@ -5,6 +5,7 @@ import java.util.logging.Logger;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.mcnsa.essentials.managers.CommandsManager;
+import com.mcnsa.essentials.managers.DatabaseManager;
 import com.mcnsa.essentials.managers.PermissionsManager;
 import com.mcnsa.essentials.utilities.ColourHandler;
 
@@ -15,7 +16,8 @@ public class MCNSAEssentials extends JavaPlugin {
 	// keep track of ourself
 	static MCNSAEssentials instance = null;
 	
-	// keep track of our command manager
+	// our manager
+	DatabaseManager databaseManager = null;
 	PermissionsManager permissionsManager = null;
 	CommandsManager commandsManager = null;
 	
@@ -24,6 +26,10 @@ public class MCNSAEssentials extends JavaPlugin {
 	}
 	
 	public void onEnable() {
+		// initialize our datbase manager
+		databaseManager = new DatabaseManager();
+		databaseManager.connect();
+		
 		// initialize our permissions manager
 		permissionsManager = new PermissionsManager();
 		
