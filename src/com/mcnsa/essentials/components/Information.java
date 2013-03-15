@@ -1,6 +1,7 @@
 package com.mcnsa.essentials.components;
 
 import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -27,21 +28,23 @@ public class Information implements Listener {
 		return new String(hours + ":" + minutes);
 	}
 	
-	private static void sendMOTD(Player player) {
+	private static void sendMOTD(CommandSender sender) {
+		World world = (sender instanceof Player) ? ((Player)sender).getWorld() : Bukkit.getServer().getWorlds().get(0);
 		String motd = new String(Information.motd);
-		motd = motd.replaceAll("%name%", player.getName());
-		motd = motd.replaceAll("%time%", formatTime(player.getWorld().getTime()));
-		motd = motd.replaceAll("%world%", player.getWorld().getName());
+		motd = motd.replaceAll("%name%", sender.getName());
+		motd = motd.replaceAll("%time%", formatTime(world.getTime()));
+		motd = motd.replaceAll("%world%", world.getName());
 		
 		String[] lines = motd.split("\n");
 		for(int i = 0; i < lines.length; i++) {
-			ColourHandler.sendMessage(player, lines[i]);
+			ColourHandler.sendMessage(sender, lines[i]);
 		}
 	}
 	
 	private static void sendRules(CommandSender sender) {
+		ColourHandler.sendMessage(sender, "&e--- &6RULES &e---");
 		for(int i = 0; i < rules.length; i++) {
-			ColourHandler.sendMessage(sender, (i+1) + ". " + rules[i]);
+			ColourHandler.sendMessage(sender, "&6" + (i+1) + ". " + rules[i]);
 		}
 	}
 	
@@ -51,11 +54,11 @@ public class Information implements Listener {
 		sendMOTD(event.getPlayer());
 	}
 	
+	// our commands
 	@Command(command = "motd",
-			description = "tells you the message of the day!",
-			playerOnly = true)
+			description = "tells you the message of the day!")
 	public static boolean motd(CommandSender sender) {
-		sendMOTD((Player)sender);
+		sendMOTD(sender);
 		return true;
 	}
 	
