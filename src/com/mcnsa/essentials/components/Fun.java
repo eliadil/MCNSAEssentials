@@ -7,6 +7,7 @@ import java.util.Random;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
 import com.mcnsa.essentials.annotations.Command;
@@ -17,6 +18,35 @@ import com.mcnsa.essentials.utilities.PlayerSelector;
 public class Fun {
 	private static boolean broadcast = true;
 	private static int broadcastLimit = 6;
+	
+	@Command(command = "hat",
+			description = "puts whatever you're holding in your hand onto your head",
+			permissions = {"fun.hat"},
+			playerOnly = true)
+	public static boolean hat(CommandSender sender) throws EssentialsCommandException {
+		// get our player
+		Player player = (Player)sender;
+		
+		// get our currently held item
+		ItemStack stack = player.getInventory().getItemInHand();
+		
+		// make sure it exists
+		if(stack == null || stack.getAmount() == 0) {
+			throw new EssentialsCommandException("You're not holding anything!");
+		}
+		
+		// see if anything is currently on our head
+		ItemStack stackOnHead = player.getInventory().getHelmet();
+		
+		// and swap!
+		player.getInventory().setHelmet(stack);
+		player.getInventory().setItemInHand(stackOnHead);
+		
+		// alert!
+		ColourHandler.sendMessage(sender, "&dMy, but you're looking fashionable!");
+		
+		return true;
+	}
 	
 	@Command(command = "slap",
 			arguments = {"target player[s]"},
