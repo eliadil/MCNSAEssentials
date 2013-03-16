@@ -10,6 +10,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import com.mcnsa.essentials.annotations.Command;
+import com.mcnsa.essentials.exceptions.EssentialsCommandException;
 import com.mcnsa.essentials.utilities.ColourHandler;
 import com.mcnsa.essentials.utilities.PlayerSelector;
 
@@ -20,20 +21,8 @@ public class Teleport {
 			description = "teleports you to <player>",
 			permissions = { "teleport.self" },
 			playerOnly = true)
-	public static boolean teleport(CommandSender sender, String targetPlayer) {
-		// try to find the player
-		Player target = Bukkit.getServer().getPlayer(targetPlayer);
-		if(target == null) {
-			ColourHandler.sendMessage(sender, "&cI couldn't find player `" + targetPlayer + "' to teleport to!");
-			return false;
-		}
-		
-		// do it!
-		Player player = (Player)sender;
-		player.teleport(target);
-		ColourHandler.sendMessage(sender, "&6You have been teleported to " + target.getName());
-		
-		return true;
+	public static boolean teleport(CommandSender sender, String targetPlayer) throws EssentialsCommandException {
+		return teleport(sender, sender.getName(), targetPlayer);
 	}
 	
 	@Command(command = "bring",
@@ -41,7 +30,7 @@ public class Teleport {
 			description = "teleports target player[s] to you",
 			permissions = { "teleport.bring" },
 			playerOnly = true)
-	public static boolean bring(CommandSender sender, String targetPlayer) {
+	public static boolean bring(CommandSender sender, String targetPlayer) throws EssentialsCommandException {
 		teleport(sender, targetPlayer, sender.getName());
 		return true;
 	}
@@ -51,12 +40,11 @@ public class Teleport {
 			arguments = {"target player[s]", "destination player"},
 			description = "teleports <target player[s]> to <destination player>",
 			permissions = { "teleport.other" })
-	public static boolean teleport(CommandSender sender, String targetPlayer, String destinationPlayer) {
+	public static boolean teleport(CommandSender sender, String targetPlayer, String destinationPlayer) throws EssentialsCommandException {
 		// try to find the destination player
 		Player destination = Bukkit.getServer().getPlayer(destinationPlayer);
 		if(destination == null) {
-			ColourHandler.sendMessage(sender, "&cI couldn't find player `" + destination + "' to teleport to!");
-			return false;
+			throw new EssentialsCommandException("&cI couldn't find player '%s' to teleport to!", destination);
 		}
 		
 		// get a list of all target players
@@ -64,8 +52,7 @@ public class Teleport {
 		
 		// make sure we have at least one target player
 		if(targetPlayers.size() == 0) {
-			ColourHandler.sendMessage(sender, "&cI couldn't find / parse target player[s] `" + targetPlayer + "' to teleport!");
-			return false;
+			throw new EssentialsCommandException("I couldn't find target player[s] '%s' to teleport!", targetPlayer);
 		}
 		
 		// loop through all target players
@@ -90,28 +77,21 @@ public class Teleport {
 	@Command(command = "tp",
 			aliases = {"teleport"},
 			arguments = {"x", "y", "z"},
+			description = "teleports you to the given coordinates in your current world",
+			permissions = { "teleport.selfcoords" },
+			playerOnly = true)
+	public static boolean teleport(CommandSender sender, float x, float y, float z) throws EssentialsCommandException {
+		return teleport(sender, sender.getName(), ((Player)sender).getWorld().getName(), x, y, z);
+	}
+	
+	@Command(command = "tp",
+			aliases = {"teleport"},
+			arguments = {"world", "x", "y", "z"},
 			description = "teleports you to the given coordinates in the given world",
 			permissions = { "teleport.selfcoords" },
 			playerOnly = true)
-	public static boolean teleport(CommandSender sender, String worldName, float x, float y, float z) {
-		// get the player
-		Player player = (Player)sender;
-		
-		// make sure the world exists
-		World targetWorld = Bukkit.getServer().getWorld(worldName);
-		if(targetWorld == null) {
-			ColourHandler.sendMessage(sender, "&cI couldn't find world `" + worldName + "' to teleport into!");
-			return false;
-		}
-		
-		// build a location
-		Location destination = new Location(targetWorld, x, y, z, player.getLocation().getYaw(), player.getLocation().getPitch());
-		
-		// do it!
-		player.teleport(destination);
-		ColourHandler.sendMessage(sender, "&6You have been teleported to (" + destination.getBlockX() + ", " + destination.getBlockY() + ", " + destination.getBlockZ() + ") in world: " + destination.getWorld().getName());
-		
-		return true;
+	public static boolean teleport(CommandSender sender, String worldName, float x, float y, float z) throws EssentialsCommandException {
+		return teleport(sender, sender.getName(), worldName, x, y, z);
 	}
 	
 	@Command(command = "tp",
@@ -120,12 +100,11 @@ public class Teleport {
 			description = "teleports <player[s]> to the given coordinates in the given world",
 			permissions = { "teleport.othercoords" },
 			playerOnly = true)
-	public static boolean teleport(CommandSender sender, String targetPlayer, String worldName, float x, float y, float z) {
+	public static boolean teleport(CommandSender sender, String targetPlayer, String worldName, float x, float y, float z) throws EssentialsCommandException {
 		// make sure the world exists
 		World targetWorld = Bukkit.getServer().getWorld(worldName);
 		if(targetWorld == null) {
-			ColourHandler.sendMessage(sender, "&cI couldn't find world `" + worldName + "' to teleport into!");
-			return false;
+			throw new EssentialsCommandException("I couldn't find world '%s' to teleport to!", worldName);
 		}
 		
 		// get a list of all target players
@@ -133,8 +112,7 @@ public class Teleport {
 		
 		// make sure we have at least one target player
 		if(targetPlayers.size() == 0) {
-			ColourHandler.sendMessage(sender, "&cI couldn't find / parse target player[s] `" + targetPlayer + "' to teleport!");
-			return false;
+			throw new EssentialsCommandException("I couldn't find target player[s] '%s' to teleport!", targetPlayer);
 		}
 		
 		// loop through all target players

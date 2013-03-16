@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import com.mcnsa.essentials.annotations.Command;
+import com.mcnsa.essentials.exceptions.EssentialsCommandException;
 import com.mcnsa.essentials.utilities.ColourHandler;
 import com.mcnsa.essentials.utilities.PlayerSelector;
 
@@ -21,14 +22,13 @@ public class Fun {
 			arguments = {"target player[s]"},
 			description = "slaps target player[s]",
 			permissions = {"fun.slap"})
-	public static boolean slap(CommandSender sender, String targetPlayer) {
+	public static boolean slap(CommandSender sender, String targetPlayer) throws EssentialsCommandException {
 		// get a list of all target players
 		ArrayList<Player> targetPlayers = PlayerSelector.selectPlayersExact(targetPlayer);
 		
 		// make sure we have at least one target player
 		if(targetPlayers.size() == 0) {
-			ColourHandler.sendMessage(sender, "&cI couldn't find / parse target player[s] '" + targetPlayer + "' to slap!");
-			return false;
+			throw new EssentialsCommandException("I couldn't find / parse target player[s] '%s' to slap!", targetPlayer);
 		}
 		
 		// get our random number generator
@@ -80,14 +80,13 @@ public class Fun {
 			arguments = {"target player[s]"},
 			description = "rockets target player[s]",
 			permissions = {"fun.rocket"})
-	public static boolean rocket(CommandSender sender, String targetPlayer) {
+	public static boolean rocket(CommandSender sender, String targetPlayer) throws EssentialsCommandException {
 		// get a list of all target players
 		ArrayList<Player> targetPlayers = PlayerSelector.selectPlayersExact(targetPlayer);
 		
 		// make sure we have at least one target player
 		if(targetPlayers.size() == 0) {
-			ColourHandler.sendMessage(sender, "&cI couldn't find / parse target player[s] '" + targetPlayer + "' to rocket!");
-			return false;
+			throw new EssentialsCommandException("I couldn't find / parse target player[s] '%s' to rocket!", targetPlayer);
 		}
 		
 		// loop through all target players
@@ -133,14 +132,13 @@ public class Fun {
 			arguments = {"target player[s]"},
 			description = "immolates target player[s]",
 			permissions = {"fun.immolate"})
-	public static boolean immolate(CommandSender sender, String targetPlayer) {
+	public static boolean immolate(CommandSender sender, String targetPlayer) throws EssentialsCommandException {
 		// get a list of all target players
 		ArrayList<Player> targetPlayers = PlayerSelector.selectPlayersExact(targetPlayer);
 		
 		// make sure we have at least one target player
 		if(targetPlayers.size() == 0) {
-			ColourHandler.sendMessage(sender, "&cI couldn't find / parse target player[s] '" + targetPlayer + "' to immolate!");
-			return false;
+			throw new EssentialsCommandException("I couldn't find / parse target player[s] '%s' to immolate!", targetPlayer);
 		}
 		
 		// loop through all target players

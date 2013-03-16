@@ -5,13 +5,13 @@ import java.util.HashMap;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 
-import com.mcnsa.essentials.exceptions.CommandException;
+import com.mcnsa.essentials.exceptions.EssentialsCommandException;
 
 public class ItemSelector {
 	private static HashMap<String, Integer> itemNames = new HashMap<String, Integer>();
 	
 	// format: <id/name>:<data value/name>|<enchantment 1 name:level>,<enchantment 2 name:level>,...
-	public static ItemStack selectItem(String name) throws CommandException {
+	public static ItemStack selectItem(String name) throws EssentialsCommandException {
 		int id, dmg = 0;
 		String dataName = null;
 		String enchantmentName = null;
@@ -45,7 +45,7 @@ public class ItemSelector {
 			}
 			else {
 				// nope, unfortunately :s
-				throw new CommandException("Couldn't find item type known by %s!", name);
+				throw new EssentialsCommandException("Couldn't find item type known by %s!", name);
 			}
 		}
 		
@@ -90,17 +90,17 @@ public class ItemSelector {
 				
 				// make sure we found it
 				if(enchantment == null) {
-					throw new CommandException("Unknown enchantment '%s'!", enchantmentStr);
+					throw new EssentialsCommandException("Unknown enchantment '%s'!", enchantmentStr);
 				}
 				
 				// make sure we can enchant our stack
 				if(!enchantment.canEnchantItem(stack)) {
-					throw new CommandException("Item '%s' cannot be enchanted with %s!", name, enchantment.getName().toLowerCase().replace("[_\\-]", ""));
+					throw new EssentialsCommandException("Item '%s' cannot be enchanted with %s!", name, enchantment.getName().toLowerCase().replace("[_\\-]", ""));
 				}
 				
 				// and make sure the level is acceptable too
 				if(level > enchantment.getMaxLevel()) {
-					throw new CommandException("Level %d is over the maximum enchantment level for the %s enchantment!", level, enchantment.getName().toLowerCase().replace("[_\\-]", ""));
+					throw new EssentialsCommandException("Level %d is over the maximum enchantment level for the %s enchantment!", level, enchantment.getName().toLowerCase().replace("[_\\-]", ""));
 				}
 				
 				// ok, if we made it here, we're good
@@ -113,7 +113,7 @@ public class ItemSelector {
 		return stack;
 	}
 	
-	public static int parseItemData(int itemID, String filter) throws CommandException {
+	public static int parseItemData(int itemID, String filter) throws EssentialsCommandException {
 		// first, check to see if it was a straight up number
 		try {
 			return Integer.parseInt(filter);
@@ -140,11 +140,11 @@ public class ItemSelector {
 			}
 			
 			// if we got here, we didn't find it
-			throw new CommandException("Unkown wood type '%s'!", filter);
+			throw new EssentialsCommandException("Unkown wood type '%s'!", filter);
 			
 		// TODO: more data values
 		default:
-			throw new CommandException("Invalid data value of '%s'!", filter);
+			throw new EssentialsCommandException("Invalid data value of '%s'!", filter);
 		}
 	}
 	

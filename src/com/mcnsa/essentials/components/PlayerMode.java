@@ -18,6 +18,7 @@ import org.bukkit.metadata.MetadataValue;
 
 import com.mcnsa.essentials.MCNSAEssentials;
 import com.mcnsa.essentials.annotations.Command;
+import com.mcnsa.essentials.exceptions.EssentialsCommandException;
 import com.mcnsa.essentials.utilities.ColourHandler;
 import com.mcnsa.essentials.utilities.PlayerSelector;
 
@@ -107,7 +108,7 @@ public class PlayerMode implements Listener {
 			description = "changes your game mode",
 			permissions = {"playermode.gamemode.self"},
 			playerOnly = true)
-	public static boolean gameMode(CommandSender sender, String mode) {
+	public static boolean gameMode(CommandSender sender, String mode) throws EssentialsCommandException {
 		return gameMode(sender, sender.getName(), mode);
 	}
 
@@ -116,7 +117,7 @@ public class PlayerMode implements Listener {
 			arguments = {"target player[s]", "mode name"},
 			description = "changes the game mode of the target player[s]",
 			permissions = {"playermode.gamemode.others"})
-	public static boolean gameMode(CommandSender sender, String targetPlayer, String mode) {
+	public static boolean gameMode(CommandSender sender, String targetPlayer, String mode) throws EssentialsCommandException {
 		GameMode targetMode = null;
 		if(mode.equalsIgnoreCase("survival") || mode.equalsIgnoreCase("s")) {
 			targetMode = GameMode.SURVIVAL;
@@ -128,8 +129,7 @@ public class PlayerMode implements Listener {
 			targetMode = GameMode.ADVENTURE;
 		}
 		else {
-			ColourHandler.sendMessage(sender, "&cI don't know the gamemode '" + mode + "'!");
-			return false;
+			throw new EssentialsCommandException("I don't know the gamemode '%s'", targetMode);
 		}
 		
 		// get a list of all target players
@@ -137,8 +137,7 @@ public class PlayerMode implements Listener {
 		
 		// make sure we have at least one target player
 		if(targetPlayers.size() == 0) {
-			ColourHandler.sendMessage(sender, "&cI couldn't find / parse target player[s] '" + targetPlayer + "' to change the gamemode of!");
-			return false;
+			throw new EssentialsCommandException("I couldn't find / parse target player[s] '%s' to change the gamemode of!", targetPlayer);
 		}
 		
 		// loop through all target players
@@ -167,7 +166,7 @@ public class PlayerMode implements Listener {
 			description = "enables god mode on yourself",
 			permissions = {"playermode.god.self"},
 			playerOnly = true)
-	public static boolean enableGodMode(CommandSender sender) {
+	public static boolean enableGodMode(CommandSender sender) throws EssentialsCommandException {
 		return enableGodMode(sender, sender.getName());
 	}
 	
@@ -175,14 +174,13 @@ public class PlayerMode implements Listener {
 			arguments = {"target player[s]"},
 			description = "enables god mode on the target players",
 			permissions = {"playermode.god.others"})
-	public static boolean enableGodMode(CommandSender sender, String targetPlayer) {
+	public static boolean enableGodMode(CommandSender sender, String targetPlayer) throws EssentialsCommandException {
 		// get a list of all target players
 		ArrayList<Player> targetPlayers = PlayerSelector.selectPlayersExact(targetPlayer);
 		
 		// make sure we have at least one target player
 		if(targetPlayers.size() == 0) {
-			ColourHandler.sendMessage(sender, "&cI couldn't find / parse target player[s] '" + targetPlayer + "' to change the gamemode of!");
-			return false;
+			throw new EssentialsCommandException("I couldn't find / parse target player[s] '%s' to enable god mode on!", targetPlayer);
 		}
 		
 		// loop through all target players
@@ -221,7 +219,7 @@ public class PlayerMode implements Listener {
 			description = "disables god mode on yourself",
 			permissions = {"playermode.god.self"},
 			playerOnly = true)
-	public static boolean disableGodMode(CommandSender sender) {
+	public static boolean disableGodMode(CommandSender sender) throws EssentialsCommandException {
 		return disableGodMode(sender, sender.getName());
 	}
 	
@@ -229,14 +227,13 @@ public class PlayerMode implements Listener {
 			arguments = {"target player[s]"},
 			description = "disables god mode on the target players",
 			permissions = {"playermode.god.others"})
-	public static boolean disableGodMode(CommandSender sender, String targetPlayer) {
+	public static boolean disableGodMode(CommandSender sender, String targetPlayer) throws EssentialsCommandException {
 		// get a list of all target players
 		ArrayList<Player> targetPlayers = PlayerSelector.selectPlayersExact(targetPlayer);
 		
 		// make sure we have at least one target player
 		if(targetPlayers.size() == 0) {
-			ColourHandler.sendMessage(sender, "&cI couldn't find / parse target player[s] '" + targetPlayer + "' to change the gamemode of!");
-			return false;
+			throw new EssentialsCommandException("I couldn't find / parse target player[s] '%s' to disable god mode on!", targetPlayer);
 		}
 		
 		// loop through all target players

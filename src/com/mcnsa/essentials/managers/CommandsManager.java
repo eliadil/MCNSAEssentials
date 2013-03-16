@@ -22,6 +22,7 @@ import org.bukkit.entity.Player;
 
 import com.mcnsa.essentials.MCNSAEssentials;
 import com.mcnsa.essentials.annotations.Command;
+import com.mcnsa.essentials.exceptions.EssentialsCommandException;
 import com.mcnsa.essentials.utilities.ColourHandler;
 
 public class CommandsManager implements CommandExecutor {
@@ -122,6 +123,8 @@ public class CommandsManager implements CommandExecutor {
 		}
 	}
 	
+	// utility function to ensure the function we're trying to load
+	// only has basic parameter types
 	private Boolean validParameterType(Class<?> type) {
 		if(type == int.class) {
 			return true;
@@ -136,6 +139,7 @@ public class CommandsManager implements CommandExecutor {
 		return false;
 	}
 	
+	// create a custom command registration string that makes each one unique
 	private String buildRegistrationString(CommandInfo ci) {
 		String str = new String(ci.command.command());
 		
@@ -167,6 +171,7 @@ public class CommandsManager implements CommandExecutor {
 		return str;
 	}
 	
+	// check to see if the command is already registered or not
 	private boolean commandIsRegistered(String command) {
 		// check if we have it as an alias
 		if(aliasMapping.containsKey(command)) {
@@ -183,6 +188,7 @@ public class CommandsManager implements CommandExecutor {
 		return false;
 	}
 	
+	// go through a given class and register all the commands in it
 	private void registerClassCommands(CommandMap commandMap, Class<?> cls) {
 		// loop through all our methods in the given class
 		for(Method method: cls.getMethods()) {
@@ -428,16 +434,19 @@ public class CommandsManager implements CommandExecutor {
 				// the null is because the method must be static
 				try {
 					boolean result = (Boolean)ci.method.invoke(null, arguments);
-					/*if(!result) {
-						ColourHandler.sendMessage(sender, "&cInvalid command! Type /help for some help!");
-					}*/
 					return result;
 				}
-				catch(Exception e) {
-					ColourHandler.sendMessage(sender, "&cInvalid command! Type /help for some help!");
-					MCNSAEssentials.error("failed to execute command: " + label + " (" + e.getMessage() + ")");
-					e.printStackTrace();
-					return false;
+				catch(Exception e) {					
+					if(e.getCause() instanceof EssentialsCommandException) {
+						ColourHandler.sendMessage(sender, "&c" + e.getCause().getMessage());
+						return true;
+					}
+					else {
+						ColourHandler.sendMessage(sender, "&cSomething went wrong! Alert an administrator!");
+						MCNSAEssentials.error("failed to execute command: " + label + " (" + e.getMessage() + ")");
+						e.printStackTrace();
+						return false;
+					}
 				}
 			}
 		}
