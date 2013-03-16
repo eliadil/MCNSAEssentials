@@ -50,16 +50,37 @@ public class Information implements Listener {
 	
 	// our commands
 	@Command(command = "motd",
-			description = "tells you the message of the day!")
+			description = "tells you the message of the day!",
+			permissions = "info.motd")
 	public static boolean motd(CommandSender sender) {
 		sendMOTD(sender);
 		return true;
 	}
 	
 	@Command(command = "rules",
-			description = "lists the rules of the server")
+			description = "lists the rules of the server",
+			permissions = "info.rules")
 	public static boolean rules(CommandSender sender) {
 		sendRules(sender);
+		return true;
+	}
+	
+	@Command(command = "who",
+			aliases = {"list"},
+			description = "lists people who are on the server",
+			permissions = "info.who")
+	public static boolean who(CommandSender sender) {
+		// get a list of all online players
+		Player[] onlinePlayers = Bukkit.getServer().getOnlinePlayers();
+		String messageString = String.format("&6Current online players (&f%d&6): ", onlinePlayers.length);
+		for(int i = 0; i < onlinePlayers.length; i++) {
+			if(i != 0) {
+				messageString += "&6, ";
+			}
+			messageString += "&f" + onlinePlayers[i].getName();
+		}
+		ColourHandler.sendMessage(sender, messageString);
+		
 		return true;
 	}
 }
