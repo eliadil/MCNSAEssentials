@@ -174,42 +174,6 @@ public class Vanish implements Listener {
 		}
 	}
 	
-	/*// deal with opening inventories
-	@EventHandler(ignoreCancelled = true)
-	public void onPlayerInteract(PlayerInteractEvent event) {
-		// make sure its a right click
-		if(event.getAction() != Action.RIGHT_CLICK_BLOCK) {
-			MCNSAEssentials.debug("failed (not right click)");
-			return;
-		}
-		
-		Player player = event.getPlayer();
-		// make sure the player is vanished before we do anything
-		if(!isVanished(player)) {
-			MCNSAEssentials.debug("failed (not vanished)");
-			return;
-		}
-		
-		// make sure its a chest
-		if(event.getMaterial() instanceof ) {
-			// yup, they're opening a chest
-			// cancel the event and open it progmatically
-			event.setCancelled(true);
-			
-			// get the container
-			InventoryHolder inventory = (InventoryHolder)event.getClickedBlock();
-			
-			// and send the inventory to the vanished player
-			player.openInventory(inventory.getInventory());
-			
-			// warn them about moving shit around
-			ColourHandler.sendMessage(player, "&eWARNING: You are poofed, don't move anything around if you want to keep up your cover!");
-		}
-		else {
-			MCNSAEssentials.debug("failed (not an inventory holder)");
-		}
-	}*/
-	
 	// prevent vehicles from colliding with vanished players
 	@EventHandler(ignoreCancelled = true)
 	public void onVehicleEntityCollision(VehicleEntityCollisionEvent event) {
