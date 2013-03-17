@@ -220,17 +220,6 @@ public class Vanish implements Listener {
 			// get the player
 			Player target = it.next();
 			
-			/*// only if they don't already have god mode enabled
-			if(isVanished(target)) {
-				if(sender.getName().equals(target.getName())) {
-					ColourHandler.sendMessage(target, "&6You are already vanished!");
-				}
-				else {
-					ColourHandler.sendMessage(sender, "&6" + target.getName() + " was already vanished!");
-				}
-				continue;
-			}*/
-			
 			// vanish them
 			boolean vanished = !isVanished(target);
 			vanishShowPlayer(target, vanished);
