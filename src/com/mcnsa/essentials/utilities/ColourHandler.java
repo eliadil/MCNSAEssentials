@@ -126,11 +126,19 @@ public class ColourHandler {
 		return str.replaceAll("(&([a-f0-9klmnor]))", "").replaceAll("(\u00A7([a-f0-9klmnor]))", "");
 	}
 	
+	public static void sendMessage(Player player, String format, Object... args) {
+		sendMessage(player, String.format(format, args));
+	}
+	
 	public static void sendMessage(Player player, String message) {
 		if(message.length() < 1) {
 			return;
 		}
 		player.sendMessage(processColours(message));
+	}
+	
+	public static void sendMessage(CommandSender sender, String format, Object... args) {
+		sendMessage(sender, String.format(format, args));
 	}
 	
 	public static void sendMessage(CommandSender sender, String message) {
