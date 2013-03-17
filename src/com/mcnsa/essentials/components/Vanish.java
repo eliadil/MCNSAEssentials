@@ -36,7 +36,7 @@ import com.mcnsa.essentials.utilities.PlayerSelector;
 				description = "Allows players to vanish from sight",
 				permsSettingsPrefix = "vanish")
 public class Vanish implements Listener {
-	@Setting(node = "smoke") public static boolean smokeOnVanish = true;
+	@Setting(node = "smoke-on-vanish") public static boolean smokeOnVanish = true;
 	
 	public Vanish() {
 		// register our event handlers

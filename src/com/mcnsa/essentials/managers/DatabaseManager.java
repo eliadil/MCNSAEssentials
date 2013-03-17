@@ -93,7 +93,6 @@ public class DatabaseManager {
 		}
 		query += " );";
 		tableConstructions.put(tableInfo.name(), query);
-		MCNSAEssentials.debug("Added query: %s", query);
 	}
 	private void ensureTablesExist() throws SQLException {
 		for(String table: tableConstructions.keySet()) {
@@ -110,6 +109,44 @@ public class DatabaseManager {
 		}
 	}
 	
+	// utility commands
+	private static PreparedStatement prepareStatement(String query, Object... args) throws SQLException, EssentialsDatabaseException {
+		// prepare our statement
+		preparedStatement = connection.prepareStatement(query);
+		
+		// keep track of where in the statement to do stuff
+		int i = 1;
+		for(Object arg: args) {
+			// now add to the prepared statement based on what data type we have
+			if(arg.getClass().equals(String.class)) {
+				preparedStatement.setString(i, (String)arg);
+			}
+			else if(arg.getClass().equals(int.class) || arg.getClass().equals(Integer.class)) {
+				preparedStatement.setInt(i, (Integer)arg);
+			}
+			else if(arg.getClass().equals(boolean.class) || arg.getClass().equals(Boolean.class)) {
+				preparedStatement.setBoolean(i, (Boolean)arg);
+			}
+			else if(arg.getClass().equals(float.class) || arg.getClass().equals(Float.class)) {
+				preparedStatement.setFloat(i, (Float)arg);
+			}
+			else if(arg.getClass().equals(long.class) || arg.getClass().equals(Long.class)) {
+				preparedStatement.setLong(i, (Long)arg);
+			}
+			else if(arg.getClass().equals(Date.class)) {
+				preparedStatement.setDate(i, new java.sql.Date(((java.util.Date)arg).getTime()));
+			}
+			else {
+				throw new EssentialsDatabaseException("Unknown SQL data type: %s", arg.getClass().getSimpleName());
+			}
+			
+			// increment our index
+			i++;
+		}
+		
+		return preparedStatement;
+	}
+	
 	// data access commands
 	public static ArrayList<HashMap<String, Object>> accessQuery(String query, Object... args) throws EssentialsCommandException {
 		try {
@@ -119,37 +156,7 @@ public class DatabaseManager {
 			}
 			
 			// prepare our statement
-			preparedStatement = connection.prepareStatement(query);
-			
-			// keep track of where in the statement to do stuff
-			int i = 1;
-			for(Object arg: args) {
-				// now add to the prepared statement based on what data type we have
-				if(arg.getClass().equals(String.class)) {
-					preparedStatement.setString(i, (String)arg);
-				}
-				else if(arg.getClass().equals(int.class)) {
-					preparedStatement.setInt(i, (Integer)arg);
-				}
-				else if(arg.getClass().equals(boolean.class)) {
-					preparedStatement.setBoolean(i, (Boolean)arg);
-				}
-				else if(arg.getClass().equals(float.class)) {
-					preparedStatement.setFloat(i, (Float)arg);
-				}
-				else if(arg.getClass().equals(long.class)) {
-					preparedStatement.setLong(i, (Long)arg);
-				}
-				else if(arg.getClass().equals(Date.class)) {
-					preparedStatement.setDate(i, new java.sql.Date(((java.util.Date)arg).getTime()));
-				}
-				else {
-					throw new EssentialsDatabaseException("Unknown SQL data type: %s", arg.getClass().getSimpleName());
-				}
-				
-				// increment our index
-				i++;
-			}
+			preparedStatement = prepareStatement(query, args);
 			
 			// ok, now execute our query!
 			ResultSet results = preparedStatement.executeQuery();
@@ -192,37 +199,7 @@ public class DatabaseManager {
 			}
 			
 			// prepare our statement
-			preparedStatement = connection.prepareStatement(query);
-			
-			// keep track of where in the statement to do stuff
-			int i = 1;
-			for(Object arg: args) {
-				// now add to the prepared statement based on what data type we have
-				if(arg.getClass().equals(String.class)) {
-					preparedStatement.setString(i, (String)arg);
-				}
-				else if(arg.getClass().equals(int.class)) {
-					preparedStatement.setInt(i, (Integer)arg);
-				}
-				else if(arg.getClass().equals(boolean.class)) {
-					preparedStatement.setBoolean(i, (Boolean)arg);
-				}
-				else if(arg.getClass().equals(float.class)) {
-					preparedStatement.setFloat(i, (Float)arg);
-				}
-				else if(arg.getClass().equals(long.class)) {
-					preparedStatement.setLong(i, (Long)arg);
-				}
-				else if(arg.getClass().equals(Date.class)) {
-					preparedStatement.setDate(i, new java.sql.Date(((java.util.Date)arg).getTime()));
-				}
-				else {
-					throw new EssentialsDatabaseException("Unknown SQL data type: %s", arg.getClass().getSimpleName());
-				}
-				
-				// increment our index
-				i++;
-			}
+			preparedStatement = prepareStatement(query, args);
 			
 			// ok, now execute our query!
 			return preparedStatement.executeUpdate();

@@ -4,9 +4,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 public class PlayerSelector {
+	public static OfflinePlayer selectSinglePlayer(String target) {
+		return Bukkit.getServer().getOfflinePlayer(target);
+	}
+	
 	public static ArrayList<Player> selectPlayersExact(String target) {
 		ArrayList<Player> matchedPlayers = new ArrayList<Player>();
 		if(target.equals("*")) {

@@ -66,7 +66,7 @@ public class ComponentManager {
 						
 						// register an instance of it
 						registeredComponents.put(clazz.getSimpleName().toLowerCase(), component);
-						MCNSAEssentials.debug("Added component '%s'!", clazz.getSimpleName());
+						//MCNSAEssentials.debug("Added component '%s'!", clazz.getSimpleName());
 						
 						// see if the class has a database info annotation
 						// if it does, add it to the list of tables to be created
