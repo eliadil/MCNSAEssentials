@@ -67,7 +67,7 @@ public class MCNSAEssentials extends JavaPlugin {
 	// for debugging
 	// (disable for final release)
 	public static void debug(String info) {
-		ColourHandler.consoleMessage("[MCNSAEssentials] <DEBUG> " + info);
+		ColourHandler.consoleMessage("[MCNSAEssentials] &9<DEBUG> " + info);
 	}
 	
 	public static MCNSAEssentials getInstance() {
