@@ -19,21 +19,17 @@ public class MCNSAEssentials extends JavaPlugin {
 	static MCNSAEssentials instance = null;
 	
 	// our manager
-	DatabaseManager databaseManager = null;
 	PermissionsManager permissionsManager = null;
 	ComponentManager componentManager = null;
 	ConfigurationManager configurationManager = null;
 	CommandsManager commandsManager = null;
+	DatabaseManager databaseManager = null;
 	
 	public MCNSAEssentials() {
 		instance = this;
 	}
 	
-	public void onEnable() {
-		// initialize our datbase manager
-		databaseManager = new DatabaseManager();
-		databaseManager.connect();
-		
+	public void onEnable() {		
 		// initialize our permissions manager
 		permissionsManager = new PermissionsManager();
 		
@@ -47,6 +43,9 @@ public class MCNSAEssentials extends JavaPlugin {
 		
 		// initialize our commands manager, loading commands in the process
 		commandsManager = new CommandsManager(componentManager);
+
+		// initialize our database manager
+		databaseManager = new DatabaseManager();
 		
 		// we're done!
 		log("plugin enabled");
@@ -54,6 +53,7 @@ public class MCNSAEssentials extends JavaPlugin {
 	
 	public void onDisable() {
 		// shutdown
+		databaseManager.disable();
 		log("plugin disabled");
 	}
 

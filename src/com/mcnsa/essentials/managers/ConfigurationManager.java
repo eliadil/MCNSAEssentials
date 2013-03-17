@@ -26,6 +26,14 @@ public class ConfigurationManager {
 		// get our components
 		HashMap<String, Component> registeredComponents = componentManager.getRegisteredComponents();
 		
+		// deal with database connection information
+		this.fileConfiguation.addDefault("database.url", DatabaseManager.url);
+		DatabaseManager.url = this.fileConfiguation.getString("database.url");
+		this.fileConfiguation.addDefault("database.username", DatabaseManager.user);
+		DatabaseManager.user = this.fileConfiguation.getString("database.username");
+		this.fileConfiguation.addDefault("database.password", DatabaseManager.password);
+		DatabaseManager.password = this.fileConfiguation.getString("database.password");
+		
 		// deal with disabling components
 		this.fileConfiguation.addDefault("disabled-components", new ArrayList<String>());
 		List<String> disabledComponents = this.fileConfiguation.getStringList("disabled-components");

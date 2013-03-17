@@ -11,6 +11,7 @@ import java.util.zip.ZipInputStream;
 
 import com.mcnsa.essentials.MCNSAEssentials;
 import com.mcnsa.essentials.annotations.ComponentInfo;
+import com.mcnsa.essentials.annotations.DatabaseTableInfo;
 
 public class ComponentManager {
 	public class Component {
@@ -66,6 +67,16 @@ public class ComponentManager {
 						// register an instance of it
 						registeredComponents.put(clazz.getSimpleName().toLowerCase(), component);
 						MCNSAEssentials.debug("Added component '%s'!", clazz.getSimpleName());
+						
+						// see if the class has a database info annotation
+						// if it does, add it to the list of tables to be created
+						if(clazz.isAnnotationPresent(DatabaseTableInfo.class)) {
+							// get our info
+							DatabaseTableInfo tableInfo = clazz.getAnnotation(DatabaseTableInfo.class);
+							
+							// register it with the database manager
+							DatabaseManager.addTableConstruct(tableInfo);
+						}
 					}
 				}
 			}
