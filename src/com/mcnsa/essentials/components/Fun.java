@@ -11,17 +11,22 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
 import com.mcnsa.essentials.annotations.Command;
+import com.mcnsa.essentials.annotations.ComponentInfo;
+import com.mcnsa.essentials.annotations.Setting;
 import com.mcnsa.essentials.exceptions.EssentialsCommandException;
 import com.mcnsa.essentials.utilities.ColourHandler;
 import com.mcnsa.essentials.utilities.PlayerSelector;
 
+@ComponentInfo(friendlyName = "Fun",
+				description = "Some fun commands",
+				permsSettingsPrefix = "fun")
 public class Fun {
-	private static boolean broadcast = true;
-	private static int broadcastLimit = 6;
+	@Setting(node = "broadcast") public static boolean broadcast = true;
+	@Setting(node = "broadcastlimit") public static int broadcastLimit = 6;
 	
 	@Command(command = "hat",
 			description = "puts whatever you're holding in your hand onto your head",
-			permissions = {"fun.hat"},
+			permissions = {"hat"},
 			playerOnly = true)
 	public static boolean hat(CommandSender sender) throws EssentialsCommandException {
 		// get our player
@@ -51,7 +56,7 @@ public class Fun {
 	@Command(command = "slap",
 			arguments = {"target player[s]"},
 			description = "slaps target player[s]",
-			permissions = {"fun.slap"})
+			permissions = {"slap"})
 	public static boolean slap(CommandSender sender, String targetPlayer) throws EssentialsCommandException {
 		// get a list of all target players
 		ArrayList<Player> targetPlayers = PlayerSelector.selectPlayersExact(targetPlayer);
@@ -109,7 +114,7 @@ public class Fun {
 	@Command(command = "rocket",
 			arguments = {"target player[s]"},
 			description = "rockets target player[s]",
-			permissions = {"fun.rocket"})
+			permissions = {"rocket"})
 	public static boolean rocket(CommandSender sender, String targetPlayer) throws EssentialsCommandException {
 		// get a list of all target players
 		ArrayList<Player> targetPlayers = PlayerSelector.selectPlayersExact(targetPlayer);
@@ -161,7 +166,7 @@ public class Fun {
 	@Command(command = "immolate",
 			arguments = {"target player[s]"},
 			description = "immolates target player[s]",
-			permissions = {"fun.immolate"})
+			permissions = {"immolate"})
 	public static boolean immolate(CommandSender sender, String targetPlayer) throws EssentialsCommandException {
 		// get a list of all target players
 		ArrayList<Player> targetPlayers = PlayerSelector.selectPlayersExact(targetPlayer);

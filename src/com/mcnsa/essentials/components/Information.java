@@ -10,12 +10,17 @@ import org.bukkit.event.player.PlayerJoinEvent;
 
 import com.mcnsa.essentials.MCNSAEssentials;
 import com.mcnsa.essentials.annotations.Command;
+import com.mcnsa.essentials.annotations.ComponentInfo;
+import com.mcnsa.essentials.annotations.Setting;
 import com.mcnsa.essentials.utilities.ColourHandler;
 import com.mcnsa.essentials.utilities.TimeFormat;
 
+@ComponentInfo(friendlyName = "Information",
+				description = "Provides information to players",
+				permsSettingsPrefix = "info")
 public class Information implements Listener {
-	public static String motd = "Hello, %name%, welcome to MCNSA!\nThe time is now %time% and you're in world '%world%'";
-	public static String[] rules = {"Don't be a derp, you derp"};
+	@Setting(node = "motd") public static String motd = "Hello, %name%, welcome to MCNSA!\nThe time is now %time% and you're in world '%world%'";
+	@Setting(node = "rules") public static String[] rules = {"Don't be a derp, you derp"};
 	
 	public Information() {
 		// register our events
@@ -51,7 +56,7 @@ public class Information implements Listener {
 	// our commands
 	@Command(command = "motd",
 			description = "tells you the message of the day!",
-			permissions = "info.motd")
+			permissions = "motd")
 	public static boolean motd(CommandSender sender) {
 		sendMOTD(sender);
 		return true;
@@ -59,7 +64,7 @@ public class Information implements Listener {
 	
 	@Command(command = "rules",
 			description = "lists the rules of the server",
-			permissions = "info.rules")
+			permissions = "rules")
 	public static boolean rules(CommandSender sender) {
 		sendRules(sender);
 		return true;
@@ -68,7 +73,7 @@ public class Information implements Listener {
 	@Command(command = "who",
 			aliases = {"list"},
 			description = "lists people who are on the server",
-			permissions = "info.who")
+			permissions = "who")
 	public static boolean who(CommandSender sender) {
 		// get a list of all online players
 		Player[] onlinePlayers = Bukkit.getServer().getOnlinePlayers();

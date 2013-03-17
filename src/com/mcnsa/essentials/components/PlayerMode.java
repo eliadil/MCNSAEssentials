@@ -18,10 +18,14 @@ import org.bukkit.metadata.MetadataValue;
 
 import com.mcnsa.essentials.MCNSAEssentials;
 import com.mcnsa.essentials.annotations.Command;
+import com.mcnsa.essentials.annotations.ComponentInfo;
 import com.mcnsa.essentials.exceptions.EssentialsCommandException;
 import com.mcnsa.essentials.utilities.ColourHandler;
 import com.mcnsa.essentials.utilities.PlayerSelector;
 
+@ComponentInfo(friendlyName = "PlayerMode",
+				description = "Enables changing player modes (and enabling god mode)",
+				permsSettingsPrefix = "playermode")
 public class PlayerMode implements Listener {
 	public PlayerMode() {
 		// register our events
@@ -106,7 +110,7 @@ public class PlayerMode implements Listener {
 			aliases = {"gm"},
 			arguments = {"mode name"},
 			description = "changes your game mode",
-			permissions = {"playermode.gamemode.self"},
+			permissions = {"gamemode.self"},
 			playerOnly = true)
 	public static boolean gameMode(CommandSender sender, String mode) throws EssentialsCommandException {
 		return gameMode(sender, sender.getName(), mode);
@@ -116,7 +120,7 @@ public class PlayerMode implements Listener {
 			aliases = {"gm"},
 			arguments = {"target player[s]", "mode name"},
 			description = "changes the game mode of the target player[s]",
-			permissions = {"playermode.gamemode.others"})
+			permissions = {"gamemode.others"})
 	public static boolean gameMode(CommandSender sender, String targetPlayer, String mode) throws EssentialsCommandException {
 		GameMode targetMode = null;
 		if(mode.equalsIgnoreCase("survival") || mode.equalsIgnoreCase("s")) {
@@ -164,7 +168,7 @@ public class PlayerMode implements Listener {
 	// god mode
 	@Command(command = "god",
 			description = "enables god mode on yourself",
-			permissions = {"playermode.god.self"},
+			permissions = {"god.self"},
 			playerOnly = true)
 	public static boolean enableGodMode(CommandSender sender) throws EssentialsCommandException {
 		return enableGodMode(sender, sender.getName());
@@ -173,7 +177,7 @@ public class PlayerMode implements Listener {
 	@Command(command = "god",
 			arguments = {"target player[s]"},
 			description = "enables god mode on the target players",
-			permissions = {"playermode.god.others"})
+			permissions = {"god.others"})
 	public static boolean enableGodMode(CommandSender sender, String targetPlayer) throws EssentialsCommandException {
 		// get a list of all target players
 		ArrayList<Player> targetPlayers = PlayerSelector.selectPlayersExact(targetPlayer);
@@ -217,7 +221,7 @@ public class PlayerMode implements Listener {
 
 	@Command(command = "ungod",
 			description = "disables god mode on yourself",
-			permissions = {"playermode.god.self"},
+			permissions = {"god.self"},
 			playerOnly = true)
 	public static boolean disableGodMode(CommandSender sender) throws EssentialsCommandException {
 		return disableGodMode(sender, sender.getName());
@@ -226,7 +230,7 @@ public class PlayerMode implements Listener {
 	@Command(command = "ungod",
 			arguments = {"target player[s]"},
 			description = "disables god mode on the target players",
-			permissions = {"playermode.god.others"})
+			permissions = {"god.others"})
 	public static boolean disableGodMode(CommandSender sender, String targetPlayer) throws EssentialsCommandException {
 		// get a list of all target players
 		ArrayList<Player> targetPlayers = PlayerSelector.selectPlayersExact(targetPlayer);

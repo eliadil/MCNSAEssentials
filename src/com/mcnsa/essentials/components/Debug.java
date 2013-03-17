@@ -8,14 +8,18 @@ import org.bukkit.command.CommandSender;
 
 import com.mcnsa.essentials.MCNSAEssentials;
 import com.mcnsa.essentials.annotations.Command;
+import com.mcnsa.essentials.annotations.ComponentInfo;
 import com.mcnsa.essentials.runnables.TPSTimerTask;
 import com.mcnsa.essentials.utilities.ColourHandler;
 
+@ComponentInfo(friendlyName = "Debug",
+				description = "Various server debugging utilities",
+				permsSettingsPrefix = "debug")
 public class Debug {
 	
 	@Command(command = "ping",
 			description = "pings the server to make sure it is still responding",
-			permissions = {"debug.ping"})
+			permissions = {"ping"})
 	public static boolean Ping(CommandSender sender) {
 		String[] replies = {
 				"Pong!",
@@ -29,7 +33,7 @@ public class Debug {
 	
 	@Command(command = "tps",
 			description = "tells you the current ticks per second (should be 20.0)",
-			permissions = {"debug.tps"})
+			permissions = {"tps"})
 	public static boolean ticksPerSecond(CommandSender sender) {
 		return(ticksPerSecond(sender, 5.0f));
 	}
@@ -59,7 +63,7 @@ public class Debug {
 	
 	@Command(command = "serverinfo",
 			description = "tells you server information",
-			permissions = {"debug.serverinfo"})
+			permissions = {"serverinfo"})
 	public static boolean serverInfo(CommandSender sender) {
 		// get the current runtime data
 		Runtime rt = Runtime.getRuntime();

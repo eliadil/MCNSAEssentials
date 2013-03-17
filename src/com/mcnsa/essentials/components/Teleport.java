@@ -10,16 +10,20 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import com.mcnsa.essentials.annotations.Command;
+import com.mcnsa.essentials.annotations.ComponentInfo;
 import com.mcnsa.essentials.exceptions.EssentialsCommandException;
 import com.mcnsa.essentials.utilities.ColourHandler;
 import com.mcnsa.essentials.utilities.PlayerSelector;
 
+@ComponentInfo(friendlyName = "Teleport",
+				description = "Various teleportation commands",
+				permsSettingsPrefix = "teleport")
 public class Teleport {
 	@Command(command = "tp",
 			aliases = {"teleport"},
 			arguments = {"player"},
 			description = "teleports you to <player>",
-			permissions = { "teleport.self" },
+			permissions = { "self" },
 			playerOnly = true)
 	public static boolean teleport(CommandSender sender, String targetPlayer) throws EssentialsCommandException {
 		return teleport(sender, sender.getName(), targetPlayer);
@@ -39,7 +43,7 @@ public class Teleport {
 			aliases = {"teleport"},
 			arguments = {"target player[s]", "destination player"},
 			description = "teleports <target player[s]> to <destination player>",
-			permissions = { "teleport.other" })
+			permissions = { "other" })
 	public static boolean teleport(CommandSender sender, String targetPlayer, String destinationPlayer) throws EssentialsCommandException {
 		// try to find the destination player
 		Player destination = Bukkit.getServer().getPlayer(destinationPlayer);
@@ -78,7 +82,7 @@ public class Teleport {
 			aliases = {"teleport"},
 			arguments = {"x", "y", "z"},
 			description = "teleports you to the given coordinates in your current world",
-			permissions = { "teleport.selfcoords" },
+			permissions = { "selfcoords" },
 			playerOnly = true)
 	public static boolean teleport(CommandSender sender, float x, float y, float z) throws EssentialsCommandException {
 		return teleport(sender, sender.getName(), ((Player)sender).getWorld().getName(), x, y, z);
@@ -88,7 +92,7 @@ public class Teleport {
 			aliases = {"teleport"},
 			arguments = {"world", "x", "y", "z"},
 			description = "teleports you to the given coordinates in the given world",
-			permissions = { "teleport.selfcoords" },
+			permissions = { "selfcoords" },
 			playerOnly = true)
 	public static boolean teleport(CommandSender sender, String worldName, float x, float y, float z) throws EssentialsCommandException {
 		return teleport(sender, sender.getName(), worldName, x, y, z);
@@ -98,7 +102,7 @@ public class Teleport {
 			aliases = {"teleport"},
 			arguments = {"target player[s]", "world name", "x", "y", "z"},
 			description = "teleports <player[s]> to the given coordinates in the given world",
-			permissions = { "teleport.othercoords" },
+			permissions = { "othercoords" },
 			playerOnly = true)
 	public static boolean teleport(CommandSender sender, String targetPlayer, String worldName, float x, float y, float z) throws EssentialsCommandException {
 		// make sure the world exists

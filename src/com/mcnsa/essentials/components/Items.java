@@ -10,16 +10,20 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 
 import com.mcnsa.essentials.annotations.Command;
+import com.mcnsa.essentials.annotations.ComponentInfo;
 import com.mcnsa.essentials.exceptions.EssentialsCommandException;
 import com.mcnsa.essentials.utilities.ColourHandler;
 import com.mcnsa.essentials.utilities.PlayerSelector;
 
+@ComponentInfo(friendlyName = "Items",
+				description = "Allows easy giving and enchanting of items",
+				permsSettingsPrefix = "items")
 public class Items {
 	@Command(command = "givehead",
 			aliases = {"head"},
 			arguments = {"head type / player name"},
 			description = "gives you a head",
-			permissions = {"items.head"},
+			permissions = {"head"},
 			playerOnly = true)
 	public static boolean giveHead(CommandSender sender, String headName) throws EssentialsCommandException {
 		return giveHead(sender, sender.getName(), headName);
@@ -29,7 +33,7 @@ public class Items {
 			aliases = {"head"},
 			arguments = {"target player[s]", "head type / player name"},
 			description = "gives target player[s] a head",
-			permissions = {"items.head"})
+			permissions = {"head"})
 	public static boolean giveHead(CommandSender sender, String targetPlayer, String headName) throws EssentialsCommandException {
 		// get a list of all target players
 		ArrayList<Player> targetPlayers = PlayerSelector.selectPlayersExact(targetPlayer);

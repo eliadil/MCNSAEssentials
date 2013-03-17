@@ -25,14 +25,18 @@ import org.bukkit.metadata.MetadataValue;
 
 import com.mcnsa.essentials.MCNSAEssentials;
 import com.mcnsa.essentials.annotations.Command;
+import com.mcnsa.essentials.annotations.ComponentInfo;
 import com.mcnsa.essentials.annotations.Setting;
 import com.mcnsa.essentials.exceptions.EssentialsCommandException;
 import com.mcnsa.essentials.managers.PermissionsManager;
 import com.mcnsa.essentials.utilities.ColourHandler;
 import com.mcnsa.essentials.utilities.PlayerSelector;
 
+@ComponentInfo(friendlyName = "Vanish",
+				description = "Allows players to vanish from sight",
+				permsSettingsPrefix = "vanish")
 public class Vanish implements Listener {
-	@Setting(configNode = "vanish.smoke") public static boolean smokeOnVanish = true;
+	@Setting(node = "smoke") public static boolean smokeOnVanish = true;
 	
 	public Vanish() {
 		// register our event handlers
@@ -195,7 +199,7 @@ public class Vanish implements Listener {
 	@Command(command = "vanish",
 			aliases = {"poof"},
 			description = "prevents players and mobs from seeing and interacting with you (toggle)",
-			permissions = {"vanish.self"},
+			permissions = {"self"},
 			playerOnly = true)
 	public static boolean vanish(CommandSender sender) throws EssentialsCommandException {
 		return vanish(sender, sender.getName());
@@ -205,7 +209,7 @@ public class Vanish implements Listener {
 			aliases = {"poof"},
 			arguments = {"target player[s]"},
 			description = "prevents players and mobs from seeing and interacting with the target player[s] (toggle)",
-			permissions = {"vanish.others"})
+			permissions = {"others"})
 	public static boolean vanish(CommandSender sender, String targetPlayer) throws EssentialsCommandException {
 		// get a list of all target players
 		ArrayList<Player> targetPlayers = PlayerSelector.selectPlayersExact(targetPlayer);

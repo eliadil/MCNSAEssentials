@@ -13,8 +13,12 @@ import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
 import com.mcnsa.essentials.MCNSAEssentials;
 import com.mcnsa.essentials.annotations.Command;
+import com.mcnsa.essentials.annotations.ComponentInfo;
 import com.mcnsa.essentials.utilities.ColourHandler;
 
+@ComponentInfo(friendlyName = "Spawn",
+				description = "Enables custom spawns",
+				permsSettingsPrefix = "spawn")
 public class Spawn implements Listener {
 	private static Location spawnLocation = null;
 	
@@ -61,7 +65,7 @@ public class Spawn implements Listener {
 	
 	@Command(command = "spawn",
 			description = "takes you to spawn",
-			permissions = {"spawn.set"},
+			permissions = {"set"},
 			playerOnly = true)
 	public static boolean spawn(CommandSender sender) {
 		// grab our player
@@ -74,7 +78,7 @@ public class Spawn implements Listener {
 
 	@Command(command = "setspawn",
 			description = "sets the spawn at your current location",
-			permissions = {"spawn.set"},
+			permissions = {"set"},
 			playerOnly = true)
 	public static boolean setSpawn(CommandSender sender) {
 		// grab our player
@@ -93,7 +97,7 @@ public class Spawn implements Listener {
 	@Command(command = "setspawn",
 			description = "sets the spawn at the given coordinates in the default world",
 			arguments = {"x", "y", "z"},
-			permissions = {"spawn.set"})
+			permissions = {"set"})
 	public static boolean setSpawn(CommandSender sender, float x, float y, float z) {
 		return setSpawn(sender, Bukkit.getServer().getWorlds().get(0).getName(), x, y, z);
 	}
@@ -101,7 +105,7 @@ public class Spawn implements Listener {
 	@Command(command = "setspawn",
 			description = "sets the spawn at the given coordinates in the given world",
 					arguments = {"world name", "x", "y", "z"},
-			permissions = {"spawn.set"})
+			permissions = {"set"})
 	public static boolean setSpawn(CommandSender sender, String world, float x, float y, float z) {
 		Location spawnLocation = new Location(Bukkit.getServer().getWorld(world), x, y, z, 0, 0);
 		updateSpawn(spawnLocation);

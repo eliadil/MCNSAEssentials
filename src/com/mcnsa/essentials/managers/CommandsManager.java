@@ -1,17 +1,11 @@
 package com.mcnsa.essentials.managers;
 
-import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.security.CodeSource;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandExecutor;
@@ -23,6 +17,7 @@ import org.bukkit.entity.Player;
 import com.mcnsa.essentials.MCNSAEssentials;
 import com.mcnsa.essentials.annotations.Command;
 import com.mcnsa.essentials.exceptions.EssentialsCommandException;
+import com.mcnsa.essentials.managers.ComponentManager.Component;
 import com.mcnsa.essentials.utilities.ColourHandler;
 
 public class CommandsManager implements CommandExecutor {
@@ -58,12 +53,11 @@ public class CommandsManager implements CommandExecutor {
 	}
 	
 	// our registered commands and command descriptions (for help)
-	protected ArrayList<Object> registeredComponents = new ArrayList<Object>();
 	protected HashMap<String, CommandInfo> registeredCommands = new HashMap<String, CommandInfo>();
 	protected HashMap<String, String> aliasMapping = new HashMap<String, String>();
 	
 	// constructor
-	public CommandsManager() {
+	public CommandsManager(ComponentManager componentManager) {
 		// use reflection to get access to bukkit's command map
 		try {
 			// make sure we have an appropriate class
@@ -81,37 +75,14 @@ public class CommandsManager implements CommandExecutor {
 			// now get the actual command map
 			CommandMap commandMap = (CommandMap)commandMapField.get(Bukkit.getServer());
 			
-			// get the code source that we're in
-			CodeSource src = CommandsManager.class.getProtectionDomain().getCodeSource();
-			if(src != null) {
-				URL jar = src.getLocation();
-				ZipInputStream zip = new ZipInputStream(jar.openStream());
-				
-				// get our class loader
-				File myFile = new File("plugins/MCNSAEssentials.jar");
-				URL myJarFileURL = new URL("jar", "", "file:" + myFile.getAbsolutePath() + "!/");
-				URL[] classes = {myJarFileURL};
-				URLClassLoader classLoader = new URLClassLoader(classes, this.getClass().getClassLoader());
-				
-				// now loop over our files
-				ZipEntry ze = null;
-				assert(classLoader != null);
-				while((ze = zip.getNextEntry()) != null) {
-					String entryName = ze.getName();
-					if(entryName.endsWith(".class") && entryName.startsWith("com/mcnsa/essentials/components/")) {						
-						// get it's class
-						Class<?> clazz = Class.forName(entryName.replaceAll("/", ".").substring(0, entryName.length() - 6), true, classLoader);
-						
-						// register an instance of it
-						registeredComponents.add(clazz.newInstance());
-						
-						// and register it's methods
-						registerClassCommands(commandMap, clazz);
-					}
+			// register commands from the class manager
+			HashMap<String, Component> registeredComponents = componentManager.getRegisteredComponents();
+			for(String component: registeredComponents.keySet()) {
+				// and register it's methods
+				// but only if its not disabled
+				if(!registeredComponents.get(component).disabled) {
+					registerComponentCommands(commandMap, registeredComponents.get(component));
 				}
-			}
-			else {
-				MCNSAEssentials.error("code source was null!");
 			}
 			
 			// restore our commandMap to its former glory
@@ -189,7 +160,10 @@ public class CommandsManager implements CommandExecutor {
 	}
 	
 	// go through a given class and register all the commands in it
-	private void registerClassCommands(CommandMap commandMap, Class<?> cls) {
+	private void registerComponentCommands(CommandMap commandMap, Component component) {
+		// get our class
+		Class<?> cls = component.clazz;
+		
 		// loop through all our methods in the given class
 		for(Method method: cls.getMethods()) {
 			// make sure it has the "Command" annotation on it
@@ -250,7 +224,7 @@ public class CommandsManager implements CommandExecutor {
 				// add all of our permissions
 				// (we will match ANY of these)
 				for(int i = 0; i < permissions.length; i++) {
-					ci.permissions.add(permissions[i]);
+					ci.permissions.add(component.componentInfo.permsSettingsPrefix() + "." + permissions[i]);
 				}
 			}
 			
@@ -282,6 +256,19 @@ public class CommandsManager implements CommandExecutor {
 			
 			// register our command AND aliases with bukkit
 			for(int i = 0; i < commandAndAliases.size(); i++) {
+				// make sure its not disabled
+				boolean disabled = false;
+				for(String cmd: component.disabledCommands) {
+					if(cmd.equalsIgnoreCase(commandAndAliases.get(i))) {
+						disabled = true;
+						break;
+					}
+				}
+				if(disabled) {
+					MCNSAEssentials.debug("Command alias '%s' disabled!", commandAndAliases.get(i));
+					continue;
+				}
+				
 				// check to see if it already exists as a bukkit command
 				if(commandMap.getCommand(commandAndAliases.get(i)) != null) {
 					// it exists..
