@@ -17,7 +17,6 @@ import com.mcnsa.essentials.managers.DatabaseManager;
 import com.mcnsa.essentials.utilities.ColourHandler;
 import com.mcnsa.essentials.utilities.PlayerSelector;
 
-
 @ComponentInfo(friendlyName = "Home",
 				description = "Lets players specify homes",
 				permsSettingsPrefix = "home")
@@ -27,7 +26,6 @@ public class Home {
 	@Setting(node = "max-homes") public static int maxHomes = 5;
 	
 	@Command(command = "homes",
-			arguments = {"player"},
 			description = "lists your homes",
 			permissions = {"list.self"},
 			playerOnly = true)

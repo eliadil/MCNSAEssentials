@@ -1,6 +1,7 @@
 package com.mcnsa.essentials.managers;
 
 import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import com.mcnsa.essentials.MCNSAEssentials;
@@ -19,6 +20,15 @@ public class PermissionsManager {
 		}
 		else {
 			MCNSAEssentials.error("PermissionsEx not found!");
+		}
+	}
+	
+	public static boolean playerHasPermission(CommandSender sender, String permission) {
+		if(sender instanceof Player) {
+			return playerHasPermission((Player)sender, permission);
+		}
+		else {
+			return true;
 		}
 	}
 	
