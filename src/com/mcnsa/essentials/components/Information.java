@@ -1,5 +1,7 @@
 package com.mcnsa.essentials.components;
 
+import java.util.Random;
+
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
@@ -7,6 +9,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.server.ServerListPingEvent;
 
 import com.mcnsa.essentials.MCNSAEssentials;
 import com.mcnsa.essentials.annotations.Command;
@@ -21,6 +24,12 @@ import com.mcnsa.essentials.utilities.TimeFormat;
 public class Information implements Listener {
 	@Setting(node = "motd") public static String motd = "Hello, %name%, welcome to MCNSA!\nThe time is now %time% and you're in world '%world%'";
 	@Setting(node = "rules") public static String[] rules = {"Don't be a derp, you derp"};
+	@Setting(node = "server-list-motd") public static String[] serverListMotd = {
+		"&4MCNSA.COM",
+		"&3Hookers and Blow!",
+		"&aFaster, better, sexier.",
+		"&aTry out f.mcnsa.com!"
+	};
 	
 	public Information() {
 		// register our events
@@ -48,9 +57,17 @@ public class Information implements Listener {
 	}
 	
 	// bukkit event handler on player join
-	@EventHandler
+	@EventHandler(ignoreCancelled = true)
 	public void onJoin(PlayerJoinEvent event) {
 		sendMOTD(event.getPlayer());
+	}
+	
+	@EventHandler(ignoreCancelled = true)
+	public void onServerListPing(ServerListPingEvent event) {
+		Random random = new Random();
+		int ndx = random.nextInt(serverListMotd.length);
+		//MCNSAEssentials.debug("ping (%d): %s", ndx, serverListMotd[ndx]);
+		event.setMotd(ColourHandler.processColours(serverListMotd[ndx]));
 	}
 	
 	// our commands
