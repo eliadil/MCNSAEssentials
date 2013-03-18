@@ -118,7 +118,7 @@ public class CommandsManager implements CommandExecutor {
 		if(ci.command.consoleOnly()) {
 			str += ":c";
 		}
-		if(ci.command.playerOnly()) {
+		else if(ci.command.playerOnly()) {
 			str += ":p";
 		}
 		else {
@@ -308,7 +308,12 @@ public class CommandsManager implements CommandExecutor {
 			label = aliasMapping.get(label);
 		}
 		
+		/*for(String registrationToken: registeredCommands.keySet()) {
+			MCNSAEssentials.debug("possible registration: " + registrationToken);
+		}*/
+		
 		// find all our possibilities
+		String lastFailMessage = "";
 		for(String registrationToken: registeredCommands.keySet()) {
 			//MCNSAEssentials.debug("testing " + registrationToken + " against command (" + label + ")");
 			String[] registrationParts = registrationToken.split(":");
@@ -402,19 +407,21 @@ public class CommandsManager implements CommandExecutor {
 					
 					// check to see if we have permission
 					if(!hasPermission) {
-						ColourHandler.sendMessage(sender, "&cSorry, you don't have permission to do that!");
-						return false;
+						/*ColourHandler.sendMessage(sender, "&cSorry, you don't have permission to do that!");
+						return false;*/
+						lastFailMessage = "&cSorry, you don't have permission to do that!";
+						continue;
 					}
 				}
 				
 				// make sure we have the right person trying to do the command
 				if(ci.command.playerOnly() && !(sender instanceof Player)) {
-					ColourHandler.sendMessage(sender, "&cSorry, that command is for players only");
-					return false;
+					lastFailMessage = "&cSorry, that command is for players only";
+					continue;
 				}
 				else if(ci.command.consoleOnly() && (sender instanceof Player)) {
-					ColourHandler.sendMessage(sender, "&cSorry, that command is for the console only");
-					return false;
+					lastFailMessage = "&cSorry, that command is for the console only";
+					continue;
 				}
 				
 				// finally, call the method
@@ -439,7 +446,12 @@ public class CommandsManager implements CommandExecutor {
 		}
 		
 		// if we got here, we couldn't find a matching function
-		ColourHandler.sendMessage(sender, "&cInvalid command! Type /help for some help!");
+		if(lastFailMessage.equals("")) {
+			ColourHandler.sendMessage(sender, "&cInvalid command! Type /help for some help!");
+		}
+		else {
+			ColourHandler.sendMessage(sender, lastFailMessage);
+		}
 		return false;
 	}
 }

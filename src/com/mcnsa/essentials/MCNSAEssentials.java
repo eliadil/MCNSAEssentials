@@ -10,6 +10,7 @@ import com.mcnsa.essentials.managers.ConfigurationManager;
 import com.mcnsa.essentials.managers.DatabaseManager;
 import com.mcnsa.essentials.managers.PermissionsManager;
 import com.mcnsa.essentials.utilities.ColourHandler;
+import com.mcnsa.essentials.utilities.MultilineChatEntry;
 
 public class MCNSAEssentials extends JavaPlugin {
 	// get the minecraft logger
@@ -24,6 +25,9 @@ public class MCNSAEssentials extends JavaPlugin {
 	ConfigurationManager configurationManager = null;
 	CommandsManager commandsManager = null;
 	DatabaseManager databaseManager = null;
+	
+	// our multiline chat entry handler
+	MultilineChatEntry multilineChatEntry = null;
 	
 	public MCNSAEssentials() {
 		instance = this;
@@ -46,6 +50,9 @@ public class MCNSAEssentials extends JavaPlugin {
 
 		// initialize our database manager
 		databaseManager = new DatabaseManager();
+		
+		// initialize our chat handler
+		multilineChatEntry = new MultilineChatEntry();
 		
 		// we're done!
 		log("plugin enabled");

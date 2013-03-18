@@ -5,6 +5,7 @@ import java.util.Random;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import com.mcnsa.essentials.MCNSAEssentials;
 import com.mcnsa.essentials.annotations.Command;
@@ -85,6 +86,36 @@ public class Debug {
 		ColourHandler.sendMessage(sender, "&eAvailable total memory: " + Math.floor(rt.maxMemory() / 1024.0 / 1024.0) + " MB");
 		ColourHandler.sendMessage(sender, "&eJVM allocated memory: " + Math.floor(rt.totalMemory() / 1024.0 / 1024.0) + " MB");
 		ColourHandler.sendMessage(sender, "&eFree allocated memory: " + Math.floor(rt.freeMemory() / 1024.0 / 1024.0) + " MB");
+		
+		return true;
+	}
+	
+	private static String[] metaKeys = {
+		"godMode",
+		"vanished",
+		"mlEnabled",
+		"mlOnDone",
+		"mlText",
+		"mlArgs"
+	};
+	@Command(command = "resetmeta",
+			description = "resets all metadata associated with MCNSAEssentials",
+			permissions = {"resetmeta"})
+	public static boolean resetMetaData(CommandSender sender) {
+		// get all online players
+		Player[] onlinePlayers = Bukkit.getServer().getOnlinePlayers();
+		
+		// loop through all players
+		for(int i = 0; i < onlinePlayers.length; i++) {
+			// remove all associated metadata keys
+			for(String metaKey: metaKeys) {
+				if(onlinePlayers[i].hasMetadata(metaKey)) {
+					onlinePlayers[i].removeMetadata(metaKey, MCNSAEssentials.getInstance());
+				}
+			}
+		}
+		
+		ColourHandler.sendMessage(sender, "&aAll metadata valuess cleared!");
 		
 		return true;
 	}
