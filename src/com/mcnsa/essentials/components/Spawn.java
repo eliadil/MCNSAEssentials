@@ -14,18 +14,23 @@ import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import com.mcnsa.essentials.MCNSAEssentials;
 import com.mcnsa.essentials.annotations.Command;
 import com.mcnsa.essentials.annotations.ComponentInfo;
+import com.mcnsa.essentials.annotations.Setting;
 import com.mcnsa.essentials.utilities.ColourHandler;
 
 @ComponentInfo(friendlyName = "Spawn",
 				description = "Enables custom spawns",
 				permsSettingsPrefix = "spawn")
 public class Spawn implements Listener {
+	@Setting(node = "world") public static String world = "world";
+	@Setting(node = "x") public static float spawnX = 0;
+	@Setting(node = "y") public static float spawnY = 128;
+	@Setting(node = "z") public static float spawnZ = 0;
 	private static Location spawnLocation = null;
 	
 	// our constructor
 	public Spawn() {
 		// get our spawn location
-		spawnLocation = Bukkit.getServer().getWorlds().get(0).getSpawnLocation();
+		spawnLocation = new Location(Bukkit.getServer().getWorld(world), spawnX, spawnY, spawnZ);
 		
 		// and register our events
 		Bukkit.getServer().getPluginManager().registerEvents(this, MCNSAEssentials.getInstance());
@@ -34,7 +39,18 @@ public class Spawn implements Listener {
 	// internal utility function for changing the spawn
 	private static void updateSpawn(Location spawnLocation) {
 		Spawn.spawnLocation = spawnLocation;
+		Spawn.world = spawnLocation.getWorld().getName();
+		Spawn.spawnX = spawnLocation.getBlockX();
+		Spawn.spawnY = spawnLocation.getBlockY();
+		Spawn.spawnZ = spawnLocation.getBlockZ();
 		spawnLocation.getWorld().setSpawnLocation(spawnLocation.getBlockX(), spawnLocation.getBlockY(), spawnLocation.getBlockZ());
+		
+		// update the config
+		MCNSAEssentials.getInstance().getConfig().set("spawn.world", Spawn.world);
+		MCNSAEssentials.getInstance().getConfig().set("spawn.x", Spawn.spawnX);
+		MCNSAEssentials.getInstance().getConfig().set("spawn.y", Spawn.spawnY);
+		MCNSAEssentials.getInstance().getConfig().set("spawn.z", Spawn.spawnZ);
+		MCNSAEssentials.getInstance().saveConfig();
 	}
 	
 	// bukkit event handler on respawn
