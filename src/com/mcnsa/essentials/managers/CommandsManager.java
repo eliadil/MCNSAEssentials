@@ -265,15 +265,19 @@ public class CommandsManager implements CommandExecutor {
 					}
 				}
 				if(disabled) {
-					MCNSAEssentials.debug("Command alias '%s' disabled!", commandAndAliases.get(i));
+					//MCNSAEssentials.debug("Command alias '%s' disabled!", commandAndAliases.get(i));
 					continue;
 				}
 				
 				// check to see if it already exists as a bukkit command
+				//MCNSAEssentials.debug("Testing command: %s", commandAndAliases.get(i));
 				if(commandMap.getCommand(commandAndAliases.get(i)) != null) {
+					//MCNSAEssentials.debug("\tcommand exists in bukkit: %s, registered internally: %b", commandAndAliases.get(i), commandIsRegistered(commandAndAliases.get(i)));
 					// it exists..
 					// unregister it
 					commandMap.getCommand(commandAndAliases.get(i)).unregister(commandMap);
+					
+					// now make sure we aren't tracking it
 					if(!commandIsRegistered(commandAndAliases.get(i))) {
 						MCNSAEssentials.warning("overwriting existing command: " + commandAndAliases.get(i));
 					}

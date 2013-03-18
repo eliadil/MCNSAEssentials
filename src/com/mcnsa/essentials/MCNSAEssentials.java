@@ -60,7 +60,12 @@ public class MCNSAEssentials extends JavaPlugin {
 	
 	public void onDisable() {
 		// shutdown
-		databaseManager.disable();
+		try {
+			databaseManager.disable();
+		}
+		catch(Exception e) {
+			MCNSAEssentials.error("Failed to disable database manager (%s)!", e.getMessage());
+		}
 		log("plugin disabled");
 	}
 

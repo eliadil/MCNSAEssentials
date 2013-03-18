@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -135,6 +136,9 @@ public class DatabaseManager {
 			}
 			else if(arg.getClass().equals(Date.class)) {
 				preparedStatement.setDate(i, new java.sql.Date(((java.util.Date)arg).getTime()));
+			}
+			else if(arg.getClass().equals(Timestamp.class)) {
+				preparedStatement.setTimestamp(i, (Timestamp)arg);
 			}
 			else {
 				throw new EssentialsDatabaseException("Unknown SQL data type: %s", arg.getClass().getSimpleName());

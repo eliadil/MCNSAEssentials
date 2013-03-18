@@ -95,6 +95,13 @@ public class MultilineChatEntry implements Listener {
 		catch(EssentialsCommandException e) {
 			ColourHandler.sendMessage(player, "&c" + e.getMessage());
 		}
+		finally {
+			// destroy all the meta datas
+			player.removeMetadata("mlEnabled", MCNSAEssentials.getInstance());
+			player.removeMetadata("mlOnDone", MCNSAEssentials.getInstance());
+			player.removeMetadata("mlText", MCNSAEssentials.getInstance());
+			player.removeMetadata("mlArgs", MCNSAEssentials.getInstance());
+		}
 	}
 	
 	public static void onCancel(Player player) {

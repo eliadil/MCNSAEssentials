@@ -31,7 +31,7 @@ public class Kick implements MultilineChatHandler {
 	}
 	
 	public static void recordKick(String kicker, String kickee, String reason) throws EssentialsCommandException {
-		// add our kit
+		// add our kick
 		int results = DatabaseManager.updateQuery(
 				"insert into kicklogs (id, kickee, kicker, date, reason) values (NULL, ?, ?, ?, ?);",
 				kicker,
@@ -47,7 +47,7 @@ public class Kick implements MultilineChatHandler {
 	
 	@Command(command = "kick",
 			arguments = {"target player[s]"},
-			description = "kicks the target player[s]",
+			description = "kicks the target player[s] for a given reason",
 			permissions = {"kick"},
 			consoleOnly = true)
 	public static boolean kickFromConsole(CommandSender sender, String targetPlayer) throws EssentialsCommandException {

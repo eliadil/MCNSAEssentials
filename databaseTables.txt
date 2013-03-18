@@ -15,3 +15,6 @@ Homes
 
 Warps
 	|	id	|	owner	|	name	|	world name	|	x	|	y	|	z	|	public	|
+
+Ranks
+	|	id	|	target player	|	source player	|	old group	|	new group	|	date	|	reason	|
