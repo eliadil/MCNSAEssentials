@@ -17,7 +17,6 @@ import com.mcnsa.essentials.utilities.ColourHandler;
 import com.mcnsa.essentials.utilities.MultilineChatEntry;
 import com.mcnsa.essentials.utilities.PlayerSelector;
 
-
 @ComponentInfo(friendlyName = "Kick",
 				description = "Commands to kick players",
 				permsSettingsPrefix = "kick")

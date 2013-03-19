@@ -90,7 +90,7 @@ public class MultilineChatEntry implements Listener {
 		
 		// and call it
 		try {
-			mlOnDone.onChatComplete(player, mlText, mlArgs);
+			mlOnDone.onChatComplete(player, mlText.trim(), mlArgs);
 		}
 		catch(EssentialsCommandException e) {
 			ColourHandler.sendMessage(player, "&c" + e.getMessage());

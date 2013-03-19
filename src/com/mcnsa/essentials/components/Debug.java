@@ -96,7 +96,8 @@ public class Debug {
 		"mlEnabled",
 		"mlOnDone",
 		"mlText",
-		"mlArgs"
+		"mlArgs",
+		"frozen"
 	};
 	@Command(command = "resetmeta",
 			description = "resets all metadata associated with MCNSAEssentials",

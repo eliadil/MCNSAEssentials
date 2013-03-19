@@ -91,6 +91,9 @@ public class ColourHandler {
 	}
 
 	// allow for colour tags to be used in strings..
+	public static String processColours(String format, Object... args) {
+		return processColours(String.format(format, args));
+	}
 	public static String processColours(String str) {
 		return processConsoleColours(str);
 	}
