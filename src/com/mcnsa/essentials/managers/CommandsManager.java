@@ -5,6 +5,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 
 import org.bukkit.Bukkit;
@@ -20,6 +21,9 @@ import com.mcnsa.essentials.utilities.ColourHandler;
 import com.mcnsa.essentials.utilities.Logger;
 
 public class CommandsManager implements CommandExecutor {
+	// keep track of all known aliases we're using
+	private HashSet<String> knownAliases = new HashSet<String>();
+	
 	// an ``internal'' command structure class to inject into the commandmap with
 	public class EssentialsCommand extends org.bukkit.command.Command {
 		// keep track of our command executor
@@ -77,6 +81,28 @@ public class CommandsManager implements CommandExecutor {
 				if(!registeredComponents.get(component).disabled) {
 					registerComponentCommands(commandMap, registeredComponents.get(component));
 				}
+			}
+			
+			// now register all our commands and aliases with bukkit
+			final Field commandMapKnownCommandsField = commandMap.getClass().getDeclaredField("knownCommands");
+			commandMapKnownCommandsField.setAccessible(true);
+			@SuppressWarnings("unchecked")
+			HashMap<String, org.bukkit.command.Command> knownCommands = (HashMap<String, org.bukkit.command.Command>)commandMapKnownCommandsField.get(commandMap);
+			for(String knownAlias: knownAliases) {
+				// if it's already a bukkit command, overwrite it
+				if(commandMap.getCommand(knownAlias) != null) {
+					Logger.warning("Overwriting command '%s'!", knownAlias);
+					commandMap.getCommand(knownAlias).unregister(commandMap);
+				}
+				
+				// create an actual command, injecting it into the Bukkit commandMap
+				EssentialsCommand essentialsCommand = new EssentialsCommand(knownAlias);
+				/// manually overwrite the command
+				knownCommands.put(knownAlias, essentialsCommand);
+				// register our command map to our command
+				essentialsCommand.register(commandMap);
+				// set our new command's executor to be this class
+				essentialsCommand.setExecutor(this);
 			}
 			
 			// restore our commandMap to its former glory
@@ -137,6 +163,7 @@ public class CommandsManager implements CommandExecutor {
 	}
 	
 	// check to see if the command is already registered or not
+	@SuppressWarnings("unused")
 	private boolean commandIsRegistered(String command) {
 		// check if we have it as an alias
 		if(aliasMapping.containsKey(command)) {
@@ -259,30 +286,12 @@ public class CommandsManager implements CommandExecutor {
 					}
 				}
 				if(disabled) {
-					Logger.debug("Command alias '%s' disabled!", commandAndAliases.get(i));
+					//Logger.debug("Command alias '%s' disabled!", commandAndAliases.get(i));
 					continue;
 				}
 				
-				// check to see if it already exists as a bukkit command
-				//MCNSAEssentials.debug("Testing command: %s", commandAndAliases.get(i));
-				if(commandMap.getCommand(commandAndAliases.get(i)) != null) {
-					//MCNSAEssentials.debug("\tcommand exists in bukkit: %s, registered internally: %b", commandAndAliases.get(i), commandIsRegistered(commandAndAliases.get(i)));
-					// it exists..
-					// unregister it
-					commandMap.getCommand(commandAndAliases.get(i)).unregister(commandMap);
-					
-					// now make sure we aren't tracking it
-					if(!commandIsRegistered(commandAndAliases.get(i))) {
-						Logger.warning("overwriting existing command: " + commandAndAliases.get(i));
-					}
-				}
-				
-				// and now create an actual command, injecting it into the Bukkit commandMap
-				EssentialsCommand essentialsCommand = new EssentialsCommand(commandAndAliases.get(i));
-				// register it with the fallback prefix of "ess"
-				commandMap.register("ess", essentialsCommand);
-				// set our new command's executor to be this class
-				essentialsCommand.setExecutor(this);
+				// add this is as a known alias
+				knownAliases.add(commandAndAliases.get(i));
 				
 				// yay!
 				if(i == 0) {
