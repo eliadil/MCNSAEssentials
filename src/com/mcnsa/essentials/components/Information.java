@@ -16,7 +16,6 @@ import com.mcnsa.essentials.annotations.Command;
 import com.mcnsa.essentials.annotations.ComponentInfo;
 import com.mcnsa.essentials.annotations.Setting;
 import com.mcnsa.essentials.utilities.ColourHandler;
-import com.mcnsa.essentials.utilities.Logger;
 import com.mcnsa.essentials.utilities.TimeFormat;
 
 @ComponentInfo(friendlyName = "Information",
@@ -35,7 +34,6 @@ public class Information implements Listener {
 	public Information() {
 		// register our events
 		Bukkit.getServer().getPluginManager().registerEvents(this, MCNSAEssentials.getInstance());
-		Logger.debug("Information component enabled");
 	}
 	
 	private static void sendMOTD(CommandSender sender) {
