@@ -11,14 +11,13 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandMap;
 import org.bukkit.command.CommandSender;
-//import org.bukkit.craftbukkit.v1_4_R1.CraftServer;
 import org.bukkit.entity.Player;
 
-import com.mcnsa.essentials.MCNSAEssentials;
 import com.mcnsa.essentials.annotations.Command;
 import com.mcnsa.essentials.exceptions.EssentialsCommandException;
 import com.mcnsa.essentials.managers.ComponentManager.Component;
 import com.mcnsa.essentials.utilities.ColourHandler;
+import com.mcnsa.essentials.utilities.Logger;
 
 public class CommandsManager implements CommandExecutor {
 	// an ``internal'' command structure class to inject into the commandmap with
@@ -56,17 +55,11 @@ public class CommandsManager implements CommandExecutor {
 	protected HashMap<String, CommandInfo> registeredCommands = new HashMap<String, CommandInfo>();
 	protected HashMap<String, String> aliasMapping = new HashMap<String, String>();
 	
-	// constructor
-	public CommandsManager(ComponentManager componentManager) {
+	// call this to load our commands
+	public void loadCommands(ComponentManager componentManager) {
 		// use reflection to get access to bukkit's command map
-		try {
-			// make sure we have an appropriate class
-			/*if(!(Bukkit.getServer() instanceof CraftServer)) {
-				throw new Exception("Bukkit server isn't an instance of CraftServer!");
-			}
-			
+		try {			
 			// grab our field
-			final Field commandMapField = CraftServer.class.getDeclaredField("commandMap");*/
 			final Field commandMapField = Bukkit.getServer().getClass().getDeclaredField("commandMap");
 			
 			// make it accessible
@@ -91,7 +84,7 @@ public class CommandsManager implements CommandExecutor {
 		}
 		catch(Exception e) {
 			e.printStackTrace();
-			MCNSAEssentials.error("Failed to load components / commands!");
+			Logger.error("Failed to load components / commands!");
 		}
 	}
 	
@@ -174,7 +167,7 @@ public class CommandsManager implements CommandExecutor {
 			
 			// ok, now make sure the command is static
 			if(!Modifier.isStatic(method.getModifiers())) {
-				MCNSAEssentials.warning("failed to register command: " + method.getName() + " (not static)");
+				Logger.warning("failed to register command: " + method.getName() + " (not static)");
 				continue;
 			}
 			
@@ -188,7 +181,7 @@ public class CommandsManager implements CommandExecutor {
 			
 			// make sure it has an appropriate return value
 			if(method.getReturnType() != boolean.class){
-				MCNSAEssentials.warning("failed to register command: " + method.getName() + " (doesn't return boolean)");
+				Logger.warning("failed to register command: " + method.getName() + " (doesn't return boolean)");
 				continue;
 			}
 			
@@ -197,7 +190,7 @@ public class CommandsManager implements CommandExecutor {
 			
 			// make sure there is at least argument and it is a command sender
 			if(parameterTypes.length < 1) {
-				MCNSAEssentials.warning("failed to register command: " + method.getName() + " (doesn't have a CommandSender argument as arg0)");
+				Logger.warning("failed to register command: " + method.getName() + " (doesn't have a CommandSender argument as arg0)");
 				continue;
 			}
 			
@@ -207,7 +200,7 @@ public class CommandsManager implements CommandExecutor {
 			for(int i = 1; i < parameterTypes.length && valid; i++) {
 				if(!validParameterType(parameterTypes[i])) {
 					// we don't know what this is!
-					MCNSAEssentials.warning("failed to register command method: " + method.getName() + " (unhandle-able parameter type: " + parameterTypes[i].getName() + ")");
+					Logger.warning("failed to register command method: " + method.getName() + " (unhandle-able parameter type: " + parameterTypes[i].getName() + ")");
 					valid = false;
 				}
 			}
@@ -232,13 +225,13 @@ public class CommandsManager implements CommandExecutor {
 			// check to see if we have a player / console only annotation
 			if(command.playerOnly() && command.consoleOnly()) {
 				// we can't have both!
-				MCNSAEssentials.warning("failed to register command method: " + method.getName() + " (can't have BOTH ConsoleOnly and PlayerOnly attributes!)");
+				Logger.warning("failed to register command method: " + method.getName() + " (can't have BOTH ConsoleOnly and PlayerOnly attributes!)");
 				continue;
 			}
 			
 			// make sure we're not repeating a command here
 			if(registeredCommands.containsKey(ci.command.command())) {
-				MCNSAEssentials.warning("failed to register command: " + ci.command.command() + " (command exists in another component)");
+				Logger.warning("failed to register command: " + ci.command.command() + " (command exists in another component)");
 				continue;
 			}
 			
@@ -266,7 +259,7 @@ public class CommandsManager implements CommandExecutor {
 					}
 				}
 				if(disabled) {
-					//MCNSAEssentials.debug("Command alias '%s' disabled!", commandAndAliases.get(i));
+					Logger.debug("Command alias '%s' disabled!", commandAndAliases.get(i));
 					continue;
 				}
 				
@@ -280,7 +273,7 @@ public class CommandsManager implements CommandExecutor {
 					
 					// now make sure we aren't tracking it
 					if(!commandIsRegistered(commandAndAliases.get(i))) {
-						MCNSAEssentials.warning("overwriting existing command: " + commandAndAliases.get(i));
+						Logger.warning("overwriting existing command: " + commandAndAliases.get(i));
 					}
 				}
 				
@@ -442,7 +435,7 @@ public class CommandsManager implements CommandExecutor {
 					}
 					else {
 						ColourHandler.sendMessage(sender, "&cSomething went wrong! Alert an administrator!");
-						MCNSAEssentials.error("failed to execute command: " + label + " (" + e.getMessage() + ")");
+						Logger.error("failed to execute command: " + label + " (" + e.getMessage() + ")");
 						e.printStackTrace();
 						return false;
 					}

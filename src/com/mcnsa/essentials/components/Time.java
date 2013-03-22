@@ -7,12 +7,12 @@ import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import com.mcnsa.essentials.MCNSAEssentials;
 import com.mcnsa.essentials.annotations.Command;
 import com.mcnsa.essentials.annotations.ComponentInfo;
 import com.mcnsa.essentials.annotations.Setting;
 import com.mcnsa.essentials.exceptions.EssentialsCommandException;
 import com.mcnsa.essentials.utilities.ColourHandler;
+import com.mcnsa.essentials.utilities.Logger;
 import com.mcnsa.essentials.utilities.PlayerSelector;
 import com.mcnsa.essentials.utilities.TimeFormat;
 
@@ -99,7 +99,7 @@ public class Time {
 		}
 		
 		// and log it
-		MCNSAEssentials.log("&6The time in world '%s' has been changed to: %s by %s",
+		Logger.log("&6The time in world '%s' has been changed to: %s by %s",
 				targetWorld.getName(),
 				newTime,
 				sender.getName());

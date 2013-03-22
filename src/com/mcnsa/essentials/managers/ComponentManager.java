@@ -9,9 +9,9 @@ import java.util.HashMap;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import com.mcnsa.essentials.MCNSAEssentials;
 import com.mcnsa.essentials.annotations.ComponentInfo;
 import com.mcnsa.essentials.annotations.DatabaseTableInfo;
+import com.mcnsa.essentials.utilities.Logger;
 
 public class ComponentManager {
 	public class Component {
@@ -26,7 +26,6 @@ public class ComponentManager {
 	
 	public ComponentManager() {
 		// load all the classes in our desired package (the components package)
-		
 		try {
 			// get the code source that we're in
 			CodeSource src = CommandsManager.class.getProtectionDomain().getCodeSource();
@@ -53,7 +52,7 @@ public class ComponentManager {
 						if(!clazz.isAnnotationPresent(ComponentInfo.class)) {
 							// no component info!
 							// skip it!
-							MCNSAEssentials.warning("no component info for class '%s'! Skipping...", clazz.getSimpleName());
+							Logger.warning("no component info for class '%s'! Skipping...", clazz.getSimpleName());
 							continue;
 						}
 						ComponentInfo ci = clazz.getAnnotation(ComponentInfo.class); 
@@ -61,12 +60,11 @@ public class ComponentManager {
 						// create a component object
 						Component component = new Component();
 						component.clazz = clazz;
-						component.instance = clazz.newInstance();
+						component.instance = null; // don't initialize yet!
 						component.componentInfo = ci;
 						
 						// register an instance of it
 						registeredComponents.put(clazz.getSimpleName().toLowerCase(), component);
-						//MCNSAEssentials.debug("Added component '%s'!", clazz.getSimpleName());
 						
 						// see if the class has a database info annotation
 						// if it does, add it to the list of tables to be created
@@ -81,12 +79,26 @@ public class ComponentManager {
 				}
 			}
 			else {
-				MCNSAEssentials.error("code source was null!");
+				Logger.error("code source was null!");
 			}
 		}
 		catch(Exception e) {
 			e.printStackTrace();
-			MCNSAEssentials.error("Failed to load component classes!");
+			Logger.error("Failed to load component classes!");
+		}
+	}
+	
+	public void loadComponents() {
+		// initialize all non-disabled components
+		for(String component: registeredComponents.keySet()) {
+			if(!registeredComponents.get(component).disabled) {
+				try {
+					registeredComponents.get(component).instance = registeredComponents.get(component).clazz.newInstance();
+				}
+				catch(Exception e) {
+					Logger.error("Failed to instantiate component '%s': %s", component, e.getMessage());
+				}
+			}
 		}
 	}
 	

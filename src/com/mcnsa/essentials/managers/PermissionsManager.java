@@ -4,7 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import com.mcnsa.essentials.MCNSAEssentials;
+import com.mcnsa.essentials.utilities.Logger;
 
 import ru.tehkode.permissions.bukkit.PermissionsEx;
 
@@ -16,10 +16,10 @@ public class PermissionsManager {
 		// set up permissions
 		if(Bukkit.getServer().getPluginManager().isPluginEnabled("PermissionsEx")) {
 			permissions = PermissionsEx.getPermissionManager();
-			MCNSAEssentials.log("permissions successfully loaded!");
+			Logger.log("&aPermissions successfully loaded!");
 		}
 		else {
-			MCNSAEssentials.error("PermissionsEx not found!");
+			Logger.error("PermissionsEx not found!");
 		}
 	}
 	

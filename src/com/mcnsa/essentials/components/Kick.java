@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import com.mcnsa.essentials.MCNSAEssentials;
 import com.mcnsa.essentials.annotations.Command;
 import com.mcnsa.essentials.annotations.ComponentInfo;
 import com.mcnsa.essentials.annotations.DatabaseTableInfo;
@@ -14,6 +13,7 @@ import com.mcnsa.essentials.exceptions.EssentialsCommandException;
 import com.mcnsa.essentials.interfaces.MultilineChatHandler;
 import com.mcnsa.essentials.managers.DatabaseManager;
 import com.mcnsa.essentials.utilities.ColourHandler;
+import com.mcnsa.essentials.utilities.Logger;
 import com.mcnsa.essentials.utilities.MultilineChatEntry;
 import com.mcnsa.essentials.utilities.PlayerSelector;
 
@@ -73,7 +73,7 @@ public class Kick implements MultilineChatHandler {
 			playerListString += "&e" + target.getName();
 			
 			// log it
-			MCNSAEssentials.log("%s kicked %s: %s", playerName, target.getName(), reason);
+			Logger.log("%s kicked %s: %s", playerName, target.getName(), reason);
 			recordKick(playerName, target.getName(), reason);
 		}
 		
@@ -122,7 +122,7 @@ public class Kick implements MultilineChatHandler {
 			playerListString += "&e" + target.getName();
 			
 			// log it
-			MCNSAEssentials.log("%s kicked %s: %s", playerName, target.getName(), reason);
+			Logger.log("%s kicked %s: %s", playerName, target.getName(), reason);
 			recordKick(playerName, target.getName(), reason);
 		}
 		

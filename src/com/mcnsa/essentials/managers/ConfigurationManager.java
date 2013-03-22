@@ -4,35 +4,30 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Vector;
 
 import org.bukkit.configuration.file.FileConfiguration;
 
-import com.mcnsa.essentials.MCNSAEssentials;
 import com.mcnsa.essentials.annotations.Setting;
 import com.mcnsa.essentials.exceptions.EssentialsSettingsException;
 import com.mcnsa.essentials.managers.ComponentManager.Component;
+import com.mcnsa.essentials.utilities.Logger;
 
 public class ConfigurationManager {
 	// store our config
 	private FileConfiguration fileConfiguation = null;
 	
-	public ConfigurationManager(FileConfiguration fileConfiguration, ComponentManager componentManager) {
+	public ConfigurationManager(FileConfiguration fileConfiguration) {
 		// store our config
 		this.fileConfiguation = fileConfiguration;
 		
 		// deal with defaults
 		fileConfiguration.options().copyDefaults(true);
-		
+	}
+	
+	public void loadDisabledComponents(ComponentManager componentManager) {
 		// get our components
 		HashMap<String, Component> registeredComponents = componentManager.getRegisteredComponents();
-		
-		// deal with database connection information
-		this.fileConfiguation.addDefault("database.url", DatabaseManager.url);
-		DatabaseManager.url = this.fileConfiguation.getString("database.url");
-		this.fileConfiguation.addDefault("database.username", DatabaseManager.user);
-		DatabaseManager.user = this.fileConfiguation.getString("database.username");
-		this.fileConfiguation.addDefault("database.password", DatabaseManager.password);
-		DatabaseManager.password = this.fileConfiguation.getString("database.password");
 		
 		// deal with disabling components
 		this.fileConfiguation.addDefault("disabled-components", new ArrayList<String>());
@@ -40,43 +35,65 @@ public class ConfigurationManager {
 		// try to disable all our components
 		for(String disabledComponent: disabledComponents) {
 			if(!registeredComponents.containsKey(disabledComponent.toLowerCase())) {
-				MCNSAEssentials.warning("Component '%s' does not exist and so cannot be disabled!", disabledComponent.toLowerCase());
+				Logger.warning("Component '%s' does not exist and so cannot be disabled!", disabledComponent.toLowerCase());
 				continue;
 			}
 			
 			// ok, disable it
 			registeredComponents.get(disabledComponent).disabled = true;
 		}
+	}
+	
+	public void loadSettings(ComponentManager componentManager) {
+		// get all our loaded classes
+		Vector<Class<?>> classes = null;
+		try {
+			classes = getLoadedClasses();
+		}
+		catch(Exception e) {
+			Logger.error("Unhandled exception (%s): %s!", e.getClass().getName(), e.getMessage());
+			e.printStackTrace();
+		}
 		
-		for(String component: registeredComponents.keySet()) {
-			// now deal with disabling commands
-			String disabledKeyString = registeredComponents.get(component).componentInfo.permsSettingsPrefix() + ".disabled-commands";
-			this.fileConfiguation.addDefault(disabledKeyString, new ArrayList<String>());
-			List<String> disabledCommands = this.fileConfiguation.getStringList(disabledKeyString);
-			registeredComponents.get(component).disabledCommands.addAll(disabledCommands);
-
-			// register configuration keys from the component manager
+		// copy the data
+		List<Class<?>> classList = null;
+		synchronized(classes) {
+			classList = new ArrayList<Class<?>>(classes);
+		}
+		
+		// loop over all our classes
+		for(Class<?> clazz: classList) {
+			// and register their settings
 			try {
-				// and register it's config keys
-				// but only if its not disabled
-				if(!registeredComponents.get(component).disabled) {
-					registerComponentSettings(registeredComponents.get(component));
+				if(clazz.getPackage() != null) {
+					registerSettings(clazz, componentManager);
 				}
 			}
 			catch(Exception e) {
+				Logger.error("Failed to load settings for class '%s': %s", clazz.getName(), e.getMessage());
 				e.printStackTrace();
-				MCNSAEssentials.error("Failed to load component settings!");
-				MCNSAEssentials.error("Contact and administrator for help!");
-				break;
 			}
 		}
 	}
 	
-	public void registerComponentSettings(Component component) throws IllegalArgumentException, IllegalAccessException {
-		Object instance = component.instance;
+	public void registerSettings(Class<?> clazz, ComponentManager componentManager) throws IllegalArgumentException, IllegalAccessException {
+		String settingsPrefix = "";
+		Component component = null;
+		// check to see if it's a component
+		if(componentManager.getRegisteredComponents().containsKey(clazz.getSimpleName().toLowerCase())) {
+			component = componentManager.getRegisteredComponents().get(clazz.getSimpleName().toLowerCase());
+			settingsPrefix = component.componentInfo.permsSettingsPrefix() + ".";
+		}
+		
+		// if we have a component, get any disabled commands in it
+		if(component != null) {
+			String node = settingsPrefix + "disabled-commands";
+			this.fileConfiguation.addDefault(node, new String[]{});
+			component.disabledCommands = new ArrayList<String>(this.fileConfiguation.getStringList(node));
+		}
 		
 		// loop over all the fields in the component
-		for(Field field: instance.getClass().getFields()) {
+		for(Field field: clazz.getFields()) {
 			// make sure it has the "Setting" annotation on it
 			if(!field.isAnnotationPresent(Setting.class)) {
 				continue;
@@ -87,9 +104,16 @@ public class ConfigurationManager {
 				field.setAccessible(true);
 			}
 			
+			// make sure it is static
+			if(!java.lang.reflect.Modifier.isStatic(field.getModifiers())) {
+				// nope
+				Logger.warning("Can't configure setting '%s.%s' - only STATIC fields may be configurable settings!",
+						clazz.getName(), field.getName());
+			}
+			
 			// get the annotation
 			Setting setting = field.getAnnotation(Setting.class);
-			String node = component.componentInfo.permsSettingsPrefix() + "." + setting.node();
+			String node = settingsPrefix + setting.node();
 			
 			// get the field type
 			Class<?> type = field.getType();
@@ -98,66 +122,84 @@ public class ConfigurationManager {
 				// now determine what to do based on what type of variable it is
 				if(type.equals(String.class)) {
 					// single string
-					this.fileConfiguation.addDefault(node, (String)field.get(instance));
-					field.set(instance, this.fileConfiguation.getString(node, (String)field.get(instance)));
+					this.fileConfiguation.addDefault(node, (String)field.get(null));
+					field.set(null, this.fileConfiguation.getString(node, (String)field.get(null)));
 				}
 				else if(type.equals(String[].class)) {
 					// list of strings
-					this.fileConfiguation.addDefault(node, (String[])field.get(instance));
+					this.fileConfiguation.addDefault(node, (String[])field.get(null));
 					List<String> result = this.fileConfiguation.getStringList(node);
-					field.set(instance, result.toArray(new String[result.size()]));
+					field.set(null, result.toArray(new String[result.size()]));
 				}
 				else if(type.equals(int.class)) {
 					// single int
-					this.fileConfiguation.addDefault(node, field.getInt(instance));
-					field.setInt(instance, this.fileConfiguation.getInt(node, field.getInt(instance)));
+					this.fileConfiguation.addDefault(node, field.getInt(null));
+					field.setInt(null, this.fileConfiguation.getInt(node, field.getInt(null)));
 				}
 				else if(type.equals(Integer[].class)) {
 					// list of ints
-					this.fileConfiguation.addDefault(node, (Integer[])field.get(instance));
+					this.fileConfiguation.addDefault(node, (Integer[])field.get(null));
 					List<Integer> result = this.fileConfiguation.getIntegerList(node);
-					field.set(instance, result.toArray(new Integer[result.size()]));
+					field.set(null, result.toArray(new Integer[result.size()]));
 				}
 				else if(type.equals(boolean.class)) {
 					// single boolean
-					this.fileConfiguation.addDefault(node, field.getBoolean(instance));
-					field.setBoolean(instance, this.fileConfiguation.getBoolean(node, field.getBoolean(instance)));
+					this.fileConfiguation.addDefault(node, field.getBoolean(null));
+					field.setBoolean(null, this.fileConfiguation.getBoolean(node, field.getBoolean(null)));
 				}
 				else if(type.equals(Boolean[].class)) {
 					// list of booleans
-					this.fileConfiguation.addDefault(node, (Boolean[])field.get(instance));
+					this.fileConfiguation.addDefault(node, (Boolean[])field.get(null));
 					List<Boolean> result = this.fileConfiguation.getBooleanList(node);
-					field.set(instance, result.toArray(new Boolean[result.size()]));
+					field.set(null, result.toArray(new Boolean[result.size()]));
 				}
 				else if(type.equals(float.class)) {
 					// single float
-					this.fileConfiguation.addDefault(node, field.getFloat(instance));
-					field.setFloat(instance, (float)this.fileConfiguation.getDouble(node, field.getFloat(instance)));
+					this.fileConfiguation.addDefault(node, field.getFloat(null));
+					field.setFloat(null, (float)this.fileConfiguation.getDouble(node, field.getFloat(null)));
 				}
 				else if(type.equals(Float[].class)) {
 					// list of floats
-					this.fileConfiguation.addDefault(node, (Float[])field.get(instance));
+					this.fileConfiguation.addDefault(node, (Float[])field.get(null));
 					List<Float> result = this.fileConfiguation.getFloatList(node);
-					field.set(instance, result.toArray(new Float[result.size()]));
+					field.set(null, result.toArray(new Float[result.size()]));
 				}
 				else if(type.equals(long.class)) {
 					// single boolean
-					this.fileConfiguation.addDefault(node, field.getLong(instance));
-					field.setLong(instance, this.fileConfiguation.getLong(node, field.getLong(instance)));
+					this.fileConfiguation.addDefault(node, field.getLong(null));
+					field.setLong(null, this.fileConfiguation.getLong(node, field.getLong(null)));
 				}
 				else if(type.equals(Long[].class)) {
 					// list of booleans
-					this.fileConfiguation.addDefault(node, (Long[])field.get(instance));
+					this.fileConfiguation.addDefault(node, (Long[])field.get(null));
 					List<Long> result = this.fileConfiguation.getLongList(node);
-					field.set(instance, result.toArray(new Long[result.size()]));
+					field.set(null, result.toArray(new Long[result.size()]));
 				}
 				else {
-					throw new EssentialsSettingsException("Unrecognized setting type '%s' for field %s.%s!", type.toString(), component.clazz.getSimpleName(), field.getName());
+					throw new EssentialsSettingsException("Unrecognized setting type '%s' for field %s.%s!", type.toString(), clazz.getSimpleName(), field.getName());
 				}
 			}
 			catch(EssentialsSettingsException e) {
-				MCNSAEssentials.warning(e.getMessage() + " &c(ignoring setting)");
+				Logger.warning(e.getMessage() + " &c(ignoring setting)");
 			}
 		}
+	}
+	
+	private static Vector<Class<?>> getLoadedClasses() throws SecurityException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException {
+		// get a list of all our classes
+		//Logger.debug("Getting classes...");
+		Field f = ClassLoader.class.getDeclaredField("classes");
+		//Logger.debug("Type: %s", f.getType().getName());
+		f.setAccessible(true);
+		@SuppressWarnings("unchecked")
+		Vector<Class<?>> classes = (Vector<Class<?>>)f.get(ConfigurationManager.class.getClassLoader());
+		/*for(Class<?> clazz: classes) {
+			if(clazz != null && clazz.getPackage() != null) {
+				Logger.debug("Found class '%s' (%s)!", clazz.getName(), clazz.getPackage().getName());
+			}
+		}
+		Logger.debug("done!");*/
+		
+		return classes;
 	}
 }

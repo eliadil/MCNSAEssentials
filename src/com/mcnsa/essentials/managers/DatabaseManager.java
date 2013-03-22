@@ -11,18 +11,19 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
-import com.mcnsa.essentials.MCNSAEssentials;
 import com.mcnsa.essentials.annotations.DatabaseTableInfo;
+import com.mcnsa.essentials.annotations.Setting;
 import com.mcnsa.essentials.exceptions.EssentialsCommandException;
 import com.mcnsa.essentials.exceptions.EssentialsDatabaseException;
+import com.mcnsa.essentials.utilities.Logger;
 
 // http://zetcode.com/db/mysqljava/
 
 public class DatabaseManager {	
 	// our connection settings
-	public static String url = "jdbc:mysql://localhost/mcnsa";
-	public static String user = "mcnsa";
-	public static String password = "mcnsa";
+	@Setting(node = "database.url") public static String url = "jdbc:mysql://localhost/mcnsa";
+	@Setting(node = "database.username") public static String user = "mcnsa";
+	@Setting(node = "database.password") public static String password = "mcnsa";
 	
 	// our connections
 	private static Connection connection = null;
@@ -31,8 +32,7 @@ public class DatabaseManager {
 	
 	private static HashMap<String, String> tableConstructions = new HashMap<String, String>();
 	
-	// our constructor
-	public DatabaseManager() {
+	public void enable() {
 		try {
 			// connect
 			connect();
@@ -43,8 +43,8 @@ public class DatabaseManager {
 		catch(Exception e) {
 			// disconnect on error
 			e.printStackTrace();
-			MCNSAEssentials.error("Failed to initialize database connection! Using url <%s>, user <%s>, pass <%s>", url, user, password);
-			MCNSAEssentials.warning("You won't be able to use any commands that utilize the database!");
+			Logger.error("Failed to initialize database connection! Using url <%s>, user <%s>, pass <%s>", url, user, password);
+			Logger.warning("You won't be able to use any commands that utilize the database!");
 			disconnect();
 		}
 	}
@@ -60,7 +60,7 @@ public class DatabaseManager {
 		resultSet = preparedStatement.executeQuery();
 		
 		if(resultSet.next()) {
-			MCNSAEssentials.log("&aDatabase connected! Database version: &f%s", resultSet.getString(1));
+			Logger.log("&aDatabase connected! Database version: &f%s", resultSet.getString(1));
 		}
 		else {
 			throw new EssentialsDatabaseException("Failed to retrieve database version!");
@@ -82,7 +82,7 @@ public class DatabaseManager {
 		}
 		catch(SQLException e) {
 			e.printStackTrace();
-			MCNSAEssentials.error("Failed to terminate database connection! (%s)", e.getMessage());
+			Logger.error("Failed to terminate database connection! (%s)", e.getMessage());
 		}
 	}
 	
@@ -102,7 +102,7 @@ public class DatabaseManager {
 				preparedStatement.executeUpdate();
 			}
 			catch(SQLException e) {
-				MCNSAEssentials.error("Failed to ensure table construction: (%s)! Skipping...", e.getMessage());
+				Logger.error("Failed to ensure table construction: (%s)! Skipping...", e.getMessage());
 			}
 			finally {
 				preparedStatement.close();
@@ -190,7 +190,7 @@ public class DatabaseManager {
 			}
 			catch(SQLException e) {
 				e.printStackTrace();
-				MCNSAEssentials.error("Failed to close prepared statement on query: (%s)!", e.getMessage());
+				Logger.error("Failed to close prepared statement on query: (%s)!", e.getMessage());
 			}
 		}
 	}
@@ -218,7 +218,7 @@ public class DatabaseManager {
 			}
 			catch(SQLException e) {
 				e.printStackTrace();
-				MCNSAEssentials.error("Failed to close prepared statement on query: (%s)!", e.getMessage());
+				Logger.error("Failed to close prepared statement on query: (%s)!", e.getMessage());
 			}
 		}
 	}

@@ -166,7 +166,6 @@ public class Vanish implements Listener {
 				
 			case ENDER_CHEST:
 				// just open their ender chest
-				MCNSAEssentials.debug("cancelling ender chest open");
 				event.setCancelled(true);
 				player.openInventory(player.getEnderChest());
 				break;

@@ -1,7 +1,5 @@
 package com.mcnsa.essentials;
 
-import java.util.logging.Logger;
-
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.mcnsa.essentials.managers.ComponentManager;
@@ -9,13 +7,10 @@ import com.mcnsa.essentials.managers.CommandsManager;
 import com.mcnsa.essentials.managers.ConfigurationManager;
 import com.mcnsa.essentials.managers.DatabaseManager;
 import com.mcnsa.essentials.managers.PermissionsManager;
-import com.mcnsa.essentials.utilities.ColourHandler;
+import com.mcnsa.essentials.utilities.Logger;
 import com.mcnsa.essentials.utilities.MultilineChatEntry;
 
-public class MCNSAEssentials extends JavaPlugin {
-	// get the minecraft logger
-	static Logger log = Logger.getLogger("Minecraft");
-	
+public class MCNSAEssentials extends JavaPlugin {	
 	// keep track of ourself
 	static MCNSAEssentials instance = null;
 	
@@ -41,12 +36,14 @@ public class MCNSAEssentials extends JavaPlugin {
 		componentManager = new ComponentManager();
 		
 		// load the configuration for all our components
-		this.saveDefaultConfig();
-		configurationManager = new ConfigurationManager(this.getConfig(), componentManager);
-		this.saveConfig();
+		configurationManager = new ConfigurationManager(this.getConfig());
+		configurationManager.loadDisabledComponents(componentManager);
+		
+		// now load our components
+		componentManager.loadComponents();
 		
 		// initialize our commands manager, loading commands in the process
-		commandsManager = new CommandsManager(componentManager);
+		commandsManager = new CommandsManager();
 
 		// initialize our database manager
 		databaseManager = new DatabaseManager();
@@ -54,8 +51,18 @@ public class MCNSAEssentials extends JavaPlugin {
 		// initialize our chat handler
 		multilineChatEntry = new MultilineChatEntry();
 		
+		// now load all our class's settings
+		configurationManager.loadSettings(componentManager);
+		this.saveConfig();
+		
+		// load our commands
+		commandsManager.loadCommands(componentManager);
+		
+		// and start our database
+		databaseManager.enable();
+		
 		// we're done!
-		log("plugin enabled");
+		Logger.log("&aPlugin enabled");
 	}
 	
 	public void onDisable() {
@@ -64,46 +71,9 @@ public class MCNSAEssentials extends JavaPlugin {
 			databaseManager.disable();
 		}
 		catch(Exception e) {
-			MCNSAEssentials.error("Failed to disable database manager (%s)!", e.getMessage());
+			Logger.error("Failed to disable database manager (%s)!", e.getMessage());
 		}
-		log("plugin disabled");
-	}
-
-	public static Logger log() {
-		return log;
-	}
-
-	// for simpler logging
-	public static void log(String format, Object... args) {
-		log(String.format(format, args));
-	}
-	public static void log(String info) {
-		ColourHandler.consoleMessage("[MCNSAEssentials] " + info);
-	}
-
-	// for error reporting
-	public static void warning(String format, Object... args) {
-		warning(String.format(format, args));
-	}
-	public static void warning(String info) {
-		ColourHandler.consoleMessage("[MCNSAEssentials] &e<WARNING> " + info);
-	}
-
-	// for error reporting
-	public static void error(String format, Object... args) {
-		error(String.format(format, args));
-	}
-	public static void error(String info) {
-		ColourHandler.consoleMessage("[MCNSAEssentials] &c<ERROR> " + info);
-	}
-
-	// for debugging
-	// (disable for final release)
-	public static void debug(String format, Object... args) {
-		debug(String.format(format, args));
-	}
-	public static void debug(String info) {
-		ColourHandler.consoleMessage("[MCNSAEssentials] &9<DEBUG> " + info);
+		Logger.log("&6Plugin disabled");
 	}
 	
 	public static MCNSAEssentials getInstance() {
