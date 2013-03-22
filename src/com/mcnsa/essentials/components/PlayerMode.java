@@ -15,6 +15,7 @@ import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
+import org.bukkit.util.Vector;
 
 import com.mcnsa.essentials.MCNSAEssentials;
 import com.mcnsa.essentials.annotations.Command;
@@ -151,6 +152,11 @@ public class PlayerMode implements Listener {
 			
 			// change their game mode
 			target.setGameMode(targetMode);
+
+			if(targetMode.equals(GameMode.SURVIVAL) || targetMode.equals(GameMode.ADVENTURE)) {
+				// also, set their velocity to 0
+				target.setVelocity(new Vector(0, 0, 0));
+			}
 			
 			// and alert them!
 			if(sender.getName().equals(target.getName())) {
@@ -258,6 +264,9 @@ public class PlayerMode implements Listener {
 			
 			// enable the god metadata on them
 			target.removeMetadata("godMode", MCNSAEssentials.getInstance());
+			
+			// also, set their velocity to 0
+			target.setVelocity(new Vector(0, 0, 0));
 			
 			// alert them
 			if(sender.getName().equals(target.getName())) {
