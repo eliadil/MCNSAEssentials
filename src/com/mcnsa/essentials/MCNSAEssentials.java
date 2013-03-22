@@ -41,7 +41,7 @@ public class MCNSAEssentials extends JavaPlugin {
 		componentManager = new ComponentManager();
 		
 		// load the configuration for all our components
-		//this.saveDefaultConfig();
+		this.saveDefaultConfig();
 		configurationManager = new ConfigurationManager(this.getConfig(), componentManager);
 		this.saveConfig();
 		

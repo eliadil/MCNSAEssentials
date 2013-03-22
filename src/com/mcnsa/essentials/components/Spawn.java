@@ -50,6 +50,7 @@ public class Spawn implements Listener {
 		MCNSAEssentials.getInstance().getConfig().set("spawn.x", Spawn.spawnX);
 		MCNSAEssentials.getInstance().getConfig().set("spawn.y", Spawn.spawnY);
 		MCNSAEssentials.getInstance().getConfig().set("spawn.z", Spawn.spawnZ);
+		MCNSAEssentials.getInstance().getConfig().options().copyDefaults(true);
 		MCNSAEssentials.getInstance().saveConfig();
 	}
 	

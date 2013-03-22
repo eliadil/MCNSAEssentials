@@ -1,10 +1,9 @@
 package com.mcnsa.essentials.utilities;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.craftbukkit.v1_4_R1.command.ColouredConsoleSender;
 
 public class ColourHandler {
 	static Integer nextColour = new Integer(0);	
@@ -129,17 +128,6 @@ public class ColourHandler {
 		return str.replaceAll("(&([a-f0-9klmnor]))", "").replaceAll("(\u00A7([a-f0-9klmnor]))", "");
 	}
 	
-	public static void sendMessage(Player player, String format, Object... args) {
-		sendMessage(player, String.format(format, args));
-	}
-	
-	public static void sendMessage(Player player, String message) {
-		if(message.length() < 1) {
-			return;
-		}
-		player.sendMessage(processColours(message));
-	}
-	
 	public static void sendMessage(CommandSender sender, String format, Object... args) {
 		sendMessage(sender, String.format(format, args));
 	}
@@ -148,21 +136,14 @@ public class ColourHandler {
 		if(message.length() < 1) {
 			return;
 		}
-		if(sender instanceof Player) {
-			sender.sendMessage(processColours(message));
-		}
-		else {
-			consoleMessage(message);
-		}
-	}
-	
-	public static void sendMessage(JavaPlugin plugin, String name, String message) {
-		if(message.length() < 1) {
-			return;
-		}
-		Player player = plugin.getServer().getPlayer(name);
-		if(player != null) {
-			player.sendMessage(processColours(message));
+		String[] lines = message.split("\n");
+		for(String line: lines) {
+			if(sender instanceof Player) {
+				sender.sendMessage(processColours(line));
+			}
+			else {
+				consoleMessage(line);
+			}
 		}
 	}
 	
@@ -170,6 +151,6 @@ public class ColourHandler {
 		if(message.length() < 1) {
 			return;
 		}
-		ColouredConsoleSender.getInstance().sendMessage(ColourHandler.processConsoleColours(message));
+		Bukkit.getServer().getConsoleSender().sendMessage(ColourHandler.processConsoleColours(message));
 	}
 }

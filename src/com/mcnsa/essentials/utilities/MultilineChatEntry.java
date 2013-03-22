@@ -23,7 +23,7 @@ public class MultilineChatEntry implements Listener {
 	private static boolean isEnteringMultilineChat(Player player) {
 		// if any of our metadata values come back as true,
 		// we have god mode on
-		for(MetadataValue val: player.getMetadata("mlEnabled")) {
+		for(MetadataValue val: player.getMetadata("mleEnabled")) {
 			if(val.asBoolean()) {
 				return true;
 			}
@@ -50,7 +50,7 @@ public class MultilineChatEntry implements Listener {
 			}
 			else {
 				String mlText = "";
-				for(MetadataValue val: player.getMetadata("mlText")) {
+				for(MetadataValue val: player.getMetadata("mleText")) {
 					mlText = val.asString();
 					break;
 				}
@@ -58,9 +58,9 @@ public class MultilineChatEntry implements Listener {
 				mlText += " " + line;
 				
 				// remove the old mlText
-				player.removeMetadata("mlText", MCNSAEssentials.getInstance());
+				player.removeMetadata("mleText", MCNSAEssentials.getInstance());
 				// add the new mlText
-				player.setMetadata("mlText", new FixedMetadataValue(MCNSAEssentials.getInstance(), mlText));
+				player.setMetadata("mleText", new FixedMetadataValue(MCNSAEssentials.getInstance(), mlText));
 				
 				ColourHandler.sendMessage(player, "&9Added text: &f%s", line);
 			}
@@ -73,17 +73,32 @@ public class MultilineChatEntry implements Listener {
 	public static void onDone(Player player) {
 		// get the various meta datas
 		String mlText = "";
-		for(MetadataValue val: player.getMetadata("mlText")) {
+		for(MetadataValue val: player.getMetadata("mleText")) {
 			mlText = val.asString();
 			break;
 		}
 		MultilineChatHandler mlOnDone = null;
-		for(MetadataValue val: player.getMetadata("mlOnDone")) {
+		for(MetadataValue val: player.getMetadata("mleOnDone")) {
+			// see if it's ours
+			Class<?>[] interfaces = val.value().getClass().getInterfaces();
+			boolean isOurs = false;
+			for(Class<?> face: interfaces) {
+				//MCNSAEssentials.debug("onDone interface: " + face.getName());
+				if(face.equals(MultilineChatHandler.class)) {
+					isOurs = true;
+					break;
+				}
+			}
+			if(!isOurs) {
+				// nope
+				return;
+			}
+			
 			mlOnDone = (MultilineChatHandler)val.value();
 			break;
 		}
 		Object[] mlArgs = null;
-		for(MetadataValue val: player.getMetadata("mlArgs")) {
+		for(MetadataValue val: player.getMetadata("mleArgs")) {
 			mlArgs = (Object[])val.value();
 			break;
 		}
@@ -97,19 +112,19 @@ public class MultilineChatEntry implements Listener {
 		}
 		finally {
 			// destroy all the meta datas
-			player.removeMetadata("mlEnabled", MCNSAEssentials.getInstance());
-			player.removeMetadata("mlOnDone", MCNSAEssentials.getInstance());
-			player.removeMetadata("mlText", MCNSAEssentials.getInstance());
-			player.removeMetadata("mlArgs", MCNSAEssentials.getInstance());
+			player.removeMetadata("mleEnabled", MCNSAEssentials.getInstance());
+			player.removeMetadata("mleOnDone", MCNSAEssentials.getInstance());
+			player.removeMetadata("mleText", MCNSAEssentials.getInstance());
+			player.removeMetadata("mleArgs", MCNSAEssentials.getInstance());
 		}
 	}
 	
 	public static void onCancel(Player player) {
 		// destroy all the meta datas
-		player.removeMetadata("mlEnabled", MCNSAEssentials.getInstance());
-		player.removeMetadata("mlOnDone", MCNSAEssentials.getInstance());
-		player.removeMetadata("mlText", MCNSAEssentials.getInstance());
-		player.removeMetadata("mlArgs", MCNSAEssentials.getInstance());
+		player.removeMetadata("mleEnabled", MCNSAEssentials.getInstance());
+		player.removeMetadata("mleOnDone", MCNSAEssentials.getInstance());
+		player.removeMetadata("mleText", MCNSAEssentials.getInstance());
+		player.removeMetadata("mleArgs", MCNSAEssentials.getInstance());
 		
 		// tell them
 		ColourHandler.sendMessage(player, "&9Multiline text entry cancelled");
@@ -122,10 +137,10 @@ public class MultilineChatEntry implements Listener {
 		}
 
 		// set the player's metadata
-		player.setMetadata("mlEnabled", new FixedMetadataValue(MCNSAEssentials.getInstance(), true));
-		player.setMetadata("mlOnDone", new FixedMetadataValue(MCNSAEssentials.getInstance(), onDone));
-		player.setMetadata("mlText", new FixedMetadataValue(MCNSAEssentials.getInstance(), new String("")));
-		player.setMetadata("mlArgs", new FixedMetadataValue(MCNSAEssentials.getInstance(), args));
+		player.setMetadata("mleEnabled", new FixedMetadataValue(MCNSAEssentials.getInstance(), true));
+		player.setMetadata("mleOnDone", new FixedMetadataValue(MCNSAEssentials.getInstance(), onDone));
+		player.setMetadata("mleText", new FixedMetadataValue(MCNSAEssentials.getInstance(), new String("")));
+		player.setMetadata("mleArgs", new FixedMetadataValue(MCNSAEssentials.getInstance(), args));
 		
 		// and tell them
 		ColourHandler.sendMessage(player, "&aYou are now entering multiline text. Continue entering text, line-by-line, until you're done. When you're done, send 'done' by itself on its own line (or 'cancel' to stop).");

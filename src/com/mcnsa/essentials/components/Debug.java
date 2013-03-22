@@ -87,16 +87,21 @@ public class Debug {
 		ColourHandler.sendMessage(sender, "&eJVM allocated memory: " + Math.floor(rt.totalMemory() / 1024.0 / 1024.0) + " MB");
 		ColourHandler.sendMessage(sender, "&eFree allocated memory: " + Math.floor(rt.freeMemory() / 1024.0 / 1024.0) + " MB");
 		
+		// now send out information about all our worlds
+		for(World world: Bukkit.getServer().getWorlds()) {
+			ColourHandler.sendMessage(sender, "&eWorld '&f%s&e': &c%d &eloaded chunks, &c%d &eentities", world.getName(), world.getLoadedChunks().length, world.getEntities().size());
+		}
+		
 		return true;
 	}
 	
 	private static String[] metaKeys = {
 		"godMode",
 		"vanished",
-		"mlEnabled",
-		"mlOnDone",
-		"mlText",
-		"mlArgs",
+		"mleEnabled",
+		"mleOnDone",
+		"mleText",
+		"mleArgs",
 		"frozen"
 	};
 	@Command(command = "resetmeta",

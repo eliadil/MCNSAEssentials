@@ -11,7 +11,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandMap;
 import org.bukkit.command.CommandSender;
-import org.bukkit.craftbukkit.v1_4_R1.CraftServer;
+//import org.bukkit.craftbukkit.v1_4_R1.CraftServer;
 import org.bukkit.entity.Player;
 
 import com.mcnsa.essentials.MCNSAEssentials;
@@ -61,12 +61,13 @@ public class CommandsManager implements CommandExecutor {
 		// use reflection to get access to bukkit's command map
 		try {
 			// make sure we have an appropriate class
-			if(!(Bukkit.getServer() instanceof CraftServer)) {
+			/*if(!(Bukkit.getServer() instanceof CraftServer)) {
 				throw new Exception("Bukkit server isn't an instance of CraftServer!");
 			}
 			
 			// grab our field
-			final Field commandMapField = CraftServer.class.getDeclaredField("commandMap");
+			final Field commandMapField = CraftServer.class.getDeclaredField("commandMap");*/
+			final Field commandMapField = Bukkit.getServer().getClass().getDeclaredField("commandMap");
 			
 			// make it accessible
 			boolean accessible = commandMapField.isAccessible();
