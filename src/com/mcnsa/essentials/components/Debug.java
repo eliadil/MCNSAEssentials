@@ -25,7 +25,7 @@ public class Debug {
 		String[] replies = {
 				"Pong!",
 				"Yup, I'm still here!",
-				"I heard " + sender.getName() + " likes boys!",
+				"I heard " + sender.getName() + " likes cute asian boys!",
 				"I said a hip hop, the hippie, the hippie, to the hip hip hop, you don't stop!"
 		};
 		ColourHandler.sendMessage(sender, "&e" + replies[(new Random()).nextInt(replies.length)]);

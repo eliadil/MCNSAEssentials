@@ -52,7 +52,7 @@ public class ComponentManager {
 						if(!clazz.isAnnotationPresent(ComponentInfo.class)) {
 							// no component info!
 							// skip it!
-							Logger.warning("no component info for class '%s'! Skipping...", clazz.getSimpleName());
+							Logger.debug("no component info for class '%s'! Skipping...", clazz.getSimpleName());
 							continue;
 						}
 						ComponentInfo ci = clazz.getAnnotation(ComponentInfo.class); 

@@ -111,6 +111,10 @@ public class DatabaseManager {
 	}
 	
 	// utility commands
+	public static Connection getConnection() {
+		return connection;
+	}
+	
 	private static PreparedStatement prepareStatement(String query, Object... args) throws SQLException, EssentialsDatabaseException {
 		// prepare our statement
 		preparedStatement = connection.prepareStatement(query);
@@ -154,13 +158,29 @@ public class DatabaseManager {
 	// data access commands
 	public static ArrayList<HashMap<String, Object>> accessQuery(String query, Object... args) throws EssentialsCommandException {
 		try {
+			return accessQuery(prepareStatement(query, args));
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			throw new EssentialsCommandException("Failed to prepare query: (%s)!", e.getMessage());
+		}
+		finally {
+			try {
+				preparedStatement.close();
+			}
+			catch(SQLException e) {
+				e.printStackTrace();
+				Logger.error("Failed to close prepared statement on query: (%s)!", e.getMessage());
+			}
+		}
+	}
+	
+	public static ArrayList<HashMap<String, Object>> accessQuery(PreparedStatement preparedStatement) throws EssentialsCommandException {
+		try {
 			// make sure we have a connection
 			if(connection == null || connection.isClosed()) {
 				throw new EssentialsDatabaseException("Not connected to a database!");
 			}
-			
-			// prepare our statement
-			preparedStatement = prepareStatement(query, args);
 			
 			// ok, now execute our query!
 			ResultSet results = preparedStatement.executeQuery();
@@ -197,13 +217,29 @@ public class DatabaseManager {
 	
 	public static int updateQuery(String query, Object... args) throws EssentialsCommandException {
 		try {
+			return updateQuery(prepareStatement(query, args));
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			throw new EssentialsCommandException("Failed to prepare query: (%s)!", e.getMessage());
+		}
+		finally {
+			try {
+				preparedStatement.close();
+			}
+			catch(SQLException e) {
+				e.printStackTrace();
+				Logger.error("Failed to close prepared statement on query: (%s)!", e.getMessage());
+			}
+		}
+	}
+	
+	public static int updateQuery(PreparedStatement preparedStatement) throws EssentialsCommandException {
+		try {
 			// make sure we have a connection
 			if(connection == null || connection.isClosed()) {
 				throw new EssentialsDatabaseException("Not connected to a database!");
 			}
-			
-			// prepare our statement
-			preparedStatement = prepareStatement(query, args);
 			
 			// ok, now execute our query!
 			return preparedStatement.executeUpdate();
