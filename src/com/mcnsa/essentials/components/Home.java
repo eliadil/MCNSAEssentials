@@ -7,7 +7,12 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerRespawnEvent;
 
+import com.mcnsa.essentials.MCNSAEssentials;
 import com.mcnsa.essentials.annotations.Command;
 import com.mcnsa.essentials.annotations.ComponentInfo;
 import com.mcnsa.essentials.annotations.DatabaseTableInfo;
@@ -22,8 +27,48 @@ import com.mcnsa.essentials.utilities.PlayerSelector;
 				permsSettingsPrefix = "home")
 @DatabaseTableInfo(name = "homes",
 					fields = { "owner TINYTEXT", "name TINYTEXT", "world TINYTEXT", "x FLOAT", "y FLOAT", "z FLOAT" })
-public class Home {
+public class Home implements Listener {
 	@Setting(node = "max-homes") public static int maxHomes = 5;
+	
+	public Home() {
+		// and register our events
+		Bukkit.getServer().getPluginManager().registerEvents(this, MCNSAEssentials.getInstance());
+	}
+	
+	@EventHandler(priority = EventPriority.HIGH)
+	public void onPlayerRespawn(PlayerRespawnEvent event) {
+		try {
+			// first try to get our "default" home
+			ArrayList<HashMap<String, Object>> results = DatabaseManager.accessQuery(
+					"select * from homes where owner=? and name=?;",
+					event.getPlayer().getName(), "default");
+			// if we don't have a "default" home, get the first one
+			if(results.size() != 1) {
+				// grab our first home
+				results = DatabaseManager.accessQuery(
+						"select * from homes where owner=? order by id limit 1;",
+						event.getPlayer().getName());
+				if(results.size() != 1){
+					// we don't have a home, cancel it!
+					return;
+				}
+			}
+			
+			// we DO have a home!
+			// make a location
+			Location location = new Location(
+					Bukkit.getServer().getWorld((String)results.get(0).get("world")),
+					(Float)results.get(0).get("x"),
+					(Float)results.get(0).get("y"),
+					(Float)results.get(0).get("z"));
+
+			// take us there!
+			event.setRespawnLocation(location);
+		}
+		catch(Exception e) {
+			// ignore if something goes wrong!
+		}
+	}
 	
 	@Command(command = "homes",
 			description = "lists your homes",

@@ -5,6 +5,7 @@ import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
@@ -21,49 +22,55 @@ import com.mcnsa.essentials.utilities.ColourHandler;
 				description = "Enables custom spawns",
 				permsSettingsPrefix = "spawn")
 public class Spawn implements Listener {
-	@Setting(node = "world") public static String world = "world";
+	@Setting(node = "world") public static String spawnWorld = "world";
 	@Setting(node = "x") public static float spawnX = 0;
-	@Setting(node = "y") public static float spawnY = 128;
+	@Setting(node = "y") public static float spawnY = 64;
 	@Setting(node = "z") public static float spawnZ = 0;
-	private static Location spawnLocation = null;
+	@Setting(node = "yaw") public static float spawnYaw = 0;
+	@Setting(node = "pitch") public static float spawnPitch = 0;
 	
 	// our constructor
 	public Spawn() {
-		// get our spawn location
-		spawnLocation = new Location(Bukkit.getServer().getWorld(world), spawnX, spawnY, spawnZ);
-		
 		// and register our events
 		Bukkit.getServer().getPluginManager().registerEvents(this, MCNSAEssentials.getInstance());
 	}
 	
 	// internal utility function for changing the spawn
 	private static void updateSpawn(Location spawnLocation) {
-		Spawn.spawnLocation = spawnLocation;
-		Spawn.world = spawnLocation.getWorld().getName();
-		Spawn.spawnX = spawnLocation.getBlockX();
-		Spawn.spawnY = spawnLocation.getBlockY();
-		Spawn.spawnZ = spawnLocation.getBlockZ();
+		spawnWorld = spawnLocation.getWorld().getName();
+		spawnX = spawnLocation.getBlockX();
+		spawnY = spawnLocation.getBlockY();
+		spawnZ = spawnLocation.getBlockZ();
+		spawnYaw = spawnLocation.getYaw();
+		spawnPitch = spawnLocation.getPitch();
 		spawnLocation.getWorld().setSpawnLocation(spawnLocation.getBlockX(), spawnLocation.getBlockY(), spawnLocation.getBlockZ());
 		
 		// update the config
-		MCNSAEssentials.getInstance().getConfig().set("spawn.world", Spawn.world);
-		MCNSAEssentials.getInstance().getConfig().set("spawn.x", Spawn.spawnX);
-		MCNSAEssentials.getInstance().getConfig().set("spawn.y", Spawn.spawnY);
-		MCNSAEssentials.getInstance().getConfig().set("spawn.z", Spawn.spawnZ);
-		MCNSAEssentials.getInstance().getConfig().options().copyDefaults(true);
+		MCNSAEssentials.getInstance().getConfig().set("spawn.world", spawnWorld);
+		MCNSAEssentials.getInstance().getConfig().set("spawn.x", spawnX);
+		MCNSAEssentials.getInstance().getConfig().set("spawn.y", spawnY);
+		MCNSAEssentials.getInstance().getConfig().set("spawn.z", spawnZ);
+		MCNSAEssentials.getInstance().getConfig().set("spawn.yaw", spawnYaw);
+		MCNSAEssentials.getInstance().getConfig().set("spawn.pitch", spawnPitch);
 		MCNSAEssentials.getInstance().saveConfig();
 	}
 	
 	// bukkit event handler on respawn
-	@EventHandler
+	@EventHandler(priority = EventPriority.LOW)
 	public void onRespawn(PlayerRespawnEvent event) {
-		event.setRespawnLocation(Spawn.spawnLocation);
+		Location spawnLocation = new Location(
+				Bukkit.getServer().getWorld(spawnWorld),
+				spawnX, spawnY, spawnZ, spawnYaw, spawnPitch);
+		event.setRespawnLocation(spawnLocation);
 	}
 	
 	// bukkit event handler on player join
 	@EventHandler
 	public void onJoin(PlayerJoinEvent event) {
 		if(!event.getPlayer().hasPlayedBefore()) {
+			Location spawnLocation = new Location(
+					Bukkit.getServer().getWorld(spawnWorld),
+					spawnX, spawnY, spawnZ, spawnYaw, spawnPitch);
 			event.getPlayer().teleport(spawnLocation);
 		}
 	}
@@ -76,6 +83,9 @@ public class Spawn implements Listener {
 		
 		// change it to the proper spawn location
 		if(loc.equals(loc.getWorld().getSpawnLocation())) {
+			Location spawnLocation = new Location(
+					Bukkit.getServer().getWorld(spawnWorld),
+					spawnX, spawnY, spawnZ, spawnYaw, spawnPitch);
 			event.setTo(spawnLocation);
 		}
 	}
