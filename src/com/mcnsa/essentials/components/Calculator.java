@@ -7,6 +7,7 @@ import com.mcnsa.essentials.annotations.ComponentInfo;
 import com.mcnsa.essentials.exceptions.EssentialsCommandException;
 import com.mcnsa.essentials.utilities.ColourHandler;
 import com.mcnsa.essentials.utilities.MathEval;
+import com.mcnsa.essentials.utilities.StringUtils;
 
 @ComponentInfo(friendlyName = "Calculator",
 				description = "A calculator for in-game convenience",
@@ -21,12 +22,7 @@ public class Calculator {
 			description = "evaluates the expression and returns the result",
 			permissions = {"calc"})
 	public static boolean calculate(CommandSender sender, String... expressions) throws EssentialsCommandException {
-		// join our expression
-		StringBuilder sb = new StringBuilder();
-		for(String ex: expressions) {
-			sb.append(ex).append(" ");
-		}
-		String expression = sb.toString().trim();
+		String expression = StringUtils.implode(" ", expressions);
 		
 		// evaluate it!
 		MathEval math = new MathEval();

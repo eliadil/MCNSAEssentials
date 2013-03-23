@@ -13,6 +13,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandMap;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.metadata.MetadataValue;
 
 import com.mcnsa.essentials.annotations.Command;
 import com.mcnsa.essentials.exceptions.EssentialsCommandException;
@@ -312,6 +313,20 @@ public class CommandsManager implements CommandExecutor {
 			}
 		}
 	}
+	
+	// utility function to determine if someone ignore permissions or not
+	private static boolean ignoresPermissions(Player player) {
+		// if any of our metadata values come back as true,
+		// we are ignoring permissions
+		for(MetadataValue val: player.getMetadata("ignorePermissions")) {
+			if(val.asBoolean()) {
+				return true;
+			}
+		}
+		
+		// guess not!
+		return false;
+	}
 
 	@Override
 	// here is where we actually handle commands
@@ -435,18 +450,21 @@ public class CommandsManager implements CommandExecutor {
 				// check permissions first
 				if(ci.permissions != null && (sender instanceof Player)) {
 					boolean hasPermission = false;
+					
+					// see if the player is currently ignoring permissions
+					if(ignoresPermissions((Player)sender)) {
+						hasPermission = true;
+					}
+					
 					// loop through all the permissions and see if we have at least one
-					for(Iterator<String> it = ci.permissions.iterator(); it.hasNext();) {
+					for(Iterator<String> it = ci.permissions.iterator(); it.hasNext() && !hasPermission;) {
 						if(PermissionsManager.playerHasPermission((Player)sender, it.next())) {
 							hasPermission = true;
-							break;
 						}
 					}
 					
 					// check to see if we have permission
 					if(!hasPermission) {
-						/*ColourHandler.sendMessage(sender, "&cSorry, you don't have permission to do that!");
-						return false;*/
 						lastFailMessage = "&cSorry, you don't have permission to do that!";
 						continue;
 					}
