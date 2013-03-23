@@ -353,9 +353,17 @@ public class CommandsManager implements CommandExecutor {
 			Class<?>[] params = registeredCommands.get(registrationToken).method.getParameterTypes();
 			
 			// check the number of arguments
-			/*if((params.length - 1) != args.length) {
-				continue;
-			}*/
+			boolean hasVarArg = false;
+			for(int i = 0; i < params.length && !hasVarArg; i++) {
+				if(params[i].getClass().equals(String[].class)) {
+					hasVarArg = true;
+				}
+			}
+			if(!hasVarArg) {
+				if((params.length - 1) != args.length) {
+					continue;
+				}
+			}
 			
 			// check the arguments one by one
 			Object[] arguments = new Object[params.length];

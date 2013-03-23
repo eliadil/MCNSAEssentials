@@ -88,7 +88,7 @@ public class ComponentManager {
 		}
 	}
 	
-	public void loadComponents() {
+	public void initializeComponents() {
 		// initialize all non-disabled components
 		for(String component: registeredComponents.keySet()) {
 			if(!registeredComponents.get(component).disabled) {

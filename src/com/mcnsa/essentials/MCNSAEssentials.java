@@ -40,9 +40,6 @@ public class MCNSAEssentials extends JavaPlugin {
 		configurationManager = new ConfigurationManager(this.getConfig());
 		configurationManager.loadDisabledComponents(componentManager);
 		
-		// now load our components
-		componentManager.loadComponents();
-		
 		// initialize our commands manager, loading commands in the process
 		commandsManager = new CommandsManager();
 
@@ -55,6 +52,9 @@ public class MCNSAEssentials extends JavaPlugin {
 		// now load all our class's settings
 		configurationManager.loadSettings(componentManager);
 		this.saveConfig();
+		
+		// now load our components
+		componentManager.initializeComponents();
 		
 		// load our commands
 		commandsManager.loadCommands(componentManager);
