@@ -21,7 +21,7 @@ import com.mcnsa.essentials.utilities.StringUtils;
 				permsSettingsPrefix = "modtools")
 public class ModTools {	
 	// our commands
-	@Command(command = "openinv",
+	/*@Command(command = "openinv",
 			aliases = {"openinventory", "inventory"},
 			arguments = {"target player"},
 			description = "opens that target player's inventory",
@@ -29,7 +29,7 @@ public class ModTools {
 			playerOnly = true)
 	public static boolean openInventory(CommandSender sender, String targetPlayer) {
 		return true;
-	}
+	}*/
 	
 	@Command(command = "sudo",
 			arguments = {"target player[s]", "command"},

@@ -2,8 +2,10 @@ package com.mcnsa.essentials.utilities;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.Random;
 import java.util.Set;
 
+import org.bukkit.DyeColor;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.enchantments.Enchantment;
@@ -116,6 +118,23 @@ public class ItemSelector {
 		
 		// ok, we're done
 		return stack;
+	}
+	
+	public static DyeColor matchDyeColour(String colour) throws EssentialsCommandException {		
+		// taken from CommandBook
+		if(colour.equalsIgnoreCase("random")) {
+		    return DyeColor.getByDyeData((byte) new Random().nextInt(15));
+		}
+		try {
+		    DyeColor match = DyeColor.valueOf(colour.toUpperCase());
+		    if (match != null) {
+		        return match;
+		    }
+		}
+		catch (IllegalArgumentException ignored) {
+			
+		}
+		throw new EssentialsCommandException("Unknown dye color name of '%s'!", colour);
 	}
 	
 	public static int parseItemData(int itemID, String filter) throws EssentialsCommandException {
