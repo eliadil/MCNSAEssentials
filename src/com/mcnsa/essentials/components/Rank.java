@@ -20,6 +20,7 @@ import com.mcnsa.essentials.annotations.Setting;
 import com.mcnsa.essentials.exceptions.EssentialsCommandException;
 import com.mcnsa.essentials.interfaces.MultilineChatHandler;
 import com.mcnsa.essentials.managers.DatabaseManager;
+import com.mcnsa.essentials.managers.PermissionsManager;
 import com.mcnsa.essentials.utilities.ColourHandler;
 import com.mcnsa.essentials.utilities.MultilineChatEntry;
 import com.mcnsa.essentials.utilities.PlayerSelector;
@@ -124,6 +125,37 @@ public class Rank implements MultilineChatHandler {
 		logRankChange(targetPlayer, hotdogger, oldGroup, newGroup, new Timestamp(System.currentTimeMillis()), reason);
 		ColourHandler.sendMessage(hotdogger, "&a%s has been hotdogged!", newGroup.getName());
 		ColourHandler.sendMessage(targetPlayer, "&aYou have been hotdogged by %s!", hotdogger.getName());
+	}
+	
+	@Command(command = "rank",
+			arguments = {"target player[s]"},
+			description = "tells you the rank of the target player[s]",
+			permissions = {"rank"})
+	public static boolean rank(CommandSender sender, String targetPlayer) throws EssentialsCommandException {
+		// get a list of all target players
+		ArrayList<Player> targetPlayers = PlayerSelector.selectPlayersExact(targetPlayer);
+		
+		// make sure we have at least one target player
+		if(targetPlayers.size() == 0) {
+			throw new EssentialsCommandException("I couldn't find / parse target player[s] '%s' to get the rank of!", targetPlayer);
+		}
+		
+		// loop over all our targets
+		for(Player target: targetPlayers) {
+			ArrayList<String> groups = PermissionsManager.getGroups(target);
+			if(groups != null) {
+				String message = String.format("&6%s's ranks: &f", target.getName());
+				for(int i = 0; i < groups.size(); i++) {
+					if(i != 0) {
+						message += ", ";
+					}
+					message += groups.get(i);
+				}
+				ColourHandler.sendMessage(sender, message);
+			}
+		}
+		
+		return true;
 	}
 	
 	@Command(command = "promote",

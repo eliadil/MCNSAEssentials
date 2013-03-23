@@ -1,11 +1,14 @@
 package com.mcnsa.essentials.managers;
 
+import java.util.ArrayList;
+
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import com.mcnsa.essentials.utilities.Logger;
 
+import ru.tehkode.permissions.PermissionGroup;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
 
 public class PermissionsManager {
@@ -52,5 +55,19 @@ public class PermissionsManager {
 			}
 		}
 		return false;
+	}
+	
+	public static ArrayList<String> getGroups(Player player) {
+		if(permissions == null) {
+			return null;
+		}
+		
+		PermissionGroup[] groups = permissions.getUser(player).getGroups();
+		ArrayList<String> groupNames = new ArrayList<String>();
+		for(PermissionGroup group: groups) {
+			groupNames.add(group.getName());
+		}
+		
+		return groupNames;
 	}
 };
