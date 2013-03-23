@@ -40,4 +40,17 @@ public class PermissionsManager {
 			return player.isOp();
 		}
 	}
+	
+	public static boolean playerHasPermission(String playerTarget, String permission) {
+		Player player = Bukkit.getServer().getPlayer(playerTarget);
+		if(permissions != null) {
+			if(player != null) {
+				return permissions.has(player, "mcnsaessentials." + permission);
+			}
+			else {
+				permissions.has(playerTarget, permission, Bukkit.getServer().getWorlds().get(0).getName());
+			}
+		}
+		return false;
+	}
 };

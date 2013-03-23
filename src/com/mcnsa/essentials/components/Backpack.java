@@ -21,7 +21,6 @@ import com.mcnsa.essentials.annotations.Command;
 import com.mcnsa.essentials.annotations.ComponentInfo;
 import com.mcnsa.essentials.exceptions.EssentialsCommandException;
 import com.mcnsa.essentials.managers.PermissionsManager;
-import com.mcnsa.essentials.utilities.Logger;
 
 @ComponentInfo(friendlyName = "Backpack",
 				description = "Gives players a backpack to use",
@@ -30,11 +29,11 @@ public class Backpack implements Listener {
 	// taken from ThePickleMan's implementation at
 	// https://github.com/ThePickleMan/HatCraft/
 	public class BackpackInventory implements InventoryHolder {
-		private Player player = null;
+		private String ownerName = null;
 		private Inventory inventory = null;
 		
-		public Player getPlayer() {
-			return player;
+		public String getPlayer() {
+			return ownerName;
 		}
 		
 		@Override
@@ -42,14 +41,14 @@ public class Backpack implements Listener {
 			return inventory;
 		}
 		
-		public BackpackInventory(int size, Player player, ItemStack[] contents) {
+		public BackpackInventory(int size, String ownerName, ItemStack[] contents) {
 			// store our player
-			this.player = player;
+			this.ownerName = ownerName;
 			
 			// store our inventory
 			inventory = Bukkit.getServer().createInventory(this,
 					size,
-					String.format("%s's Backpack", player.getName(), size));
+					String.format("%s's Backpack", ownerName, size));
 			
 			// and fill it up
 			if(contents != null) {
@@ -58,7 +57,7 @@ public class Backpack implements Listener {
 		}
 	}
 	
-	private static int getMaxBackpackSize(Player player) {
+	private static int getMaxBackpackSize(String player) {
 		for(int size = 54; size > 0; size -= 9) {
 			if(PermissionsManager.playerHasPermission(player, String.format("backpack.size.%d", size))) {
 				return size;
@@ -91,7 +90,7 @@ public class Backpack implements Listener {
 			BackpackInventory backpack = (BackpackInventory)event.getInventory().getHolder();
 			
 			// get our backpack key
-			String key = backpack.getPlayer().getName();
+			String key = backpack.getPlayer();
 			
 			// get our inventory
 			ArrayList<ItemStack> stacks = new ArrayList<ItemStack>();
@@ -109,24 +108,48 @@ public class Backpack implements Listener {
 			permissions = {"self"},
 			playerOnly = true)
 	public static boolean backpack(CommandSender sender) throws EssentialsCommandException {
+		return backpack(sender, sender.getName());
+	}
+
+	@Command(command = "backpack",
+			arguments = {"target player"},
+			description = "opens target player's backpack",
+			permissions = {"other"},
+			playerOnly = true)
+	public static boolean backpack(CommandSender sender, String targetPlayer) throws EssentialsCommandException {
 		// get our player
-		Player player = (Player)sender;
+		Player target = Bukkit.getServer().getPlayer(targetPlayer);
+		if(target != null) {
+			targetPlayer = target.getName();
+		}
 		
 		// get our stored inventory
-		String configKey = player.getName();
+		String configKey = targetPlayer;
 		ItemStack[] inv = config.contains(configKey) ? config.getList(configKey).toArray(new ItemStack[0]) : null;
 		
-		// get the backpack size
-		int size = getMaxBackpackSize(player);
-		if(size == 0) {
-			throw new EssentialsCommandException("You don't have a backpack to open!");
+		if(inv == null) {
+			if(sender.getName().equalsIgnoreCase(targetPlayer)) {
+				throw new EssentialsCommandException("You don't have a backpack to open!");
+			}
+			else {
+				throw new EssentialsCommandException("%s doesn't have a backpack to open!", targetPlayer);
+			}
 		}
-		Logger.debug("Backpack size: %d", size);
+		
+		// get the backpack size
+		int size = getMaxBackpackSize(targetPlayer);
+		if(size == 0) {
+			if(sender.getName().equalsIgnoreCase(targetPlayer)) {
+				throw new EssentialsCommandException("You don't have a backpack to open!");
+			}
+			else {
+				throw new EssentialsCommandException("%s doesn't have a backpack to open!", targetPlayer);
+			}
+		}
 		
 		// and open the backpack
-		BackpackInventory backpack = instance.new BackpackInventory(size, player, inv);
-		player.openInventory(backpack.getInventory());
-		
+		BackpackInventory backpack = instance.new BackpackInventory(size, targetPlayer, inv);
+		((Player)sender).openInventory(backpack.getInventory());
 		return true;
 	}
 }
