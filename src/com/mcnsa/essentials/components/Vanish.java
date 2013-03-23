@@ -58,9 +58,9 @@ public class Vanish implements Listener {
 	}
 	
 	// utility function to vanish / show a player
-	private static void vanishShowPlayer(Player player, boolean vanish) {
+	private static void vanishShowPlayer(Player player, boolean doVanish) {
 		// set their metadata
-		if(vanish) {
+		if(doVanish) {
 			player.setMetadata("vanished", new FixedMetadataValue(MCNSAEssentials.getInstance(), true));
 		}
 		else {
@@ -75,7 +75,7 @@ public class Vanish implements Listener {
 				continue;
 			}
 			
-			if(vanish) {
+			if(doVanish) {
 				// check permissions to see if we should hide from this player
 				if(!PermissionsManager.playerHasPermission(player, "vanish.seeall")) {
 					// nope, they can't see everyone!
@@ -197,7 +197,7 @@ public class Vanish implements Listener {
 	// our commands
 	@Command(command = "vanish",
 			aliases = {"poof"},
-			description = "prevents players and mobs from seeing and interacting with you (toggle)",
+			description = "prevents players and mobs from seeing and interacting with you",
 			permissions = {"self"},
 			playerOnly = true)
 	public static boolean vanish(CommandSender sender) throws EssentialsCommandException {
@@ -207,7 +207,7 @@ public class Vanish implements Listener {
 	@Command(command = "vanish",
 			aliases = {"poof"},
 			arguments = {"target player[s]"},
-			description = "prevents players and mobs from seeing and interacting with the target player[s] (toggle)",
+			description = "prevents players and mobs from seeing and interacting with the target player[s]",
 			permissions = {"others"})
 	public static boolean vanish(CommandSender sender, String targetPlayer) throws EssentialsCommandException {
 		// get a list of all target players
@@ -223,18 +223,82 @@ public class Vanish implements Listener {
 			// get the player
 			Player target = it.next();
 			
-			// vanish them
-			boolean vanished = !isVanished(target);
-			vanishShowPlayer(target, vanished);
+			// make sure they're not already vanished
+			if(isVanished(target)) {	
+				if(sender.getName().equals(target.getName())) {
+					ColourHandler.sendMessage(target, "&6You were already vanished!");
+				}
+				else {
+					ColourHandler.sendMessage(sender, "&6%s was already vanished!", target.getName());
+				}
+				continue;
+			}
 			
-			// alert them
-			String prefix = vanished ? "" : "un";			
+			// vanish them
+			vanishShowPlayer(target, true);
+			
+			// alert them		
 			if(sender.getName().equals(target.getName())) {
-				ColourHandler.sendMessage(target, "&6You have been %svanished!", prefix);
+				ColourHandler.sendMessage(target, "&6You have been vanished!");
 			}
 			else {
-				ColourHandler.sendMessage(target, "&6You have been %svanished by %s", prefix, sender.getName());
-				ColourHandler.sendMessage(sender, "&6%s has been %svanished!", target.getName(), prefix);
+				ColourHandler.sendMessage(target, "&6You have been vanished by %s", sender.getName());
+				ColourHandler.sendMessage(sender, "&6%s has been vanished!", target.getName());
+			}
+		}
+		
+		return true;
+	}
+	
+	@Command(command = "unvanish",
+			aliases = {"appear"},
+			description = "unvanishes you",
+			permissions = {"self"},
+			playerOnly = true)
+	public static boolean unvanish(CommandSender sender) throws EssentialsCommandException {
+		return unvanish(sender, sender.getName());
+	}
+	
+	@Command(command = "unvanish",
+			aliases = {"appear"},
+			arguments = {"target player[s]"},
+			description = "unvanishes target player[s]",
+			permissions = {"others"})
+	public static boolean unvanish(CommandSender sender, String targetPlayer) throws EssentialsCommandException {
+		// get a list of all target players
+		ArrayList<Player> targetPlayers = PlayerSelector.selectPlayersExact(targetPlayer);
+		
+		// make sure we have at least one target player
+		if(targetPlayers.size() == 0) {
+			throw new EssentialsCommandException("I couldn't find target player[s] '%s' to unvanish!", targetPlayer);
+		}
+		
+		// loop through all target players
+		for(Iterator<Player> it = targetPlayers.iterator(); it.hasNext();) {
+			// get the player
+			Player target = it.next();
+			
+			// make sure they're already vanished
+			if(!isVanished(target)) {	
+				if(sender.getName().equals(target.getName())) {
+					ColourHandler.sendMessage(target, "&6You weren't vanished!");
+				}
+				else {
+					ColourHandler.sendMessage(sender, "&6%s wasn't vanished!", target.getName());
+				}
+				continue;
+			}
+			
+			// vanish them
+			vanishShowPlayer(target, false);
+			
+			// alert them		
+			if(sender.getName().equals(target.getName())) {
+				ColourHandler.sendMessage(target, "&6You have been appeared!");
+			}
+			else {
+				ColourHandler.sendMessage(target, "&6You have been appeared by %s", sender.getName());
+				ColourHandler.sendMessage(sender, "&6%s has been appeared!", target.getName());
 			}
 		}
 		
