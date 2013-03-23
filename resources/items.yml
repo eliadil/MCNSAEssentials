@@ -783,3 +783,16 @@ items:
   disc_wait: 2267
   recordwait: 2267
   record_wait: 2267
+data:
+  logs:
+    id: 17
+    oak: 0
+    spruce: 1
+    birch: 2
+    jungle: 3
+  planks:
+    id: 5
+    oak: 0
+    spruce: 1
+    birch: 2
+    jungle: 3
