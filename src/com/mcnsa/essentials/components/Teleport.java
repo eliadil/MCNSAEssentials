@@ -101,7 +101,7 @@ public class Teleport implements Listener {
 		}
 		
 		// get our last TP location, popping it off
-		Location lastLocation = history.pop();
+		Location lastLocation = history.removeLast();
 		
 		// update their metadata
 		player.setMetadata("tpHistory", new FixedMetadataValue(MCNSAEssentials.getInstance(), history));
@@ -110,21 +110,40 @@ public class Teleport implements Listener {
 		return lastLocation;
 	}
 	
-	/*private static void setLastLocation(Player player, Location location) {
-		player.setMetadata("tpHistory", new FixedMetadataValue(MCNSAEssentials.getInstance(), location));
+	@SuppressWarnings("unchecked")
+	private static Location getFirstLocationAndClear(Player player) throws EssentialsCommandException {
+		LinkedList<Location> history = null;
+		if(player.hasMetadata("tpHistory")) {
+			if(player.getMetadata("tpHistory").get(0).value() instanceof LinkedList<?>) {
+				history = (LinkedList<Location>)player.getMetadata("tpHistory").get(0).value();
+			}
+			else {
+				throw new EssentialsCommandException("Error: something went horribly wrong!");
+			}
+		}
+		else {
+			throw new EssentialsCommandException("You don't have anywhere to go!");
+		}
+		
+		// make sure we have somewhere to go
+		if(history.size() == 0) {
+			player.removeMetadata("tpHistory", MCNSAEssentials.getInstance());
+			throw new EssentialsCommandException("You don't have anywhere to go!");
+		}
+		
+		// get our last TP location, popping it off
+		Location firstLocation = history.remove();
+		
+		// update their metadata
+		player.removeMetadata("tpHistory", MCNSAEssentials.getInstance());
+		
+		// and return
+		return firstLocation;
 	}
 	
-	private static void removeLastLocation(Player player) {
+	private static void clearHistory(Player player) {
 		player.removeMetadata("tpHistory", MCNSAEssentials.getInstance());
 	}
-	
-	private static Location getLastLocation(Player player) throws EssentialsCommandException {
-		if(player.getMetadata("tpHistory").size() != 1) {
-			throw new EssentialsCommandException("tpHistory != 1");
-		}
-		MetadataValue mv = player.getMetadata("tpHistory").get(0);
-		return (Location)mv.value();
-	}*/
 	
 	// our bukkit event handlers
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -150,9 +169,9 @@ public class Teleport implements Listener {
 	
 	// our commands
 	@Command(command = "back",
-			aliases = {"return"},
+			aliases = {"return", "tpback"},
 			description = "sends you back to where you were before you last teleported",
-			permissions = {"back"},
+			permissions = {"history.back"},
 			playerOnly = true)
 	public static boolean back(CommandSender sender) throws EssentialsCommandException {
 		// get our player
@@ -173,6 +192,44 @@ public class Teleport implements Listener {
 		player.teleport(lastLocation);
 		ColourHandler.sendMessage(player, "&6!hsooW");
 		
+		return true;
+	}
+	
+	@Command(command = "origin",
+			aliases = {"tporigin"},
+			description = "sends you back to where you were before you started teleporting",
+			permissions = {"history.origin"},
+			playerOnly = true)
+	public static boolean origin(CommandSender sender) throws EssentialsCommandException {
+		// get our player
+		Player player = (Player)sender;
+		
+		// make sure we have somewhere else to go
+		if(!player.hasMetadata("tpHistory")) {
+			throw new EssentialsCommandException("You don't have anywhere to go!");
+		}
+		
+		// get their last location
+		Location lastLocation = getFirstLocationAndClear(player);
+		
+		// disable teleport logging
+		ignoreTeleport(player, true);
+		
+		// and send them there
+		player.teleport(lastLocation);
+		ColourHandler.sendMessage(player, "&6!hsooW");
+		
+		return true;
+	}
+	
+	@Command(command = "tpclear",
+			aliases = {"rewind"},
+			description = "clears your teleport history",
+			permissions = {"history.clear"},
+			playerOnly = true)
+	public static boolean clearHistory(CommandSender sender) throws EssentialsCommandException {
+		clearHistory((Player)sender);
+		ColourHandler.sendMessage(sender, "&6Your teleport history has been wiped!");
 		return true;
 	}
 	
