@@ -126,6 +126,9 @@ public class CommandsManager implements CommandExecutor {
 		else if(type == String.class) {
 			return true;
 		}
+		else if(type == String[].class) {
+			return true;
+		}
 		
 		return false;
 	}
@@ -156,6 +159,9 @@ public class CommandsManager implements CommandExecutor {
 			}
 			else if(parameterTypes[i] == String.class) {
 				str += ":s";
+			}
+			else if(parameterTypes[i] == String[].class) {
+				str += ":sa";
 			}
 		}
 		
@@ -347,9 +353,9 @@ public class CommandsManager implements CommandExecutor {
 			Class<?>[] params = registeredCommands.get(registrationToken).method.getParameterTypes();
 			
 			// check the number of arguments
-			if((params.length - 1) != args.length) {
+			/*if((params.length - 1) != args.length) {
 				continue;
-			}
+			}*/
 			
 			// check the arguments one by one
 			Object[] arguments = new Object[params.length];
@@ -386,6 +392,23 @@ public class CommandsManager implements CommandExecutor {
 				else if(params[i].equals(String.class)) {
 					try {
 						arguments[i] = args[i - 1];
+					}
+					catch(Exception e) {
+						possible = false;
+					}
+				}
+				// string array
+				else if(params[i].equals(String[].class)) {
+					try {
+						String[] argsArray = new String[args.length - (i - 1)];
+						
+						// fill in the array
+						for(int j = 0; j < argsArray.length; j++) {
+							argsArray[j] = args[i - 1 + j];
+						}
+						
+						// store the argument
+						arguments[i] = argsArray;
 					}
 					catch(Exception e) {
 						possible = false;
