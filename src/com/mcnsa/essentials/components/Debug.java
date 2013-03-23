@@ -102,7 +102,9 @@ public class Debug {
 		"mleOnDone",
 		"mleText",
 		"mleArgs",
-		"frozen"
+		"frozen",
+		"tpHistory",
+		"ignoreTP"
 	};
 	@Command(command = "resetmeta",
 			description = "resets all metadata associated with MCNSAEssentials",

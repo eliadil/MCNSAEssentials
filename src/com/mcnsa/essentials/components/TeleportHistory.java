@@ -7,6 +7,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
@@ -28,7 +29,7 @@ public class TeleportHistory implements Listener {
 	
 	// metadata utility functions
 	private static boolean ignoringTeleport(Player player) {
-		if(player.getMetadata("ignoreTP").size() != 1) {
+		if(!player.hasMetadata("ignoreTP") || player.getMetadata("ignoreTP").size() != 1) {
 			return false;
 		}
 		return player.getMetadata("ignoreTP").get(0).asBoolean();
@@ -65,10 +66,18 @@ public class TeleportHistory implements Listener {
 		if(!ignoringTeleport(event.getPlayer())) {
 			// set their last location
 			setLastLocation(event.getPlayer(), event.getPlayer().getLocation());
-			
-			// and re-enable teleport logging
-			ignoreTeleport(event.getPlayer(), false);
 		}
+		// and re-enable teleport logging
+		ignoreTeleport(event.getPlayer(), false);
+		
+		// disable fall distance
+		event.getPlayer().setFallDistance(0);
+	}
+	
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void onPlayerRespawn(PlayerRespawnEvent event) {
+		// set their last location
+		setLastLocation(event.getPlayer(), event.getPlayer().getLocation());
 	}
 	
 	@Command(command = "back",
