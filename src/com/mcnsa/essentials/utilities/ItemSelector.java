@@ -1,10 +1,15 @@
 package com.mcnsa.essentials.utilities;
 
+import java.io.File;
 import java.util.HashMap;
+import java.util.Set;
 
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 
+import com.mcnsa.essentials.MCNSAEssentials;
 import com.mcnsa.essentials.exceptions.EssentialsCommandException;
 
 public class ItemSelector {
@@ -122,7 +127,7 @@ public class ItemSelector {
 			// we don't care
 		}
 		
-		// ok, it wasn't a #
+		/*// ok, it wasn't a #
 		// handle it based on what the itemID is
 		switch(itemID) {
 		case ItemID.WOOD:
@@ -145,11 +150,33 @@ public class ItemSelector {
 		// TODO: more data values
 		default:
 			throw new EssentialsCommandException("Invalid data value of '%s'!", filter);
-		}
+		}*/
+		throw new EssentialsCommandException("Invalid data value of '%s'!", filter);
 	}
 	
-	static {
-		// TODO: load items from database
-		// use some default things for now
+	private static File fileConfig = new File(MCNSAEssentials.getInstance().getDataFolder(), "items.yml");
+	private static YamlConfiguration yamlConfig = new YamlConfiguration();
+	public static void load() {
+		// extract a default config
+		if(!fileConfig.exists()) {
+			MCNSAEssentials.getInstance().saveResource("items.yml", false);
+		}
+		
+		// load items from a config file
+		try {
+			yamlConfig.load(fileConfig);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		// get our items configuration section
+		ConfigurationSection items = yamlConfig.getConfigurationSection("items");
+		
+		// get all our keys (names)
+		Set<String> keys = items.getKeys(false);
+		for(String itemName: keys) {
+			itemNames.put(itemName, items.getInt(itemName));
+		}
 	}
 }

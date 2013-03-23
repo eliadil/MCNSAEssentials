@@ -13,6 +13,7 @@ import com.mcnsa.essentials.annotations.Command;
 import com.mcnsa.essentials.annotations.ComponentInfo;
 import com.mcnsa.essentials.exceptions.EssentialsCommandException;
 import com.mcnsa.essentials.utilities.ColourHandler;
+import com.mcnsa.essentials.utilities.ItemSelector;
 import com.mcnsa.essentials.utilities.PlayerSelector;
 
 @ComponentInfo(friendlyName = "Items",
@@ -86,6 +87,70 @@ public class Items {
 			}
 			else {
 				ColourHandler.sendMessage(player, "&aHere's the head of " + headName + "!");
+			}
+		}
+		
+		return true;
+	}
+	
+	@Command(command = "i",
+			aliases = {"item"},
+			arguments = {"item"},
+			description = "gives you an item",
+			permissions = {"give.self"},
+			playerOnly = true)
+	public static boolean item(CommandSender sender, String item) throws EssentialsCommandException {
+		return item(sender, item, 1);
+	}
+	
+	@Command(command = "i",
+			aliases = {"item"},
+			arguments = {"item", "amount"},
+			description = "gives you an item",
+			permissions = {"give.self"},
+			playerOnly = true)
+	public static boolean item(CommandSender sender, String item, int number) throws EssentialsCommandException {
+		return give(sender, sender.getName(), item, number);
+	}
+	
+	@Command(command = "give",
+			arguments = {"target player[s]", "item"},
+			description = "gives target player[s] an item",
+			permissions = {"give.other"})
+	public static boolean give(CommandSender sender, String targetPlayer, String item) throws EssentialsCommandException {
+		return give(sender, targetPlayer, item, 1);
+	}
+	
+	@Command(command = "give",
+			arguments = {"target player[s]", "item", "amount"},
+			description = "gives target player[s] an item",
+			permissions = {"give.other"})
+	public static boolean give(CommandSender sender, String targetPlayer, String item, int number) throws EssentialsCommandException {
+		// get a list of all target players
+		ArrayList<Player> targetPlayers = PlayerSelector.selectPlayersExact(targetPlayer);
+		
+		// make sure we have at least one target player
+		if(targetPlayers.size() == 0) {
+			throw new EssentialsCommandException("I couldn't find / parse target player[s] '%s' to give a kit to!", targetPlayer);
+		}
+		
+		// parse our item
+		ItemStack itemStack = ItemSelector.selectItem(item);
+		
+		// set the amount
+		number = number > itemStack.getMaxStackSize() ? itemStack.getMaxStackSize() : number;
+		itemStack.setAmount(number);
+		
+		// loop over all our targets
+		for(Player target: targetPlayers) {
+			// give them the item
+			target.getInventory().addItem(itemStack);
+			
+			if(sender.getName().equalsIgnoreCase(target.getName())) {
+				ColourHandler.sendMessage(sender, "&aHere's your %d &f%s&a!", number, item);
+			}
+			else {
+				ColourHandler.sendMessage(sender, "&a%s gave you %d '&f%s&a'!", number, item);
 			}
 		}
 		

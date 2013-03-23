@@ -7,6 +7,7 @@ import com.mcnsa.essentials.managers.CommandsManager;
 import com.mcnsa.essentials.managers.ConfigurationManager;
 import com.mcnsa.essentials.managers.DatabaseManager;
 import com.mcnsa.essentials.managers.PermissionsManager;
+import com.mcnsa.essentials.utilities.ItemSelector;
 import com.mcnsa.essentials.utilities.Logger;
 import com.mcnsa.essentials.utilities.MultilineChatEntry;
 
@@ -57,6 +58,9 @@ public class MCNSAEssentials extends JavaPlugin {
 		
 		// load our commands
 		commandsManager.loadCommands(componentManager);
+		
+		// load our item definitions
+		ItemSelector.load();
 		
 		// and start our database
 		databaseManager.enable();

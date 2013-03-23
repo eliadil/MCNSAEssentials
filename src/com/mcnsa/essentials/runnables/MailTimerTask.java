@@ -1,7 +1,6 @@
 package com.mcnsa.essentials.runnables;
 
 import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -16,6 +15,11 @@ public class MailTimerTask implements Runnable {
 	public void run() {
 		// get all our online players
 		Player[] onlinePlayers = Bukkit.getServer().getOnlinePlayers();
+		
+		// skip out if no one is online
+		if(onlinePlayers.length == 0) {
+			return;
+		}
 		
 		// start to prepare a statement
 		String query = "select recipient, count(recipient) from mail where unread=? and recipient in(";
@@ -53,13 +57,14 @@ public class MailTimerTask implements Runnable {
 			}
 		}
 		catch (Exception e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 		finally {
 			try {
 				preparedStatement.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
+			}
+			catch (Exception e) {
+				//e.printStackTrace();
 			}
 		}
 	}
