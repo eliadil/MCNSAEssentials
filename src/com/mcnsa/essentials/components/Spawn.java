@@ -92,7 +92,7 @@ public class Spawn implements Listener {
 	
 	@Command(command = "spawn",
 			description = "takes you to spawn",
-			permissions = {"set"},
+			permissions = {"spawn"},
 			playerOnly = true)
 	public static boolean spawn(CommandSender sender) {
 		// grab our player
