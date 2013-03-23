@@ -24,7 +24,8 @@ import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.entity.SheepDyeWoolEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.player.PlayerBedEnterEvent;
-import org.bukkit.event.player.PlayerBucketEvent;
+import org.bukkit.event.player.PlayerBucketEmptyEvent;
+import org.bukkit.event.player.PlayerBucketFillEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerEggThrowEvent;
@@ -45,15 +46,16 @@ import org.bukkit.metadata.MetadataValue;
 
 import com.mcnsa.essentials.MCNSAEssentials;
 import com.mcnsa.essentials.annotations.Command;
+import com.mcnsa.essentials.annotations.ComponentInfo;
 //import com.mcnsa.essentials.annotations.ComponentInfo;
 import com.mcnsa.essentials.annotations.Setting;
 import com.mcnsa.essentials.exceptions.EssentialsCommandException;
 import com.mcnsa.essentials.utilities.ColourHandler;
 import com.mcnsa.essentials.utilities.PlayerSelector;
 
-/*@ComponentInfo(friendlyName = "Freeze",
+@ComponentInfo(friendlyName = "Freeze",
 				description = "Allows mods to freeze players in their tracks",
-				permsSettingsPrefix = "freeze")*/
+				permsSettingsPrefix = "freeze")
 public class Freeze implements Listener {
 	@Setting(node = "allowed-commands") String[] allowedCommands = {
 		"c"
@@ -171,7 +173,13 @@ public class Freeze implements Listener {
 		}
 	}
 	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
-	public void checkFrozenEvent(PlayerBucketEvent event) {
+	public void checkFrozenEvent(PlayerBucketEmptyEvent event) {
+		if(isFrozen(event.getPlayer())) {
+			event.setCancelled(true);
+		}
+	}
+	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+	public void checkFrozenEvent(PlayerBucketFillEvent event) {
 		if(isFrozen(event.getPlayer())) {
 			event.setCancelled(true);
 		}
