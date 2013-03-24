@@ -1,5 +1,6 @@
 package com.mcnsa.essentials.components;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Creeper;
@@ -13,6 +14,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Sheep;
 import org.bukkit.entity.Skeleton;
 import org.bukkit.entity.Slime;
+import org.bukkit.entity.Tameable;
 import org.bukkit.entity.Villager;
 import org.bukkit.entity.Wolf;
 
@@ -20,6 +22,7 @@ import com.mcnsa.essentials.annotations.Command;
 import com.mcnsa.essentials.annotations.ComponentInfo;
 import com.mcnsa.essentials.annotations.Setting;
 import com.mcnsa.essentials.exceptions.EssentialsCommandException;
+import com.mcnsa.essentials.utilities.ColourHandler;
 import com.mcnsa.essentials.utilities.ItemSelector;
 
 @ComponentInfo(friendlyName = "Mobs",
@@ -80,13 +83,13 @@ public class Mobs {
 		throw new EssentialsCommandException("Unknown creature '%s'! Valid mobs: %s", name, sb.toString());
 	}
 	
-	private static void spawn(Location location, EntityType type, String special) throws EssentialsCommandException {
+	private static LivingEntity spawn(Location location, EntityType type, String special) throws EssentialsCommandException {
 		// spawn our mob
 		LivingEntity mob = (LivingEntity) location.getWorld().spawn(location, type.getEntityClass());
 		
 		// set special effects on them
 		if(special.equals("")) {
-			return;
+			return mob;
 		}
 		if(mob instanceof Wolf) {
 			if(special.contains("angry")) {
@@ -159,6 +162,7 @@ public class Mobs {
 				((Villager)mob).setProfession(profession);
 			}
 		}
+		return mob;
 	}
 	
 	// our commands
@@ -177,6 +181,15 @@ public class Mobs {
 			permissions = {"spawn"},
 			playerOnly = true)
 	public static boolean spawn(CommandSender sender, String name, int number) throws EssentialsCommandException {
+		return spawn(sender, name, number, "");
+	}
+	
+	@Command(command = "spawnmob",
+			arguments = {"mob name:special", "number", "owner"},
+			description = "spawns the given number of mobs at your location and sets their owner",
+			permissions = {"spawn"},
+			playerOnly = true)
+	public static boolean spawn(CommandSender sender, String name, int number, String owner) throws EssentialsCommandException {
 		// make sure our number is ok
 		if(number < 0) {
 			throw new EssentialsCommandException("Can't spawn negative amount of mobs!");
@@ -202,9 +215,31 @@ public class Mobs {
 		// get our location
 		Location location = ((Player)sender).getLocation();
 		
+		Player owningPlayer = null;
+		if(!owner.equals("")) {
+			owningPlayer = Bukkit.getServer().getPlayer(owner);
+			if(owningPlayer == null) {
+				throw new EssentialsCommandException("Couldn't find player '%s' to make the owner!", owner);
+			}
+		}
+		
 		// now spawn them!
+		String error = "";
 		for(int i = 0; i < number; i++) {
-			spawn(location, type, special);
+			LivingEntity spawnedMob = spawn(location, type, special);
+			
+			// set their owner
+			if(owningPlayer != null) {
+				if(spawnedMob instanceof Tameable) {
+					((Tameable)spawnedMob).setOwner(owningPlayer);
+				}
+				else {
+					error = String.format("%s mobs aren't tameable!", spawnedMob.getType().getName());
+				}
+			}
+		}
+		if(!error.equals("")) {
+			ColourHandler.sendMessage(sender, error);
 		}
 		
 		return true;
