@@ -23,13 +23,13 @@ import java.util.*;
  *     --------- ----------- -------------- ------------------------------------------------
  *     '='       99 / 99     RIGHT_SIDE     Simple assignment (internal, used for the final operation)
  *     '^'       80 / 81     NO_SIDE        Power
- *     '±'       60 / 60     RIGHT_SIDE     Unary negation (internal, substituted for '-')
+ *     '\u00B1'       60 / 60     RIGHT_SIDE     Unary negation (internal, substituted for '-')
  *     '*'       40 / 40     NO_SIDE        Multiple (conventional computer notation)
- *     '×'       40 / 40     NO_SIDE        Multiple (because it's a Unicode world out there)
- *     '·'       40 / 40     NO_SIDE        Multiple (because it's a Unicode world out there)
+ *     '\u00D7'       40 / 40     NO_SIDE        Multiple (because it's a Unicode world out there)
+ *     '\u00B7'       40 / 40     NO_SIDE        Multiple (because it's a Unicode world out there)
  *     '('       40 / 40     NO_SIDE        Multiply (implicit due to brackets, e.g "(a)(b)")
  *     '/'       40 / 40     NO_SIDE        Divide (conventional computer notation)
- *     '÷'       40 / 40     NO_SIDE        Divide (because it's a Unicode world out there)
+ *     '\u00F7'       40 / 40     NO_SIDE        Divide (because it's a Unicode world out there)
  *     '%'       40 / 40     NO_SIDE        Remainder
  *     '+'       20 / 20     NO_SIDE        Add/unary-positive
  *     '-'       20 / 20     NO_SIDE        Subtract/unary-negative
@@ -379,7 +379,7 @@ private double _evaluate(int beg, int end, double lft, Operator pnd, Operator cu
 
             if(cur.unary!=LEFT_SIDE) {
                 if(ch0=='+') { continue;             }                                              // unary '+': no-op; i.e. +(-1) == -1
-                if(ch0=='-') { nxt=getOperator('±'); }                                              // unary '-': right-binding, high precedence operation (different from subtract)
+                if(ch0=='-') { nxt=getOperator('\u00B1'); }                                              // unary '-': right-binding, high precedence operation (different from subtract)
                 }
 
             if(beg==ofs && (cur.unary==LEFT_SIDE || nxt.unary==RIGHT_SIDE)) {
@@ -668,13 +668,13 @@ private int skipWhitespace(String exp, int ofs, int end) {
         switch(opr) {
             case '=' : return rgt;                                                                  // final assignment
             case '^' : return Math.pow(lft,rgt);                                                    // power
-            case '±' : return -rgt;                                                                 // unary negation
+            case '\u00B1' : return -rgt;                                                                 // unary negation
             case '*' : return lft*rgt;                                                              // multiply (classical)
-            case '×' : return lft*rgt;                                                              // multiply (because it's a Unicode world out there)
-            case '·' : return lft*rgt;                                                              // multiply (because it's a Unicode world out there)
+            case '\u00D7' : return lft*rgt;                                                              // multiply (because it's a Unicode world out there)
+            case '\u00B7' : return lft*rgt;                                                              // multiply (because it's a Unicode world out there)
             case '(' : return lft*rgt;                                                              // multiply implicitly due to brackets (e.g (a)(b)
             case '/' : return lft/rgt;                                                              // divide (classical computing)
-            case '÷' : return lft/rgt;                                                              // divide (because it's a Unicode world out there)
+            case '\u00F7' : return lft/rgt;                                                              // divide (because it's a Unicode world out there)
             case '%' : return lft%rgt;                                                              // remainder
             case '+' : return lft+rgt;                                                              // add/unary-positive
             case '-' : return lft-rgt;                                                              // subtract/unary-negative
@@ -748,13 +748,13 @@ private int skipWhitespace(String exp, int ofs, int end) {
 
     static private final Operator       OPR_EQU =new Operator('=',99,99,RIGHT_SIDE,true ,DefaultImpl.INSTANCE); // simple assignment, used as the final operation, must be maximum precedence
     static private final Operator       OPR_PWR =new Operator('^',80,81,NO_SIDE   ,false,DefaultImpl.INSTANCE); // power
-    static private final Operator       OPR_NEG =new Operator('±',60,60,RIGHT_SIDE,true ,DefaultImpl.INSTANCE); // unary negation
+    static private final Operator       OPR_NEG =new Operator('\u00B1',60,60,RIGHT_SIDE,true ,DefaultImpl.INSTANCE); // unary negation
     static private final Operator       OPR_MLT1=new Operator('*',40                    ,DefaultImpl.INSTANCE); // multiply (classical)
-    static private final Operator       OPR_MLT2=new Operator('×',40                    ,DefaultImpl.INSTANCE); // multiply (because it's a Unicode world out there)
-    static private final Operator       OPR_MLT3=new Operator('·',40                    ,DefaultImpl.INSTANCE); // multiply (because it's a Unicode world out there)
+    static private final Operator       OPR_MLT2=new Operator('\u00D7',40                    ,DefaultImpl.INSTANCE); // multiply (because it's a Unicode world out there)
+    static private final Operator       OPR_MLT3=new Operator('\u00B7',40                    ,DefaultImpl.INSTANCE); // multiply (because it's a Unicode world out there)
     static private final Operator       OPR_BKT =new Operator('(',40                    ,DefaultImpl.INSTANCE); // multiply (implicit due to brackets, e.g "(a)(b)")
     static private final Operator       OPR_DIV1=new Operator('/',40                    ,DefaultImpl.INSTANCE); // divide (classical computing)
-    static private final Operator       OPR_DIV2=new Operator('÷',40                    ,DefaultImpl.INSTANCE); // divide (because it's a Unicode world out there)
+    static private final Operator       OPR_DIV2=new Operator('\u00F7',40                    ,DefaultImpl.INSTANCE); // divide (because it's a Unicode world out there)
     static private final Operator       OPR_MOD =new Operator('%',40                    ,DefaultImpl.INSTANCE); // remainder
     static private final Operator       OPR_ADD =new Operator('+',20                    ,DefaultImpl.INSTANCE); // add/unary-positive
     static private final Operator       OPR_SUB =new Operator('-',20                    ,DefaultImpl.INSTANCE); // subtract/unary-negative
