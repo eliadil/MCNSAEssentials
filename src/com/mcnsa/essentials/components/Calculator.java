@@ -16,9 +16,9 @@ import com.mcnsa.essentials.utilities.StringUtils;
 public class Calculator {
 	@Translation(node = "result-format") public static String resultFormat = "&aResult: &f%result%";
 	
-	private static String formatResult(double result) {
+	/*private static String formatResult(double result) {
 		return String.format("%.4f", result);
-	}
+	}*/
 	
 	@Command(command = "calc",
 			arguments = {"expression"},
@@ -30,7 +30,7 @@ public class Calculator {
 		// evaluate it!
 		MathEval math = new MathEval();
 		double result = math.evaluate(expression);
-		ColourHandler.sendMessage(sender, resultFormat.replaceAll("%result%", formatResult(result)));
+		ColourHandler.sendMessage(sender, resultFormat.replaceAll("%result%", String.valueOf(result)));
 		
 		return true;
 	}
