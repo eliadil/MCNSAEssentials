@@ -1,0 +1,137 @@
+blockexplosion:
+  - '%player% apparently has an explosive personality.'
+  - '%player% exploded.'
+  - '%player% blew the fuck up.'
+  - '%player% learned that explosions are bad for you.'
+  - '%player% just lost a game of Minesweeper.'
+  - '%player% is no more, check out the subreddit /r/mcnsa.'
+  - '%player% is now a blinking star on the horizon.'
+  - '%player% win happytime prize for yay!'
+cactus:
+  - Welcome to the Cactus Huggers’ Club, %player%!
+  - '%player% found out cacti hurt.'
+  - '%player% poked a cactus, but the cactus poked back.'
+  - '%player% sucks at lying on a bed of nails.'
+drowning:
+  - '%player% forgot about air.'
+  - '%player% is swimming with the fishes.'
+  - '%player% took a long walk off a short pier.'
+  - '%player% can’t find the fucking space bar.'
+  - '%player% met the Kraken.'
+  - 'Ocean: 1. %player%: 0.'
+  - '%player% doesn’t have gills.'
+fall:
+  - '%player% fell to their death.'
+  - '%player% took a leap of faith for nsanidy.'
+  - '%player% went over 9000.'
+  - '%player% believed they could fly.'
+  - I believe I can fly!!!... No you can not, %player%!
+  - '%player% forgot a parachute.'
+  - '%player% just left a human-shaped crater in the countryside.'
+  - Newton’s Laws were not kind to %player%.
+fallingblock:
+  - A block of %attacker% fell onto %player%'s head. The end.
+fire:
+  - '%player% didn’t start the fire, but couldn’t stop it either.'
+  - '%player% will be baked, and then there will be cake.'
+  - 'Today''s special: %player%, extra crispy!'
+  - '%player% burned to death.'
+  - '%player% forgot how to stop, drop and roll.'
+  - '%player% exited this mortal coil via self immolation.'
+  - '%player% looked in the mirror for the first time.'
+  - Go die in a fire, %player%. Oh wait.
+lava:
+  - '%player% lost all of their items!'
+  - '%player% was killed by lava.'
+  - '%player% became obsidian.'
+  - '%player% fell in to a burning ring of fire.'
+  - That’s not tomato juice, %player%!
+  - Remember, mods don’t reimburse lost stuff, %player%.
+lightning:
+  - '%player% had an unfortunate weather incident.'
+  - '%player% heard the thunder too late.'
+  - '%player% angered the God Thor.'
+  - '%player% probably pissed the mods off.'
+  - '%player% probably didn’t piss off the mods at all.'
+  - They say lightning never strikes in the same place twice... it didn’t need to for %player%.
+  - '%player% should check out mcnsa.reddit.com.'
+  - There’s a good chance %player% met Sirenfal.
+magic:
+  - '%player% discovered the voodoo that you do so well.'
+poison:
+  - No, %player%, that bottle did NOT contain kool-aid
+projectile:
+  - '%player% was sniped by %attacker% with a %wielding%'
+starvation:
+  - '%player% couldn''t find the local McDonalds fast enough'
+suffocation:
+  - '%player% was buried alive.'
+  - '%player% suffocated.'
+  - '%player% lost all their stuff in a wall.'
+  - '%player% discovered solids aren’t breathable.'
+suicide:
+  - '%player% found life to be not worth living anymore'
+void:
+  - '%player% fell into the Gap.'
+  - Hey, where did the world go, %player%?
+  - '%player% found purgatory.'
+blaze:
+  - '%player% got a little too ambitious with some blazes'
+cavespider:
+  - '%player% failed to kill it with fire. It being that large spider.'
+  - '%player% found out that the “she” monster’s lair is a bad place.'
+  - '%player% just took an eight-legged beating.'
+  - '%player% herp to the derp to the merp.'
+  - '%player% found out that following a %attacker% web, isn’t the best idea.'
+creeper:
+  - Kch-tsssssssssssss. %player% never saw it coming.
+  - '%player% hugged a creeper, and is now a convicted felon.'
+  - '%attacker% got insulted by %player%, the creeper didn’t like it... At all.'
+  - Creeper used SELFDESTRUCT! %player% fainted!
+enderman:
+  - A certain something thought %player%'s head would look great on it's mantle.
+giant:
+  - '%player% got curbstomped!'
+  - '%player% met a member of the band “They are Definitely Giants.”'
+  - '%player% shouldn’t have climbed that beanstalk.'
+  - '%player% made their new home under the foot of a giant.'
+  - '%player% met my little friend, Timmy.'
+pigzombie:
+  - '%player% took a golden pork sword to the sphincter.'
+  - '%player% played six degrees of Zombie Bacon.'
+  - '%player% tried to steal the pork. Don’t do that.'
+  - '%player% seems to have encountered the result of an Ion Cannon applied to a helpless pig.'
+  - '%player% found out that there is not only one %attacker% in that neighbourhood.'
+silverfish:
+  - '%player% got chewed on by maggots. Ew.'
+skeleton:
+  - '%player% just got boned by a Skeleton.'
+  - '%player% caught an arrow! With their face.'
+  - Know who is a skeleton's pincushion now? %player%.
+  - I know, %player%, who gives a skeleton a bow anyway?
+spider:
+  - '%player% failed to kill it with fire. It being that large spider.'
+  - '%player% found out that the “she” monster’s lair is a bad place.'
+  - '%player% just took an eight-legged beating.'
+  - '%player% herp to the derp to the merp.'
+  - '%player% found out that following a %attacker% web, isn’t the best idea.'
+wither:
+  - '%player% just took a beating from a three-headed badass motherfucker'
+wolf:
+  - '%player% pissed off the wrong puppy.'
+  - There’s only so much poking with sticks that a %attacker% will take, %player%.
+  - Petting and heavy petting are different, and %player% picked the wrong one.
+  - '%player% told the %attacker% to sit. Didn’t work out so well now did it, %player%.'
+  - '%player% let the dogs out.'
+  - '%player% must have played with too many pigs before punching that wolf.'
+zombie:
+  - '%player% just got their face ripped off by a Zombie. Well, it’s an improvement.'
+  - '%player% just got killed by a Zombie. Well, that’s a no-brainer.'
+  - The last %player% heard was, brraaaaiiinnns~.
+  - '%player% doesn’t watch enough Zombie films.'
+player:
+  - '%attacker% killed %player% wielding %wielding%, do not fuck with him.'
+  - '%attacker% wanted to know how sharp their %wielding% was...so they tested it on %player%.'
+  - '%attacker% wanted to tell %player% about reddit.com/r/mcnsa.'
+  - '%attacker% put a %wielding% to %player%’s head.'
+  - That PVP to %player% better have been mutual %attacker%.
