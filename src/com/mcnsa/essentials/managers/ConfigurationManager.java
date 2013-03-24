@@ -11,6 +11,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import com.mcnsa.essentials.annotations.Setting;
 import com.mcnsa.essentials.exceptions.EssentialsSettingsException;
 import com.mcnsa.essentials.managers.ComponentManager.Component;
+import com.mcnsa.essentials.utilities.ClassReflection;
 import com.mcnsa.essentials.utilities.Logger;
 
 public class ConfigurationManager {
@@ -48,7 +49,7 @@ public class ConfigurationManager {
 		// get all our loaded classes
 		Vector<Class<?>> classes = null;
 		try {
-			classes = getLoadedClasses();
+			classes = ClassReflection.getLoadedClasses();
 		}
 		catch(Exception e) {
 			Logger.error("Unhandled exception (%s): %s!", e.getClass().getName(), e.getMessage());
@@ -109,6 +110,7 @@ public class ConfigurationManager {
 				// nope
 				Logger.warning("Can't configure setting '%s.%s' - only STATIC fields may be configurable settings!",
 						clazz.getName(), field.getName());
+				continue;
 			}
 			
 			// get the annotation
@@ -183,23 +185,5 @@ public class ConfigurationManager {
 				Logger.warning(e.getMessage() + " &c(ignoring setting)");
 			}
 		}
-	}
-	
-	private static Vector<Class<?>> getLoadedClasses() throws SecurityException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException {
-		// get a list of all our classes
-		//Logger.debug("Getting classes...");
-		Field f = ClassLoader.class.getDeclaredField("classes");
-		//Logger.debug("Type: %s", f.getType().getName());
-		f.setAccessible(true);
-		@SuppressWarnings("unchecked")
-		Vector<Class<?>> classes = (Vector<Class<?>>)f.get(ConfigurationManager.class.getClassLoader());
-		/*for(Class<?> clazz: classes) {
-			if(clazz != null && clazz.getPackage() != null) {
-				Logger.debug("Found class '%s' (%s)!", clazz.getName(), clazz.getPackage().getName());
-			}
-		}
-		Logger.debug("done!");*/
-		
-		return classes;
 	}
 }

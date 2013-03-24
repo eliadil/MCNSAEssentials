@@ -19,6 +19,7 @@ import org.bukkit.inventory.ItemStack;
 import com.mcnsa.essentials.MCNSAEssentials;
 import com.mcnsa.essentials.annotations.Command;
 import com.mcnsa.essentials.annotations.ComponentInfo;
+import com.mcnsa.essentials.annotations.Translation;
 import com.mcnsa.essentials.exceptions.EssentialsCommandException;
 import com.mcnsa.essentials.managers.PermissionsManager;
 
@@ -26,9 +27,12 @@ import com.mcnsa.essentials.managers.PermissionsManager;
 				description = "Gives players a backpack to use",
 				permsSettingsPrefix = "backpack")
 public class Backpack implements Listener {
+	@Translation(node = "you-dont-have-a-backpack") public static String youDontHaveABackpack = "You don't have a backpack to open!";
+	@Translation(node = "player-doesnt-have-a-backpack") public static String playerDoesntHaveABackpack = "%player% doesn't have a backpack to open!";
+	
 	// taken from ThePickleMan's implementation at
 	// https://github.com/ThePickleMan/HatCraft/
-	public class BackpackInventory implements InventoryHolder {
+	public class BackpackInventory implements InventoryHolder {		
 		private String ownerName = null;
 		private Inventory inventory = null;
 		
@@ -129,10 +133,10 @@ public class Backpack implements Listener {
 		
 		if(inv == null) {
 			if(sender.getName().equalsIgnoreCase(targetPlayer)) {
-				throw new EssentialsCommandException("You don't have a backpack to open!");
+				throw new EssentialsCommandException(youDontHaveABackpack);
 			}
 			else {
-				throw new EssentialsCommandException("%s doesn't have a backpack to open!", targetPlayer);
+				throw new EssentialsCommandException(playerDoesntHaveABackpack.replaceAll("%player%", targetPlayer));
 			}
 		}
 		
@@ -140,10 +144,10 @@ public class Backpack implements Listener {
 		int size = getMaxBackpackSize(targetPlayer);
 		if(size == 0) {
 			if(sender.getName().equalsIgnoreCase(targetPlayer)) {
-				throw new EssentialsCommandException("You don't have a backpack to open!");
+				throw new EssentialsCommandException(youDontHaveABackpack);
 			}
 			else {
-				throw new EssentialsCommandException("%s doesn't have a backpack to open!", targetPlayer);
+				throw new EssentialsCommandException(playerDoesntHaveABackpack.replaceAll("%player%", targetPlayer));
 			}
 		}
 		

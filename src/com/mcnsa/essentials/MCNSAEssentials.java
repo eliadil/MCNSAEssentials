@@ -7,6 +7,7 @@ import com.mcnsa.essentials.managers.CommandsManager;
 import com.mcnsa.essentials.managers.ConfigurationManager;
 import com.mcnsa.essentials.managers.DatabaseManager;
 import com.mcnsa.essentials.managers.PermissionsManager;
+import com.mcnsa.essentials.managers.TranslationManager;
 import com.mcnsa.essentials.utilities.ItemSelector;
 import com.mcnsa.essentials.utilities.Logger;
 import com.mcnsa.essentials.utilities.MultilineChatEntry;
@@ -19,6 +20,7 @@ public class MCNSAEssentials extends JavaPlugin {
 	PermissionsManager permissionsManager = null;
 	ComponentManager componentManager = null;
 	ConfigurationManager configurationManager = null;
+	TranslationManager translationManager = null;
 	CommandsManager commandsManager = null;
 	DatabaseManager databaseManager = null;
 	
@@ -52,6 +54,10 @@ public class MCNSAEssentials extends JavaPlugin {
 		// now load all our class's settings
 		configurationManager.loadSettings(componentManager);
 		this.saveConfig();
+		
+		// load our translations
+		translationManager = new TranslationManager();
+		translationManager.load(componentManager);
 		
 		// now load our components
 		componentManager.initializeComponents();

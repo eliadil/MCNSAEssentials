@@ -146,30 +146,8 @@ public class ItemSelector {
 			// we don't care
 		}
 		
-		/*// ok, it wasn't a #
-		// handle it based on what the itemID is
-		switch(itemID) {
-		case ItemID.WOOD:
-			if(filter.equalsIgnoreCase("oak")) {
-				return 1;
-			}
-			else if(filter.equalsIgnoreCase("redwood") || filter.equalsIgnoreCase("spruce")) {
-				return 1;
-			}
-			else if(filter.equalsIgnoreCase("birch")) {
-				return 2;
-			}
-			else if(filter.equalsIgnoreCase("jungle")) {
-				return 3;
-			}
-			
-			// if we got here, we didn't find it
-			throw new EssentialsCommandException("Unkown wood type '%s'!", filter);
-			
-		// TODO: more data values
-		default:
-			throw new EssentialsCommandException("Invalid data value of '%s'!", filter);
-		}*/
+		// TODO: load data value aliases
+		
 		throw new EssentialsCommandException("Invalid data value of '%s'!", filter);
 	}
 	

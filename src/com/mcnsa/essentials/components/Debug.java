@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 import com.mcnsa.essentials.MCNSAEssentials;
 import com.mcnsa.essentials.annotations.Command;
 import com.mcnsa.essentials.annotations.ComponentInfo;
+import com.mcnsa.essentials.annotations.Translation;
 import com.mcnsa.essentials.runnables.TPSTimerTask;
 import com.mcnsa.essentials.utilities.ColourHandler;
 
@@ -17,6 +18,9 @@ import com.mcnsa.essentials.utilities.ColourHandler;
 				description = "Various server debugging utilities",
 				permsSettingsPrefix = "debug")
 public class Debug {
+	@Translation(node = "starting-clock-test") public static String startingClockTest =
+			"&9Timing clock test for %testTime% seconds...\n&cDO NOT &9change the world time or do anything stressful during this test!";
+	@Translation(node = "metadata-cleared") public static String metadataCleared = "&aAll metadata values cleared!";
 	
 	@Command(command = "ping",
 			description = "pings the server to make sure it is still responding",
@@ -46,8 +50,7 @@ public class Debug {
 	// pretty much a copy of commandbook's TPS
 	public static boolean ticksPerSecond(CommandSender sender, float testTime) {		
 		// alert them
-		ColourHandler.sendMessage(sender, "&9Timing clock test for " + testTime + " seconds...");
-		ColourHandler.sendMessage(sender, "&cDO NOT &9change the world time or do anything stressful during this test!");
+		ColourHandler.sendMessage(sender, startingClockTest.replaceAll("%testTime%", String.valueOf(testTime)));
 		
 		World world = Bukkit.getServer().getWorlds().get(0);
 		int expectedTicks = (int)(20.0f * testTime);
@@ -104,7 +107,8 @@ public class Debug {
 		"mleArgs",
 		"frozen",
 		"tpHistory",
-		"ignoreTP"
+		"ignoreTP",
+		"ignorePermissions"
 	};
 	@Command(command = "resetmeta",
 			description = "resets all metadata associated with MCNSAEssentials",
@@ -123,7 +127,7 @@ public class Debug {
 			}
 		}
 		
-		ColourHandler.sendMessage(sender, "&aAll metadata valuess cleared!");
+		ColourHandler.sendMessage(sender, metadataCleared);
 		
 		return true;
 	}
