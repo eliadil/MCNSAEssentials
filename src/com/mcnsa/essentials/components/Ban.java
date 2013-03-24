@@ -28,7 +28,7 @@ import com.mcnsa.essentials.utilities.PlayerSelector;
 
 @ComponentInfo(friendlyName = "Ban",
 				description = "Commands to ban players",
-				permsSettingsPrefix = "ban")
+				permsSettingsPrefix = "bans")
 @DatabaseTableInfo(name = "banlogs",
 					fields = { "banee TINYTEXT", "banner TINYTEXT", "date TIMESTAMP", "reason TINYTEXT", "expiry TIMESTAMP" })
 public class Ban implements Listener, MultilineChatHandler {
