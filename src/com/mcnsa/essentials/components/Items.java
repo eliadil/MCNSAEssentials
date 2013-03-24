@@ -147,10 +147,10 @@ public class Items {
 			target.getInventory().addItem(itemStack);
 			
 			if(sender.getName().equalsIgnoreCase(target.getName())) {
-				ColourHandler.sendMessage(sender, "&aHere's your %d &f%s&a!", number, item);
+				ColourHandler.sendMessage(target, "&aHere's your %d &f%s&a!", number, item);
 			}
 			else {
-				ColourHandler.sendMessage(sender, "&a%s gave you %d '&f%s&a'!", number, item);
+				ColourHandler.sendMessage(target, "&a%s gave you %d '&f%s&a'!", sender.getName(), number, item);
 			}
 		}
 		
