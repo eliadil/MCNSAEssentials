@@ -5,11 +5,15 @@ import java.util.Iterator;
 import java.util.Random;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Ocelot;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
+import com.mcnsa.essentials.MCNSAEssentials;
 import com.mcnsa.essentials.annotations.Command;
 import com.mcnsa.essentials.annotations.ComponentInfo;
 import com.mcnsa.essentials.annotations.Setting;
@@ -228,6 +232,50 @@ public class Fun {
 				ColourHandler.sendMessage(onlinePlayers[i], andMorePeople);
 			}
 		}
+		
+		return true;
+	}
+	
+	@Setting(node = "kitten-explode-timer-seconds") public static float kittenExplodeTimerSeconds = 1.5f;
+	@Command(command = "kittycannon",
+			description = "fire the kittycannon!",
+			permissions = {"kittycannon"},
+			playerOnly = true)
+	public static boolean kittyCannon(CommandSender sender) throws EssentialsCommandException {
+		// get our player
+		Player player = (Player)sender;
+		
+		// spawn the cat
+		final Ocelot cat = (Ocelot)player.getWorld().spawn(player.getEyeLocation(), EntityType.OCELOT.getEntityClass());
+		// make sure it spawned
+		if(cat == null) {
+			throw new EssentialsCommandException("Failed to spawn kitty!");
+		}
+		
+		// randomize the cat type
+		Random random = new Random();
+		cat.setCatType(Ocelot.Type.values()[random.nextInt(Ocelot.Type.values().length)]);
+		
+		// tame it and make it a kittem
+		cat.setTamed(true);
+		cat.setBaby();
+		
+		// launch it!
+		cat.setVelocity(player.getEyeLocation().getDirection().multiply(2));
+		
+		// now explode the kitty in a few seconds!
+		Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(MCNSAEssentials.getInstance(),
+				new Runnable() {
+					@Override
+					public void run() {
+						// get the kittens location
+						Location kittyLocation = cat.getLocation();
+						// remove the kitty
+						cat.remove();
+						// and make an explosion!
+						kittyLocation.getWorld().createExplosion(kittyLocation, 0, false);
+					}
+		}, (long)(kittenExplodeTimerSeconds * 20.0f));
 		
 		return true;
 	}
