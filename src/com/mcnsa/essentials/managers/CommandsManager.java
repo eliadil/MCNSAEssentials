@@ -475,11 +475,13 @@ public class CommandsManager implements CommandExecutor {
 				
 				// make sure we have the right person trying to do the command
 				if(ci.command.playerOnly() && !(sender instanceof Player)) {
-					lastFailMessage = "&cSorry, that command is for players only";
+					//lastFailMessage = "&cSorry, that command is for players only";
+					lastFailMessage = "playeronly";
 					continue;
 				}
 				else if(ci.command.consoleOnly() && (sender instanceof Player)) {
-					lastFailMessage = "&cSorry, that command is for the console only";
+					//lastFailMessage = "&cSorry, that command is for the console only";
+					lastFailMessage = "consoleonly";
 					continue;
 				}
 				
@@ -505,18 +507,43 @@ public class CommandsManager implements CommandExecutor {
 		}
 		
 		// if we got here, we couldn't find a matching function
-		if(lastFailMessage.equals("")) {
-			ColourHandler.sendMessage(sender, "&cInvalid command usage! Proper usage:");
-			
+		if(lastFailMessage.equals("") || lastFailMessage.equals("playeronly") || lastFailMessage.equals("consoleonly")) {			
 			// deal with aliases
 			String commandName = command.getName();
 			if(aliasMapping.containsKey(commandName)) {
 				commandName = aliasMapping.get(commandName);
 			}
 			
-			// send the usage string
-			String usage = InformationManager.searchUsageString(sender, commandName);
-			ColourHandler.sendMessage(sender, usage);
+			// get the usage string
+			String usage = InformationManager.searchUsageString(sender, commandName, false);
+			
+			// inform them
+			if(!usage.equals("")) {
+				ColourHandler.sendMessage(sender, "&cInvalid command usage! Proper usage:");
+				ColourHandler.sendMessage(sender, usage);
+			}
+			else {
+				// we didn't have any commands we could run
+				String possibleUsage = InformationManager.searchUsageString(sender, commandName, true);
+				
+				if(!possibleUsage.equals("")) {
+					// found something maybe?
+					ColourHandler.sendMessage(sender, "&cInvalid command! Did you mean one of the following?");
+					ColourHandler.sendMessage(sender, possibleUsage);
+				}
+				else {
+					// no possible matches
+					if(lastFailMessage.equals("playeronly")) {
+						ColourHandler.sendMessage(sender, "&cSorry, that command is for players only");
+					}
+					else if(lastFailMessage.equals("consoleonly")) {
+						ColourHandler.sendMessage(sender, "&cSorry, that command is for the console only");
+					}
+					else {
+						ColourHandler.sendMessage(sender, "&cInvalid command!");
+					}
+				}
+			}
 		}
 		else {
 			ColourHandler.sendMessage(sender, lastFailMessage);
