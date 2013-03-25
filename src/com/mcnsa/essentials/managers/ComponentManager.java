@@ -6,6 +6,7 @@ import java.net.URLClassLoader;
 import java.security.CodeSource;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -19,7 +20,8 @@ public class ComponentManager {
 		public Object instance = null;
 		public boolean disabled = false;
 		public ArrayList<String> disabledCommands = new ArrayList<String>();
-		ComponentInfo componentInfo = null;
+		public ComponentInfo componentInfo = null;
+		public LinkedList<CommandsManager.CommandInfo> commands = new LinkedList<CommandsManager.CommandInfo>();
 	}
 	
 	private HashMap<String, Component> registeredComponents = new HashMap<String, Component>();

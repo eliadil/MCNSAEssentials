@@ -6,6 +6,7 @@ import com.mcnsa.essentials.managers.ComponentManager;
 import com.mcnsa.essentials.managers.CommandsManager;
 import com.mcnsa.essentials.managers.ConfigurationManager;
 import com.mcnsa.essentials.managers.DatabaseManager;
+import com.mcnsa.essentials.managers.InformationManager;
 import com.mcnsa.essentials.managers.PermissionsManager;
 import com.mcnsa.essentials.managers.TranslationManager;
 import com.mcnsa.essentials.utilities.ItemSelector;
@@ -22,6 +23,7 @@ public class MCNSAEssentials extends JavaPlugin {
 	ConfigurationManager configurationManager = null;
 	TranslationManager translationManager = null;
 	CommandsManager commandsManager = null;
+	InformationManager informationManager = null;
 	DatabaseManager databaseManager = null;
 	
 	// our multiline chat entry handler
@@ -64,6 +66,9 @@ public class MCNSAEssentials extends JavaPlugin {
 		
 		// load our commands
 		commandsManager.loadCommands(componentManager);
+		
+		// load our command information
+		informationManager = new InformationManager(componentManager);
 		
 		// load our item definitions
 		ItemSelector.load();

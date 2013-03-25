@@ -50,7 +50,7 @@ public class CommandsManager implements CommandExecutor {
 	}
 	
 	// keep track of our own command info
-	public class CommandInfo {	
+	public class CommandInfo {
 		public Command command = null;
 		public Method method = null;
 		public ArrayList<String> permissions = null;
@@ -282,7 +282,7 @@ public class CommandsManager implements CommandExecutor {
 				commandAndAliases.add(ci.command.aliases()[i]);
 			}
 			
-			// register our command AND aliases with bukkit
+			// register our aliases
 			for(int i = 0; i < commandAndAliases.size(); i++) {
 				// make sure its not disabled
 				boolean disabled = false;
@@ -311,6 +311,9 @@ public class CommandsManager implements CommandExecutor {
 					//MCNSAEssentials.log("\t&aregistered alias `" + commandAndAliases.get(i) + "' for: " + registrationString);
 				}
 			}
+			
+			// add our command info to our component
+			component.commands.add(ci);
 		}
 	}
 	
@@ -503,7 +506,17 @@ public class CommandsManager implements CommandExecutor {
 		
 		// if we got here, we couldn't find a matching function
 		if(lastFailMessage.equals("")) {
-			ColourHandler.sendMessage(sender, "&cInvalid command! Type /help for some help!");
+			ColourHandler.sendMessage(sender, "&cInvalid command usage! Proper usage:");
+			
+			// deal with aliases
+			String commandName = command.getName();
+			if(aliasMapping.containsKey(commandName)) {
+				commandName = aliasMapping.get(commandName);
+			}
+			
+			// send the usage string
+			String usage = InformationManager.searchUsageString(sender, commandName);
+			ColourHandler.sendMessage(sender, usage);
 		}
 		else {
 			ColourHandler.sendMessage(sender, lastFailMessage);
