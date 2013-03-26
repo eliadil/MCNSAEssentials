@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Map;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -15,6 +16,7 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import com.mcnsa.essentials.MCNSAEssentials;
 import com.mcnsa.essentials.annotations.Command;
@@ -22,6 +24,7 @@ import com.mcnsa.essentials.annotations.ComponentInfo;
 import com.mcnsa.essentials.annotations.Translation;
 import com.mcnsa.essentials.exceptions.EssentialsCommandException;
 import com.mcnsa.essentials.managers.PermissionsManager;
+import com.mcnsa.essentials.utilities.Logger;
 
 @ComponentInfo(friendlyName = "Backpack",
 				description = "Gives players a backpack to use",
@@ -85,6 +88,26 @@ public class Backpack implements Listener {
 		config = YamlConfiguration.loadConfiguration(configFile);
 	}
 	
+	private void printSerialization(ItemStack stack) {
+		if(stack == null || stack.getAmount() == 0) {
+			return;
+		}
+		Map<String, Object> map = stack.serialize();
+		Logger.debug("Item = %s", stack.getType().name());
+		for(String key: map.keySet()) {
+			if(map.get(key) instanceof ItemMeta) {
+				Logger.debug("\tmeta:");
+				Map<String, Object> meta = ((ItemMeta)map.get(key)).serialize();
+				for(String metaKey: meta.keySet()) {
+					Logger.debug("\t\t%s: %s", metaKey, meta.get(metaKey).toString());
+				}
+			}
+			else {
+				Logger.debug("\t%s: %s", key, map.get(key).toString());
+			}
+		}
+	}
+	
 	// bukkit events
 	@EventHandler
 	public void onInventoryClose(InventoryCloseEvent event) throws IOException {
@@ -99,6 +122,10 @@ public class Backpack implements Listener {
 			// get our inventory
 			ArrayList<ItemStack> stacks = new ArrayList<ItemStack>();
 			Collections.addAll(stacks, backpack.getInventory().getContents());
+			
+			/*for(ItemStack stack: stacks) {
+				printSerialization(stack);
+			}*/
 			
 			// now save it to file
 			config.set(key, stacks);
