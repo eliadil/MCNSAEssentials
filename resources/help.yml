@@ -1,0 +1,49 @@
+Protection:
+  description: Commands for protecting chests and other sensitive things
+  commands:
+    cprivate:
+      description: makes the next object you click private
+      permissions: ['lwc.protect']
+      playerOnly: Yes
+    cpassword:
+      arguments: ['password']
+      description: makes the next object you click private with a password
+      permissions: ['lwc.protect']
+      playerOnly: Yes
+    cpublic:
+      description: makes a public protection
+      permissions: ['lwc.protect']
+      playerOnly: Yes
+    cremove:
+      description: removes your protection on the next object you click
+      permissions: ['lwc.protect']
+      playerOnly: Yes
+    cunlock:
+      arguments: ['password']
+      description: Attempt to gain access to a password-protected protection
+      permissions: ['lwc.protect']
+      playerOnly: Yes
+WorldEdit:
+  description: Very powerful tool for changing numerous blocks at once
+  commands:
+    biomelist:
+      aliases: ['biomels']
+      arguments: []
+      description: gets all biomes available
+      permissions: ['worldedit.biome.list']
+      playerOnly: Yes
+      consoleOnly: No
+    biomeinfo:
+      aliases: []
+      arguments: []
+      description: get the biome of the targeted block
+      permissions: ['worldedit.biome.info']
+      playerOnly: Yes
+      consoleOnly: No
+    setbiome:
+      aliases: []
+      arguments: []
+      description: 'sets the biome of the player''s current block or region'
+      permissions: ['worldedit.biome.set']
+      playerOnly: Yes
+      consoleOnly: No

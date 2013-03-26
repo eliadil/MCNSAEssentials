@@ -5,10 +5,22 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import com.mcnsa.essentials.annotations.Setting;
+
 public class ColourHandler {
 	static Integer nextColour = new Integer(0);	
 	// make it a static class) private constructor, static methods
 	private ColourHandler() {}
+	
+	@Setting(node = "tab-size-spaces") public static int tabSizeSpaces = 4;
+	private static String tabSpaces = "";
+	
+	public static void initialize() {
+		tabSpaces = "";
+		for(int i = 0; i < tabSizeSpaces; i++) {
+			tabSpaces += " ";
+		}
+	}
 
 	public static String translateColour(String name) {
 		String colour = new String("???");
@@ -139,7 +151,7 @@ public class ColourHandler {
 		String[] lines = message.split("\n");
 		for(String line: lines) {
 			if(sender instanceof Player) {
-				sender.sendMessage(processColours(line));
+				sender.sendMessage(processColours(line).replaceAll("\t", tabSpaces));
 			}
 			else {
 				consoleMessage(line);

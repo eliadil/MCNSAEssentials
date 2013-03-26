@@ -1,29 +1,138 @@
 package com.mcnsa.essentials.managers;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.util.ChatPaginator;
 
-import com.mcnsa.essentials.annotations.Command;
-import com.mcnsa.essentials.annotations.ComponentInfo;
+import com.mcnsa.essentials.MCNSAEssentials;
 import com.mcnsa.essentials.annotations.Translation;
 import com.mcnsa.essentials.exceptions.EssentialsCommandException;
-import com.mcnsa.essentials.managers.CommandsManager.CommandInfo;
 import com.mcnsa.essentials.managers.ComponentManager.Component;
 
 public class InformationManager {
-	private static LinkedList<Component> components = new LinkedList<Component>();
+	public class CommandHelp {
+		public String command = null;
+		public String[] aliases = null;
+		public String[] args = null;
+		public String description = null;
+		public String[] permissions = null;
+		public Boolean playerOnly = null;
+		public Boolean consoleOnly = null;
+	}
 	
+	public class HelpSection {
+		public String name = null;
+		public String description = null;
+		public LinkedList<CommandHelp> commands = new LinkedList<CommandHelp>();
+	}
+	
+	//private static LinkedList<Component> components = new LinkedList<Component>();
+	private static LinkedList<HelpSection> sections = new LinkedList<HelpSection>();
+
+	private static File fileConfig = new File(MCNSAEssentials.getInstance().getDataFolder(), "help.yml");
+	private static YamlConfiguration yamlConfig = new YamlConfiguration();
 	public InformationManager(ComponentManager componentManager) {
 		// pull all of our registered components that aren't disabled
 		HashMap<String, Component> registeredComponents = componentManager.getRegisteredComponents();
 		for(String key: registeredComponents.keySet()) {
 			if(!registeredComponents.get(key).disabled) {
-				components.add(registeredComponents.get(key));
+				//components.add(registeredComponents.get(key));
+				Component component = registeredComponents.get(key);
+				
+				// fill out our help section
+				HelpSection section = new HelpSection();
+				section.name = component.componentInfo.friendlyName();
+				section.description = component.componentInfo.description();
+				section.commands = new LinkedList<CommandHelp>();
+				
+				// get all our commands
+				for(CommandsManager.CommandInfo commandInfo: component.commands) {
+					// fill out a help command
+					CommandHelp command = new CommandHelp();
+					command.command = commandInfo.command.command();
+					command.aliases = commandInfo.command.aliases();
+					command.args = commandInfo.command.arguments();
+					command.description = commandInfo.command.description();
+					command.permissions = new String[commandInfo.command.permissions().length];
+					for(int i = 0; i < commandInfo.command.permissions().length; i++) {
+						command.permissions[i] =
+								PermissionsManager.globalPermissionsPrefix
+								+ component.componentInfo.permsSettingsPrefix()
+								+ "." + commandInfo.command.permissions()[i];
+					}
+					command.playerOnly = commandInfo.command.playerOnly();
+					command.consoleOnly = commandInfo.command.consoleOnly();
+					
+					// add it
+					section.commands.add(command);
+				}
+				
+				// add our help section
+				sections.add(section);
 			}
+		}
+		
+		// now also pull all of our components from our help file
+		// extract a default config
+		if(!fileConfig.exists()) {
+			MCNSAEssentials.getInstance().saveResource("help.yml", false);
+		}
+		
+		// load help from a config file
+		try {
+			yamlConfig.load(fileConfig);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		// get all of our sections / components
+		Set<String> keys = yamlConfig.getKeys(false);
+		for(String key: keys) {
+			// create a section
+			HelpSection section = new HelpSection();
+			
+			// fill in some information
+			section.name = key;
+			section.description = yamlConfig.getString(key + ".description");
+			section.commands = new LinkedList<CommandHelp>();
+			
+			// get our commands
+			ConfigurationSection commandSection = yamlConfig.getConfigurationSection(key + ".commands");
+			Set<String> commandKeys = commandSection.getKeys(false);
+			for(String commandKey: commandKeys) {
+				/*String description = commandSection.getString(commandKey + ".description");
+				Logger.debug(description);*/
+				
+				// create a new command help
+				CommandHelp ch = new CommandHelp();
+				ch.command = commandKey.toLowerCase();
+				
+				// fill it in with data from the config file
+				List<String> aliases = commandSection.getStringList(commandKey + ".aliases");
+				ch.aliases = aliases.toArray(new String[aliases.size()]);
+				List<String> args = commandSection.getStringList(commandKey + ".arguments");
+				ch.args = args.toArray(new String[aliases.size()]);
+				ch.description = commandSection.getString(commandKey + ".description");
+				List<String> permissions = commandSection.getStringList(commandKey + ".permissions");
+				ch.permissions = permissions.toArray(new String[permissions.size()]);
+				ch.playerOnly = commandSection.getBoolean(commandKey + ".playerOnly", false);
+				ch.consoleOnly = commandSection.getBoolean(commandKey + ".consoleOnly", false);
+				
+				// add it
+				section.commands.add(ch);
+			}
+			
+			// add our help section
+			sections.add(section);
 		}
 	}
 	
@@ -31,18 +140,20 @@ public class InformationManager {
 			"&6/%command% &e%args%\n&7%description%";
 	@Translation(node = "information.usage-argument-format") public static String usageArgumentFormat = 
 			"&7<&f%arg%&7>";
-	public static String formatUsage(Command command) {
+	public static String formatUsage(CommandHelp command) {
 		// create our args string
 		StringBuilder args = new StringBuilder();
-		for(String arg: command.arguments()) {
-			args.append(usageArgumentFormat.replaceAll("%arg%", arg)).append(" ");
+		for(String arg: command.args) {
+			if(arg != null) {
+				args.append(usageArgumentFormat.replaceAll("%arg%", arg)).append(" ");
+			}
 		}
 		
 		// get our usage
 		String usage =  usageFormat
-				.replaceAll("%command%", command.command())
+				.replaceAll("%command%", command.command)
 				.replaceAll("%args%", args.toString().trim())
-				.replaceAll("%description%", command.description());
+				.replaceAll("%description%", command.description);
 		
 		// word wrap that sucker
 		String[] lines = ChatPaginator.wordWrap(usage, ChatPaginator.AVERAGE_CHAT_PAGE_WIDTH);
@@ -61,25 +172,25 @@ public class InformationManager {
 		return usageBlock.toString().trim();
 	}
 	
-	private static boolean hasPermission(CommandSender sender, ComponentInfo componentInfo, Command command) {
+	private static boolean hasPermission(CommandSender sender, CommandHelp command) {
 		// make sure we can access it properly based on console or not
 		// player only command
-		if(command.playerOnly() && !(sender instanceof Player)) {
+		if(command.playerOnly && !(sender instanceof Player)) {
 			return false;
 		}
 		// console only command
-		else if(command.consoleOnly() && sender instanceof Player) {
+		else if(command.consoleOnly && sender instanceof Player) {
 			return false;
 		}
 		
 		// if we don't have any permissions, we're good
-		if(command.permissions().length == 0) {
+		if(command.permissions.length == 0) {
 			return true;
 		}
 		
 		// check if we have any of the permissions necessary
-		for(String permission: command.permissions()) {
-			if(PermissionsManager.playerHasPermission(sender, componentInfo.permsSettingsPrefix() + "." + permission)) {
+		for(String permission: command.permissions) {
+			if(PermissionsManager.playerHasPermission(sender, permission, false)) {
 				return true;
 			}
 		}
@@ -102,16 +213,16 @@ public class InformationManager {
 	public static LinkedList<String> searchUsage(CommandSender sender, String command, boolean softMatch) {
 		LinkedList<String> commandsUsage = new LinkedList<String>();
 		
-		// go through all our components and match all commands
-		for(Component component: components) {
+		// loop over all our help sections
+		for(HelpSection section: sections) {
 			// loop over all registered commands
-			for(CommandInfo ci: component.commands) {
+			for(CommandHelp ch: section.commands) {
 				// check if we found a proper command
-				if(ci.command.command().equalsIgnoreCase(command) || (softMatch && softMatch(ci.command.command(), command))) {
-					// make sure we have permission first
-					if(hasPermission(sender, component.componentInfo, ci.command)) {
+				if(ch.command.equalsIgnoreCase(command) || (softMatch && softMatch(ch.command, command))) {
+					// make sure we have permission
+					if(hasPermission(sender, ch)) {
 						// add it
-						commandsUsage.add(formatUsage(ci.command));
+						commandsUsage.add(formatUsage(ch));
 					}
 				}
 			}
@@ -132,55 +243,55 @@ public class InformationManager {
 	}
 	
 	// get a list of all components with commands the player can use
-	public static LinkedList<Component> listAvailableComponents(CommandSender sender) {
-		LinkedList<Component> possibleComponents = new LinkedList<Component>();
+	public static LinkedList<HelpSection> listAvailableSections(CommandSender sender) {
+		LinkedList<HelpSection> possibleSections = new LinkedList<HelpSection>();
 		
-		// go through all available components
-		for(Component component: components) {
+		// go through all available sections
+		for(HelpSection section: sections) {
 			boolean valid = false;
 			// loop over all registered commands
-			for(CommandInfo ci: component.commands) {
-				// try to find a command that we can use
-				if(hasPermission(sender, component.componentInfo, ci.command)) {
+			for(CommandHelp ch: section.commands) {
+				// try to find a command that the sender can use
+				if(hasPermission(sender, ch)) {
 					valid = true;
 					break;
 				}
 			}
 			
-			// we have a valid component, return it!
+			// if we have a valid component, return it
 			if(valid) {
-				possibleComponents.add(component);
+				possibleSections.add(section);
 			}
 		}
 		
-		return possibleComponents;
+		return possibleSections;
 	}
 	
-	public static Component findComponent(String componentName) throws EssentialsCommandException {
+	public static HelpSection findSection(String sectionName) throws EssentialsCommandException {
 		// find our component
-		Component foundComponent = null;
-		for(Component component: components) {
-			if(component.componentInfo.friendlyName().equalsIgnoreCase(componentName)) {
-				foundComponent = component;
+		HelpSection foundSection = null;
+		for(HelpSection section: sections) {
+			if(section.name.equalsIgnoreCase(sectionName)) {
+				foundSection = section;
 				break;
 			}
 		}
-		if(foundComponent == null) {
-			throw new EssentialsCommandException("I couldn't find the component '%s'!", componentName);
+		if(foundSection == null) {
+			throw new EssentialsCommandException("I couldn't find the section '%s'!", sectionName);
 		}
-		return foundComponent;
+		return foundSection;
 	}
 	
 	// get a list of all commands within a given component
-	public static LinkedList<CommandsManager.CommandInfo> listComponentCommands(CommandSender sender, Component component) {
-		LinkedList<CommandsManager.CommandInfo> possibleCommands = new LinkedList<CommandsManager.CommandInfo>();
+	public static LinkedList<CommandHelp> listSectionCommands(CommandSender sender, HelpSection section) {
+		LinkedList<CommandHelp> possibleCommands = new LinkedList<CommandHelp>();
 		
 		// loop over all registered commands
-		for(CommandInfo ci: component.commands) {
+		for(CommandHelp ch: section.commands) {
 			// make sure we have permission first
-			if(hasPermission(sender, component.componentInfo, ci.command)) {
+			if(hasPermission(sender, ch)) {
 				// add it
-				possibleCommands.add(ci);
+				possibleCommands.add(ch);
 			}
 		}
 		

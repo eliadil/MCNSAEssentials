@@ -88,6 +88,7 @@ public class Backpack implements Listener {
 		config = YamlConfiguration.loadConfiguration(configFile);
 	}
 	
+	@SuppressWarnings("unused")
 	private void printSerialization(ItemStack stack) {
 		if(stack == null || stack.getAmount() == 0) {
 			return;

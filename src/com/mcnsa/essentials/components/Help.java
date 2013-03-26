@@ -10,42 +10,38 @@ import com.mcnsa.essentials.annotations.ComponentInfo;
 import com.mcnsa.essentials.annotations.Setting;
 import com.mcnsa.essentials.annotations.Translation;
 import com.mcnsa.essentials.exceptions.EssentialsCommandException;
-import com.mcnsa.essentials.managers.ComponentManager.Component;
-import com.mcnsa.essentials.managers.CommandsManager;
 import com.mcnsa.essentials.managers.InformationManager;
+import com.mcnsa.essentials.managers.InformationManager.CommandHelp;
+import com.mcnsa.essentials.managers.InformationManager.HelpSection;
 import com.mcnsa.essentials.utilities.ColourHandler;
 
 @ComponentInfo(friendlyName = "Help",
 				description = "Provides information about commands you can use",
 				permsSettingsPrefix = "help")
 public class Help {
-	@Setting(node = "components-per-page") public static int componentsPerPage = 5;
+	@Setting(node = "sections-per-page") public static int sectionsPerPage = 5;
 	@Setting(node = "commands-per-page") public static int commandsPerPage = 5;
 	
-	public Help() {
-		// TODO: load external help documentation
-	}
-	
 	@Command(command = "help",
-			description = "lists components you can find more information about",
-			permissions = {"components"})
+			description = "lists help sections you can find more information about",
+			permissions = {"sections"})
 	public static boolean help(CommandSender sender) throws EssentialsCommandException {
 		return help(sender, 1);
 	}
 
-	@Translation(node = "component-list-header") public static String componentListHeader = "&e--- &6Components (Page &f%page%&6/&f%numPages%&6) &e---";
-	@Translation(node = "component-list-format") public static String componentListFormat = "&6%component%&7: &f%description%";
+	@Translation(node = "section-list-header") public static String sectionListHeader = "&e--- &6Help Sections (Page &f%page%&6/&f%numPages%&6) &e---";
+	@Translation(node = "section-list-format") public static String sectionListFormat = "&6%section%&7: &f%description%";
 	@Command(command = "help",
 			arguments = {"page"},
-			description = "lists components you can find more information about",
-			permissions = {"components"})
+			description = "lists help sections you can find more information about",
+			permissions = {"sections"})
 	public static boolean help(CommandSender sender, int page) throws EssentialsCommandException {
 		// get all components that the sender can use
-		LinkedList<Component> components = InformationManager.listAvailableComponents(sender);
+		LinkedList<HelpSection> sections = InformationManager.listAvailableSections(sender);
 		
 		// calculate the number of pages
-		int totalPages = components.size() / componentsPerPage;
-		if(components.size() % 5 != 0) totalPages++;
+		int totalPages = sections.size() / sectionsPerPage;
+		if(sections.size() % 5 != 0) totalPages++;
 		
 		// make sure we have an appropriate page
 		page -= 1;
@@ -57,23 +53,23 @@ public class Help {
 		}
 		
 		// calculate the start and end warp indices
-		int start = page * componentsPerPage;
-		int end = start + componentsPerPage;
-		if(end > components.size()) {
-			end = components.size();
+		int start = page * sectionsPerPage;
+		int end = start + sectionsPerPage;
+		if(end > sections.size()) {
+			end = sections.size();
 		}
 		
 		// send our header
-		ColourHandler.sendMessage(sender, componentListHeader
+		ColourHandler.sendMessage(sender, sectionListHeader
 				.replaceAll("%page%", String.valueOf(page + 1))
 				.replaceAll("%numPages%", String.valueOf(totalPages)));
 		
 		// loop over our selected components
 		for(int i = start; i < end; i++) {
 			// word wrap that sucker
-			String componentInfo = componentListFormat
-					.replaceAll("%component%", components.get(i).componentInfo.friendlyName())
-					.replaceAll("%description%", components.get(i).componentInfo.description());
+			String componentInfo = sectionListFormat
+					.replaceAll("%section%", sections.get(i).name)
+					.replaceAll("%description%", sections.get(i).description);
 			String[] lines = ChatPaginator.wordWrap(componentInfo, ChatPaginator.AVERAGE_CHAT_PAGE_WIDTH);
 			
 			// don't indent the first line
@@ -94,8 +90,8 @@ public class Help {
 	}
 	
 	@Command(command = "help",
-			arguments = {"component name"},
-			description = "lists commands in a given component",
+			arguments = {"section name"},
+			description = "lists commands in a given section",
 			permissions = {"commands"})
 	public static boolean help(CommandSender sender, String component) throws EssentialsCommandException {
 		// catch an error with argument parsing
@@ -111,15 +107,15 @@ public class Help {
 		return help(sender, component, 1);
 	}
 	
-	@Translation(node = "command-list-header") public static String commandListHeader = "&e--- &6%component% Commands (Page &f%page%&6/&f%numPages%&6) &e---";
+	@Translation(node = "command-list-header") public static String commandListHeader = "&e--- &6%section% Commands (Page &f%page%&6/&f%numPages%&6) &e---";
 	@Command(command = "help",
-			arguments = {"component name", "page"},
-			description = "lists commands in a given component",
+			arguments = {"section name", "page"},
+			description = "lists commands in a given section",
 			permissions = {"commands"})
-	public static boolean help(CommandSender sender, String targetComponent, int page) throws EssentialsCommandException {
+	public static boolean help(CommandSender sender, String targetSection, int page) throws EssentialsCommandException {
 		// try to get a list of our commands
-		Component component = InformationManager.findComponent(targetComponent);
-		LinkedList<CommandsManager.CommandInfo> commands = InformationManager.listComponentCommands(sender, component);
+		HelpSection section = InformationManager.findSection(targetSection);
+		LinkedList<CommandHelp> commands = InformationManager.listSectionCommands(sender, section);
 		
 		// calculate the number of pages
 		int totalPages = commands.size() / commandsPerPage;
@@ -143,13 +139,13 @@ public class Help {
 		
 		// send our header
 		ColourHandler.sendMessage(sender, commandListHeader
-				.replaceAll("%component%", component.componentInfo.friendlyName())
+				.replaceAll("%section%", section.name)
 				.replaceAll("%page%", String.valueOf(page + 1))
 				.replaceAll("%numPages%", String.valueOf(totalPages)));
 		
 		// loop over our selected commands
 		for(int i = start; i < end; i++) {
-			String usage = InformationManager.formatUsage(commands.get(i).command);
+			String usage = InformationManager.formatUsage(commands.get(i));
 			ColourHandler.sendMessage(sender, usage);
 		}
 		

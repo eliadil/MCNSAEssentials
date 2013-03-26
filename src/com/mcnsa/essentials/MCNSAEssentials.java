@@ -9,6 +9,7 @@ import com.mcnsa.essentials.managers.DatabaseManager;
 import com.mcnsa.essentials.managers.InformationManager;
 import com.mcnsa.essentials.managers.PermissionsManager;
 import com.mcnsa.essentials.managers.TranslationManager;
+import com.mcnsa.essentials.utilities.ColourHandler;
 import com.mcnsa.essentials.utilities.ItemSelector;
 import com.mcnsa.essentials.utilities.Logger;
 import com.mcnsa.essentials.utilities.MultilineChatEntry;
@@ -69,6 +70,9 @@ public class MCNSAEssentials extends JavaPlugin {
 		
 		// load our command information
 		informationManager = new InformationManager(componentManager);
+		
+		// initialize our colour handler
+		ColourHandler.initialize();
 		
 		// load our item definitions
 		ItemSelector.load();
