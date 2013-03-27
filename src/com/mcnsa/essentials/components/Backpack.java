@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Map;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -16,7 +15,6 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
 import com.mcnsa.essentials.MCNSAEssentials;
 import com.mcnsa.essentials.annotations.Command;
@@ -24,7 +22,6 @@ import com.mcnsa.essentials.annotations.ComponentInfo;
 import com.mcnsa.essentials.annotations.Translation;
 import com.mcnsa.essentials.exceptions.EssentialsCommandException;
 import com.mcnsa.essentials.managers.PermissionsManager;
-import com.mcnsa.essentials.utilities.Logger;
 
 @ComponentInfo(friendlyName = "Backpack",
 				description = "Gives players a backpack to use",
@@ -88,8 +85,7 @@ public class Backpack implements Listener {
 		config = YamlConfiguration.loadConfiguration(configFile);
 	}
 	
-	@SuppressWarnings("unused")
-	private void printSerialization(ItemStack stack) {
+	/*private void printSerialization(ItemStack stack) {
 		if(stack == null || stack.getAmount() == 0) {
 			return;
 		}
@@ -107,7 +103,7 @@ public class Backpack implements Listener {
 				Logger.debug("\t%s: %s", key, map.get(key).toString());
 			}
 		}
-	}
+	}*/
 	
 	// bukkit events
 	@EventHandler

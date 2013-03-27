@@ -15,6 +15,8 @@ import com.mcnsa.essentials.managers.DatabaseManager;
 import com.mcnsa.essentials.utilities.ColourHandler;
 import com.mcnsa.essentials.utilities.ItemSelector;
 import com.mcnsa.essentials.utilities.PlayerSelector;
+import com.mcnsa.essentials.utilities.SoundUtility;
+import com.mcnsa.essentials.utilities.SoundUtility.SoundType;
 
 @ComponentInfo(friendlyName = "Kit",
 				description = "Commands to give sets of items",
@@ -53,6 +55,9 @@ public class Kit {
 		}
 		
 		ColourHandler.sendMessage(sender, "&aYour kit '%s' has been added!", kitName);
+		
+		// play a sound
+		SoundUtility.playSound(sender, SoundType.CONFIRM);
 		
 		return true;
 	}
@@ -104,6 +109,9 @@ public class Kit {
 			target.getInventory().addItem(items.toArray(new ItemStack[items.size()]));
 			
 			ColourHandler.sendMessage(target, "&aYou recieved the kit '&f%s&a'!", kit);
+			
+			// play a sound
+			SoundUtility.playSound(target, SoundType.CONFIRM);
 		}
 		
 		return true;

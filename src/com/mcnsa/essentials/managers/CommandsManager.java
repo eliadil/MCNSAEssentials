@@ -20,6 +20,7 @@ import com.mcnsa.essentials.exceptions.EssentialsCommandException;
 import com.mcnsa.essentials.managers.ComponentManager.Component;
 import com.mcnsa.essentials.utilities.ColourHandler;
 import com.mcnsa.essentials.utilities.Logger;
+import com.mcnsa.essentials.utilities.SoundUtility;
 
 public class CommandsManager implements CommandExecutor {
 	// keep track of all known aliases we're using
@@ -494,10 +495,12 @@ public class CommandsManager implements CommandExecutor {
 				catch(Exception e) {					
 					if(e.getCause() instanceof EssentialsCommandException) {
 						ColourHandler.sendMessage(sender, "&c" + e.getCause().getMessage());
+						SoundUtility.errorSound(sender);
 						return true;
 					}
 					else {
 						ColourHandler.sendMessage(sender, "&cSomething went wrong! Alert an administrator!");
+						SoundUtility.errorSound(sender);
 						Logger.error("failed to execute command: " + label + " (" + e.getMessage() + ")");
 						e.printStackTrace();
 						return false;
@@ -520,6 +523,7 @@ public class CommandsManager implements CommandExecutor {
 			// inform them
 			if(!usage.equals("")) {
 				ColourHandler.sendMessage(sender, "&cInvalid command usage! Proper usage:");
+				SoundUtility.notifySound(sender);
 				ColourHandler.sendMessage(sender, usage);
 			}
 			else {
@@ -529,6 +533,7 @@ public class CommandsManager implements CommandExecutor {
 				if(!possibleUsage.equals("")) {
 					// found something maybe?
 					ColourHandler.sendMessage(sender, "&cInvalid command! Did you mean one of the following?");
+					SoundUtility.notifySound(sender);
 					ColourHandler.sendMessage(sender, possibleUsage);
 				}
 				else {
@@ -542,11 +547,13 @@ public class CommandsManager implements CommandExecutor {
 					else {
 						ColourHandler.sendMessage(sender, "&cInvalid command!");
 					}
+					SoundUtility.errorSound(sender);
 				}
 			}
 		}
 		else {
 			ColourHandler.sendMessage(sender, lastFailMessage);
+			SoundUtility.errorSound(sender);
 		}
 		return false;
 	}

@@ -15,6 +15,8 @@ import com.mcnsa.essentials.exceptions.EssentialsCommandException;
 import com.mcnsa.essentials.utilities.ColourHandler;
 import com.mcnsa.essentials.utilities.ItemSelector;
 import com.mcnsa.essentials.utilities.PlayerSelector;
+import com.mcnsa.essentials.utilities.SoundUtility;
+import com.mcnsa.essentials.utilities.SoundUtility.SoundType;
 
 @ComponentInfo(friendlyName = "Items",
 				description = "Allows easy giving and enchanting of items",
@@ -88,6 +90,9 @@ public class Items {
 			else {
 				ColourHandler.sendMessage(player, "&aHere's the head of " + headName + "!");
 			}
+			
+			// play a sound
+			SoundUtility.playSound(player, SoundType.CONFIRM);
 		}
 		
 		return true;
@@ -152,6 +157,9 @@ public class Items {
 			else {
 				ColourHandler.sendMessage(target, "&a%s gave you %d '&f%s&a'!", sender.getName(), number, item);
 			}
+			
+			// play a sound
+			SoundUtility.playSound(target, SoundType.CONFIRM);
 		}
 		
 		return true;

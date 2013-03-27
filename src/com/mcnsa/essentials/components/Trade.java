@@ -26,6 +26,7 @@ import com.mcnsa.essentials.annotations.ComponentInfo;
 import com.mcnsa.essentials.exceptions.EssentialsCommandException;
 import com.mcnsa.essentials.utilities.ColourHandler;
 import com.mcnsa.essentials.utilities.Logger;
+import com.mcnsa.essentials.utilities.SoundUtility;
 
 @ComponentInfo(friendlyName = "Trade",
 				description = "Allows safe trading between players",
@@ -70,7 +71,7 @@ public class Trade implements Listener {
 				slots.put(slotIDs[i], slotTypes[i]);
 				switch(slotTypes[i]) {
 				case WALL:
-					inventory.setItem(slotIDs[i], new ItemStack(Material.BEDROCK));
+					inventory.setItem(slotIDs[i], new ItemStack(Material.OBSIDIAN));
 					break;
 				case ACCEPT:
 					inventory.setItem(slotIDs[i], new ItemStack(Material.WOOL, 1, (short)14));
@@ -233,6 +234,10 @@ public class Trade implements Listener {
 			// send messages
 			ColourHandler.sendMessage(playerA, "&cYou completed the trade with %s!", playerB.getName());
 			ColourHandler.sendMessage(playerB, "&cYou completed the trade with %s!", playerA.getName());
+			
+			// play sounds
+			SoundUtility.confirmSound(playerA);
+			SoundUtility.confirmSound(playerB);
 		}
 		
 		public void setAccepted(Player target, boolean accepted) {
@@ -285,6 +290,10 @@ public class Trade implements Listener {
 				ColourHandler.sendMessage(playerB, "&cYou cancelled the trade with %s!", playerA.getName());
 				ColourHandler.sendMessage(playerA, "&c%s cancelled the trade with you!", playerB.getName());
 			}
+			
+			// play cancel sounds
+			SoundUtility.cancelSound(playerA);
+			SoundUtility.cancelSound(playerB);
 		}
 		
 		public boolean canPlaceItem(Player target, int slotID) {
@@ -409,7 +418,7 @@ public class Trade implements Listener {
 		if(!exchange.canPlaceItem(player, slotID)) {
 			cancelInventoryClick(event);
 			if(event.getCursor() != null) {
-				//Logger.debug("amount: %d", event.getCursor().getAmount());
+				SoundUtility.errorSound(player);
 				ColourHandler.sendMessage(player, "&cYou can't place items over there!");
 			}
 			return;
@@ -419,7 +428,6 @@ public class Trade implements Listener {
 		ItemStack currentStack = event.getCurrentItem();
 		ItemStack cursorStack = event.getCursor();
 		if(currentStack.getTypeId() == 0 && cursorStack.getTypeId() == 0) {
-			// TODO: necessary?
 			return;
 		}
 		
