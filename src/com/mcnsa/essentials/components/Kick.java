@@ -12,10 +12,10 @@ import com.mcnsa.essentials.annotations.DatabaseTableInfo;
 import com.mcnsa.essentials.enums.TabCompleteType;
 import com.mcnsa.essentials.exceptions.EssentialsCommandException;
 import com.mcnsa.essentials.interfaces.MultilineChatHandler;
+import com.mcnsa.essentials.managers.ConversationManager;
 import com.mcnsa.essentials.managers.DatabaseManager;
 import com.mcnsa.essentials.utilities.ColourHandler;
 import com.mcnsa.essentials.utilities.Logger;
-import com.mcnsa.essentials.utilities.MultilineChatEntry;
 import com.mcnsa.essentials.utilities.PlayerSelector;
 
 @ComponentInfo(friendlyName = "Kick",
@@ -98,18 +98,19 @@ public class Kick implements MultilineChatHandler {
 		}
 		
 		// call our multiline chat handler
-		MultilineChatEntry.scheduleMultilineTextEntry((Player)sender, instance, targetPlayers);
+		//MultilineChatEntry.scheduleMultilineTextEntry((Player)sender, instance, targetPlayers);
+		ConversationManager.startConversation(sender, instance, targetPlayers);
 		
 		return true;
 	}
 
 	@Override
-	public void onChatComplete(Player player, String reason, Object... playerList) throws EssentialsCommandException {
+	public void onChatComplete(CommandSender sender, String reason, Object... playerList) throws EssentialsCommandException {
 		// kick everyone on our list
 		@SuppressWarnings("unchecked")
 		ArrayList<Player> targetPlayers = (ArrayList<Player>)playerList[0];
 		
-		String playerName = player.getName();
+		String playerName = sender.getName();
 		String playerListString = "";
 		for(Player target: targetPlayers) {
 			// make sure the target still exists
@@ -130,9 +131,9 @@ public class Kick implements MultilineChatHandler {
 		}
 		
 		// send the message to the kicking player
-		if(player != null) {
-			ColourHandler.sendMessage(player, "&6You kicked the following people:");
-			ColourHandler.sendMessage(player, playerListString);
+		if(sender != null) {
+			ColourHandler.sendMessage(sender, "&6You kicked the following people:");
+			ColourHandler.sendMessage(sender, playerListString);
 		}
 	}
 }

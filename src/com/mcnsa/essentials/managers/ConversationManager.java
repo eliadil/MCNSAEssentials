@@ -10,18 +10,21 @@ import org.bukkit.conversations.ConversationAbandonedEvent;
 import org.bukkit.conversations.ConversationAbandonedListener;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.ConversationFactory;
+import org.bukkit.conversations.InactivityConversationCanceller;
 import org.bukkit.conversations.NullConversationPrefix;
 import org.bukkit.conversations.Prompt;
 import org.bukkit.conversations.StringPrompt;
-import org.bukkit.entity.Player;
 
 import com.mcnsa.essentials.MCNSAEssentials;
+import com.mcnsa.essentials.annotations.Setting;
 import com.mcnsa.essentials.exceptions.EssentialsCommandException;
 import com.mcnsa.essentials.interfaces.MultilineChatHandler;
 import com.mcnsa.essentials.utilities.ColourHandler;
 import com.mcnsa.essentials.utilities.Logger;
 
 public class ConversationManager implements ConversationAbandonedListener {
+	@Setting(node = "conversation-timeout-seconds") public static int conversationTimeoutSeconds = 30;
+	
 	// store our conversation builder
 	private static ConversationFactory factory = null;
 	
@@ -35,7 +38,9 @@ public class ConversationManager implements ConversationAbandonedListener {
 	public ConversationManager() {
 		// store our instance
 		instance = this;
-		
+	}
+	
+	public void load() {
 		Map<Object, Object> sessionData = new HashMap<Object, Object>();
 		sessionData.put("textInputs", new LinkedList<String>());
 
@@ -45,9 +50,10 @@ public class ConversationManager implements ConversationAbandonedListener {
 			.withPrefix(new NullConversationPrefix())
 			.withFirstPrompt(instance.new AddTextPrompt())
 			.withEscapeSequence("/cancel")
-			.withTimeout(10)
-			.addConversationAbandonedListener(instance)
-			.withInitialSessionData(sessionData);
+			.withTimeout(conversationTimeoutSeconds)
+			.withInitialSessionData(sessionData)
+			.withLocalEcho(false)
+			.addConversationAbandonedListener(instance);
 	}
 	
 	public static void startConversation(CommandSender sender, MultilineChatHandler handler, Object... args) throws EssentialsCommandException {
@@ -71,18 +77,42 @@ public class ConversationManager implements ConversationAbandonedListener {
 			// get our chat data
 			MultilineChatData chatData = chatters.get(event.getContext().getForWhom());
 			try {
-				chatData.handler.onChatComplete((Player)event.getContext().getForWhom(), "derp", chatData.args);
+				// get our text inputs
+				@SuppressWarnings("unchecked")
+				LinkedList<String> textInputs = (LinkedList<String>)event.getContext().getSessionData("textInputs");
+				
+				// compose our string
+				StringBuilder lines = new StringBuilder();
+				for(String line: textInputs) {
+					lines.append(line).append("\n");
+				}
+					
+				// call the event handler
+				CommandSender sender = (CommandSender)event.getContext().getForWhom();
+				chatData.handler.onChatComplete(sender,
+						lines.toString().trim(),
+						chatData.args);
 			}
 			catch (EssentialsCommandException e) {
+				// catch any errors
 				ColourHandler.sendMessage((CommandSender)event.getContext().getForWhom(), "&c" + e.getMessage());
 			}
 		}
 		else {
 			Logger.debug("Conversation was abandoned by: %s", event.getCanceller().getClass().getName());
+			if(event.getCanceller() instanceof InactivityConversationCanceller) {
+				event.getContext().getForWhom().sendRawMessage(ColourHandler.processColours("&cYour text entry timed out!"));
+			}
+			else {
+				event.getContext().getForWhom().sendRawMessage(ColourHandler.processColours("&cYour text entry was cancelled!"));
+			}
 		}
 		
 		// remove us from the chatter list
 		chatters.remove(event.getContext().getForWhom());
+		
+		// remove our session data
+		event.getContext().setSessionData("textInputs", new LinkedList<String>());
 	}
 	
 	private class AddTextPrompt extends StringPrompt {

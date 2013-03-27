@@ -21,10 +21,10 @@ import com.mcnsa.essentials.annotations.DatabaseTableInfo;
 import com.mcnsa.essentials.enums.TabCompleteType;
 import com.mcnsa.essentials.exceptions.EssentialsCommandException;
 import com.mcnsa.essentials.interfaces.MultilineChatHandler;
+import com.mcnsa.essentials.managers.ConversationManager;
 import com.mcnsa.essentials.managers.DatabaseManager;
 import com.mcnsa.essentials.utilities.ColourHandler;
 import com.mcnsa.essentials.utilities.IPUtilities;
-import com.mcnsa.essentials.utilities.MultilineChatEntry;
 import com.mcnsa.essentials.utilities.PlayerSelector;
 
 @ComponentInfo(friendlyName = "Ban",
@@ -146,7 +146,7 @@ public class Ban implements Listener, MultilineChatHandler {
 
 	// multiline chat handler
 	@Override
-	public void onChatComplete(Player player, String reason, Object... args) throws EssentialsCommandException {
+	public void onChatComplete(CommandSender sender, String reason, Object... args) throws EssentialsCommandException {
 		// determine whether we're banning or unbanning
 		if(args.length == 2) {
 			// banning
@@ -168,7 +168,7 @@ public class Ban implements Listener, MultilineChatHandler {
 					
 					// ok, they're there.
 					// ban them.
-					ban(target, player, reason, expiry);
+					ban(target, sender, reason, expiry);
 				}
 			}
 			else if(args[0] instanceof InetAddress) {
@@ -179,7 +179,7 @@ public class Ban implements Listener, MultilineChatHandler {
 				Timestamp expiry = (Timestamp)args[1];
 				
 				// ban them
-				banIP(IP, player, reason, expiry);
+				banIP(IP, sender, reason, expiry);
 			}
 			else {
 				throw new EssentialsCommandException("Something went wrong, please contact an administrator!");
@@ -193,11 +193,11 @@ public class Ban implements Listener, MultilineChatHandler {
 				String targetPlayer = (String)args[0];
 				
 				// unban them
-				unban(targetPlayer, player, reason);
+				unban(targetPlayer, sender, reason);
 			}
 			else if(args[0] instanceof InetAddress) {
 				InetAddress IP = (InetAddress)args[0];
-				unban(IP.toString(), player, reason);
+				unban(IP.toString(), sender, reason);
 			}
 			else {
 				throw new EssentialsCommandException("Something went wrong, please contact an administrator!");
@@ -280,7 +280,8 @@ public class Ban implements Listener, MultilineChatHandler {
 		}
 		
 		// call our multiline chat handler
-		MultilineChatEntry.scheduleMultilineTextEntry((Player)sender, instance, targetPlayers, expiryTimestamp);
+		//MultilineChatEntry.scheduleMultilineTextEntry((Player)sender, instance, targetPlayers, expiryTimestamp);
+		ConversationManager.startConversation(sender, instance, targetPlayers, expiryTimestamp);
 		
 		return true;
 	}
@@ -370,7 +371,8 @@ public class Ban implements Listener, MultilineChatHandler {
 		}
 		
 		// call our multiline chat handler
-		MultilineChatEntry.scheduleMultilineTextEntry((Player)sender, instance, IP, expiryTimestamp);
+		//MultilineChatEntry.scheduleMultilineTextEntry((Player)sender, instance, IP, expiryTimestamp);
+		ConversationManager.startConversation(sender, instance, IP, expiryTimestamp);
 		
 		return true;
 	}
@@ -424,7 +426,8 @@ public class Ban implements Listener, MultilineChatHandler {
 			permissions = {"unban"},
 			playerOnly = true)
 	public static boolean unban(CommandSender sender, String targetPlayer) throws EssentialsCommandException {
-		MultilineChatEntry.scheduleMultilineTextEntry((Player)sender, instance, targetPlayer);
+		//MultilineChatEntry.scheduleMultilineTextEntry((Player)sender, instance, targetPlayer);
+		ConversationManager.startConversation(sender, instance, targetPlayer);
 		return true;
 	}
 	@Command(command = "unban",
@@ -456,7 +459,8 @@ public class Ban implements Listener, MultilineChatHandler {
 			throw new EssentialsCommandException(e.getMessage());
 		}
 		
-		MultilineChatEntry.scheduleMultilineTextEntry((Player)sender, instance, IP);
+		//MultilineChatEntry.scheduleMultilineTextEntry((Player)sender, instance, IP);
+		ConversationManager.startConversation(sender, instance, IP);
 		return true;
 	}
 	@Command(command = "unbanip",

@@ -20,10 +20,10 @@ import com.mcnsa.essentials.annotations.Setting;
 import com.mcnsa.essentials.enums.TabCompleteType;
 import com.mcnsa.essentials.exceptions.EssentialsCommandException;
 import com.mcnsa.essentials.interfaces.MultilineChatHandler;
+import com.mcnsa.essentials.managers.ConversationManager;
 import com.mcnsa.essentials.managers.DatabaseManager;
 import com.mcnsa.essentials.managers.PermissionsManager;
 import com.mcnsa.essentials.utilities.ColourHandler;
-import com.mcnsa.essentials.utilities.MultilineChatEntry;
 import com.mcnsa.essentials.utilities.PlayerSelector;
 
 @ComponentInfo(friendlyName = "Rank",
@@ -181,7 +181,8 @@ public class Rank implements MultilineChatHandler {
 		}
 		
 		// call our multiline chat handler
-		MultilineChatEntry.scheduleMultilineTextEntry((Player)sender, instance, targetPlayers, RankAction.PROMOTE);
+		//MultilineChatEntry.scheduleMultilineTextEntry((Player)sender, instance, targetPlayers, RankAction.PROMOTE);
+		ConversationManager.startConversation(sender, instance, targetPlayers, RankAction.PROMOTE);
 		
 		return true;
 	}
@@ -238,7 +239,8 @@ public class Rank implements MultilineChatHandler {
 		}
 		
 		// call our multiline chat handler
-		MultilineChatEntry.scheduleMultilineTextEntry((Player)sender, instance, targetPlayers, RankAction.DEMOTE);
+		//MultilineChatEntry.scheduleMultilineTextEntry((Player)sender, instance, targetPlayers, RankAction.DEMOTE);
+		ConversationManager.startConversation(sender, instance, targetPlayers, RankAction.DEMOTE);
 		
 		return true;
 	}
@@ -295,7 +297,8 @@ public class Rank implements MultilineChatHandler {
 		}
 		
 		// call our multiline chat handler
-		MultilineChatEntry.scheduleMultilineTextEntry((Player)sender, instance, targetPlayers, RankAction.HOTDOG);
+		//MultilineChatEntry.scheduleMultilineTextEntry((Player)sender, instance, targetPlayers, RankAction.HOTDOG);
+		ConversationManager.startConversation(sender, instance, targetPlayers, RankAction.HOTDOG);
 		
 		return true;
 	}
@@ -331,7 +334,7 @@ public class Rank implements MultilineChatHandler {
 	}
 
 	@Override
-	public void onChatComplete(Player player, String enteredText, Object... args) throws EssentialsCommandException {
+	public void onChatComplete(CommandSender sender, String enteredText, Object... args) throws EssentialsCommandException {
 		RankAction action = (RankAction)args[1];
 		
 		@SuppressWarnings("unchecked")
@@ -344,13 +347,13 @@ public class Rank implements MultilineChatHandler {
 			
 			switch(action) {
 			case PROMOTE:
-				promote(player, target, enteredText);
+				promote(sender, target, enteredText);
 				break;
 			case DEMOTE:
-				demote(player, target, enteredText);
+				demote(sender, target, enteredText);
 				break;
 			case HOTDOG:
-				hotdog(player, target, enteredText);
+				hotdog(sender, target, enteredText);
 				break;
 			}
 		}

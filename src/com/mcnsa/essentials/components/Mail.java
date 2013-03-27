@@ -21,10 +21,10 @@ import com.mcnsa.essentials.annotations.Setting;
 import com.mcnsa.essentials.enums.TabCompleteType;
 import com.mcnsa.essentials.exceptions.EssentialsCommandException;
 import com.mcnsa.essentials.interfaces.MultilineChatHandler;
+import com.mcnsa.essentials.managers.ConversationManager;
 import com.mcnsa.essentials.managers.DatabaseManager;
 import com.mcnsa.essentials.runnables.MailTimerTask;
 import com.mcnsa.essentials.utilities.ColourHandler;
-import com.mcnsa.essentials.utilities.MultilineChatEntry;
 import com.mcnsa.essentials.utilities.PlayerSelector;
 
 @ComponentInfo(friendlyName = "Mail",
@@ -175,13 +175,14 @@ public class Mail implements Listener, MultilineChatHandler {
 		}
 		
 		// call our multiline chat handler
-		MultilineChatEntry.scheduleMultilineTextEntry((Player)sender, instance, targetPlayers, subject);
+		//MultilineChatEntry.scheduleMultilineTextEntry((Player)sender, instance, targetPlayers, subject);
+		ConversationManager.startConversation(sender, instance, targetPlayers, subject);
 		
 		return true;
 	}
 
 	@Override
-	public void onChatComplete(Player player, String contents, Object... args) throws EssentialsCommandException {
+	public void onChatComplete(CommandSender sender, String contents, Object... args) throws EssentialsCommandException {
 		// get our arguments back
 		@SuppressWarnings("unchecked")
 		ArrayList<Player> targetPlayers = (ArrayList<Player>)args[0];
@@ -193,7 +194,7 @@ public class Mail implements Listener, MultilineChatHandler {
 			int results = DatabaseManager.updateQuery(
 					"insert into mail (id, recipient, sender, date, subject, contents, unread) values (NULL, ?, ?, ?, ?, ?, ?);",
 					target.getName(),
-					player.getName(),
+					sender.getName(),
 					new Timestamp(System.currentTimeMillis()),
 					subject,
 					contents,
@@ -205,8 +206,8 @@ public class Mail implements Listener, MultilineChatHandler {
 			}
 			
 			// alert the people
-			ColourHandler.sendMessage(player, "&aYour message has been delivered to %s!", target.getName());
-			ColourHandler.sendMessage(target, "&aYou have new mail from %s!", player.getName());
+			ColourHandler.sendMessage(sender, "&aYour message has been delivered to %s!", target.getName());
+			ColourHandler.sendMessage(target, "&aYou have new mail from %s!", sender.getName());
 		}
 	}
 }

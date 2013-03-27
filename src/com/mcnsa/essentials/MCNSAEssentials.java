@@ -8,6 +8,7 @@ import com.mcnsa.essentials.interfaces.DisableHandler;
 import com.mcnsa.essentials.managers.ComponentManager;
 import com.mcnsa.essentials.managers.CommandsManager;
 import com.mcnsa.essentials.managers.ConfigurationManager;
+import com.mcnsa.essentials.managers.ConversationManager;
 import com.mcnsa.essentials.managers.DatabaseManager;
 import com.mcnsa.essentials.managers.InformationManager;
 import com.mcnsa.essentials.managers.PermissionsManager;
@@ -15,23 +16,20 @@ import com.mcnsa.essentials.managers.TranslationManager;
 import com.mcnsa.essentials.utilities.ColourHandler;
 import com.mcnsa.essentials.utilities.ItemSelector;
 import com.mcnsa.essentials.utilities.Logger;
-import com.mcnsa.essentials.utilities.MultilineChatEntry;
 
 public class MCNSAEssentials extends JavaPlugin {	
 	// keep track of ourself
 	static MCNSAEssentials instance = null;
 	
-	// our manager
+	// our managers
 	PermissionsManager permissionsManager = null;
 	ComponentManager componentManager = null;
 	ConfigurationManager configurationManager = null;
 	TranslationManager translationManager = null;
 	CommandsManager commandsManager = null;
+	ConversationManager conversationManager = null;
 	InformationManager informationManager = null;
 	DatabaseManager databaseManager = null;
-	
-	// our multiline chat entry handler
-	MultilineChatEntry multilineChatEntry = null;
 	
 	public MCNSAEssentials() {
 		instance = this;
@@ -50,12 +48,12 @@ public class MCNSAEssentials extends JavaPlugin {
 		
 		// initialize our commands manager, loading commands in the process
 		commandsManager = new CommandsManager();
+		
+		// load our conversation manager
+		conversationManager = new ConversationManager();
 
 		// initialize our database manager
 		databaseManager = new DatabaseManager();
-		
-		// initialize our chat handler
-		multilineChatEntry = new MultilineChatEntry();
 		
 		// now load all our class's settings
 		configurationManager.loadSettings(componentManager);
@@ -70,6 +68,9 @@ public class MCNSAEssentials extends JavaPlugin {
 		
 		// load our commands
 		commandsManager.loadCommands(componentManager);
+		
+		// initialize our conversations
+		conversationManager.load();
 		
 		// load our command information
 		informationManager = new InformationManager(componentManager);

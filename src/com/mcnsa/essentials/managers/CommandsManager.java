@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -585,7 +586,7 @@ public class CommandsManager implements TabExecutor {
 		}
 		
 		// find all our possibilities
-		LinkedList<String> possibleArguments = new LinkedList<String>();
+		LinkedHashSet<String> possibleArguments = new LinkedHashSet<String>();
 		for(String registrationToken: registeredCommands.keySet()) {
 			// get the registration parts to find our command
 			String[] registrationParts = registrationToken.split(":");
@@ -704,6 +705,9 @@ public class CommandsManager implements TabExecutor {
 					break;
 
 				case NUMBER:
+					possibleArguments.add("1");
+					break;
+					
 				case STRING:
 					possibleArguments.add("<" + registeredCommands.get(registrationToken).command.arguments()[argumentCount - 1].replaceAll("\\s+", "_") + ">");
 					break;
@@ -729,6 +733,11 @@ public class CommandsManager implements TabExecutor {
 			}
 		}
 		
-		return possibleArguments;
+		// remoce duplicates
+		LinkedList<String> resultingList = new LinkedList<String>();
+		for(String arg: possibleArguments) {
+			resultingList.add(arg);
+		}
+		return resultingList;
 	}
 }
