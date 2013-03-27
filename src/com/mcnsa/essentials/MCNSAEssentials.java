@@ -1,7 +1,10 @@
 package com.mcnsa.essentials;
 
+import java.util.LinkedList;
+
 import org.bukkit.plugin.java.JavaPlugin;
 
+import com.mcnsa.essentials.interfaces.DisableHandler;
 import com.mcnsa.essentials.managers.ComponentManager;
 import com.mcnsa.essentials.managers.CommandsManager;
 import com.mcnsa.essentials.managers.ConfigurationManager;
@@ -86,16 +89,23 @@ public class MCNSAEssentials extends JavaPlugin {
 	
 	public void onDisable() {
 		// shutdown
-		try {
-			databaseManager.disable();
-		}
-		catch(Exception e) {
-			Logger.error("Failed to disable database manager (%s)!", e.getMessage());
+		for(DisableHandler disable: disableHandlers) {
+			try {
+				disable.onDisable();
+			}
+			catch(Exception e) {
+				Logger.error("Failed to disable clazz %s (%s)!", disable.getClass().getSimpleName(), e.getMessage());
+			}
 		}
 		Logger.log("&6Plugin disabled");
 	}
 	
 	public static MCNSAEssentials getInstance() {
 		return instance;
+	}
+	
+	private static LinkedList<DisableHandler> disableHandlers = new LinkedList<DisableHandler>();
+	public static void registerDisable(DisableHandler handler) {
+		disableHandlers.add(handler);
 	}
 }

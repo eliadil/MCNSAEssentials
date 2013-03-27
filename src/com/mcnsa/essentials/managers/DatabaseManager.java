@@ -11,15 +11,17 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
+import com.mcnsa.essentials.MCNSAEssentials;
 import com.mcnsa.essentials.annotations.DatabaseTableInfo;
 import com.mcnsa.essentials.annotations.Setting;
 import com.mcnsa.essentials.exceptions.EssentialsCommandException;
 import com.mcnsa.essentials.exceptions.EssentialsDatabaseException;
+import com.mcnsa.essentials.interfaces.DisableHandler;
 import com.mcnsa.essentials.utilities.Logger;
 
 // http://zetcode.com/db/mysqljava/
 
-public class DatabaseManager {	
+public class DatabaseManager implements DisableHandler {	
 	// our connection settings
 	@Setting(node = "database.url") public static String url = "jdbc:mysql://localhost/mcnsa";
 	@Setting(node = "database.username") public static String user = "mcnsa";
@@ -47,9 +49,13 @@ public class DatabaseManager {
 			Logger.warning("You won't be able to use any commands that utilize the database!");
 			disconnect();
 		}
+		
+		// register our disable handler
+		MCNSAEssentials.registerDisable(this);
 	}
 	
-	public void disable() {
+	@Override
+	public void onDisable() {
 		disconnect();
 	}
 	

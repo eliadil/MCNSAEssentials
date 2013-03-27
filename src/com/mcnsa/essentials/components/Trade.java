@@ -14,6 +14,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.Event.Result;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
@@ -23,15 +24,43 @@ import org.bukkit.metadata.MetadataValue;
 import com.mcnsa.essentials.MCNSAEssentials;
 import com.mcnsa.essentials.annotations.Command;
 import com.mcnsa.essentials.annotations.ComponentInfo;
+import com.mcnsa.essentials.annotations.Setting;
 import com.mcnsa.essentials.exceptions.EssentialsCommandException;
+import com.mcnsa.essentials.interfaces.DisableHandler;
 import com.mcnsa.essentials.utilities.ColourHandler;
-import com.mcnsa.essentials.utilities.Logger;
 import com.mcnsa.essentials.utilities.SoundUtility;
 
 @ComponentInfo(friendlyName = "Trade",
 				description = "Allows safe trading between players",
 				permsSettingsPrefix = "trade")
-public class Trade implements Listener {
+public class Trade implements Listener, DisableHandler {
+	@Setting(node = "max-trade-distance") public static float maxTradeDistance = 500;
+	
+	// TODO: bug checking (especially duping)
+	
+	private static Trade instance = null;
+	public Trade() {
+		instance = this;
+		
+		// register our events
+		Bukkit.getServer().getPluginManager().registerEvents(this, MCNSAEssentials.getInstance());
+		
+		// register our disable handler
+		MCNSAEssentials.registerDisable(this);
+	}
+	
+	@Override
+	public void onDisable() {
+		// get all online players that are trading
+		for(Player player: Bukkit.getServer().getOnlinePlayers()) {
+			// if they're in an exchange, close the exchange
+			if(player.hasMetadata("tradeExchange")) {
+				TradeExchange exchange = getExchange(player);
+				exchange.shutdown();
+			}
+		}
+	}
+	
 	private enum SlotType { WALL, ACCEPT, REVOKE, STATUS, TRADEABLE };
 	// define our actual trade window here
 	public class TradeInventoryHolder implements InventoryHolder {
@@ -296,6 +325,28 @@ public class Trade implements Listener {
 			SoundUtility.cancelSound(playerB);
 		}
 		
+		public void shutdown() {
+			// take all items back
+			holderA.revokeItems(false);
+			holderB.revokeItems(false);
+			
+			// close the inventories
+			playerA.closeInventory();
+			playerB.closeInventory();
+			
+			// and clear both players of their trading metadata
+			playerA.removeMetadata("tradeExchange", MCNSAEssentials.getInstance());
+			playerB.removeMetadata("tradeExchange", MCNSAEssentials.getInstance());
+			
+			// send messages
+			ColourHandler.sendMessage(playerA, "&cThe trade was interrupted!");
+			ColourHandler.sendMessage(playerB, "&cThe trade was interrupted!");
+			
+			// play cancel sounds
+			SoundUtility.cancelSound(playerA);
+			SoundUtility.cancelSound(playerB);
+		}
+		
 		public boolean canPlaceItem(Player target, int slotID) {
 			if(target.equals(playerA)) {
 				return holderA.canPlaceThere(slotID);
@@ -321,14 +372,6 @@ public class Trade implements Listener {
 			holderA.setStatus(false);
 			holderB.setStatus(false);
 		}
-	}
-	
-	private static Trade instance = null;
-	public Trade() {
-		instance = this;
-		
-		// register our events
-		Bukkit.getServer().getPluginManager().registerEvents(this, MCNSAEssentials.getInstance());
 	}
 	
 	// utility function to access the current trade exchange for a player
@@ -376,40 +419,32 @@ public class Trade implements Listener {
 		// TODO: deal with shift-clicks
 		// cancel shift clicks
 		if(event.isShiftClick()) {
-			Logger.debug("shift click");
 			cancelInventoryClick(event);
 		}
 		
 		// make sure we're clicking in our zone (not the player's inventory)
 		int slotID = event.getRawSlot();
-		Logger.debug("slotID: %d", slotID);
 		if(slotID >= 54 || slotID < 0) {
-			Logger.debug("slotID >= 54 || slotID < 0, cancelling");
 			return;
 		}
 		
 		// deal with UI clicks
 		switch(exchange.holderA.getSlotType(slotID)) {
 		case WALL:
-			Logger.debug("wall");
 			cancelInventoryClick(event);
 			return;
 			
 		case ACCEPT:
-			Logger.debug("accept");
 			exchange.setAccepted(player, !exchange.getAccepted(player));
 			cancelInventoryClick(event);
 			return;
 			
 		case REVOKE:
-			Logger.debug("revoke");
-			Logger.debug("%s revokes!", player.getName());
 			exchange.revoke(player);
 			cancelInventoryClick(event);
 			return;
 			
 		case STATUS:
-			Logger.debug("status");
 			cancelInventoryClick(event);
 			return;
 		}
@@ -489,6 +524,22 @@ public class Trade implements Listener {
 		// cancel the exchange
 		exchange.cancelTrade(player);
 	}
+	
+	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+	public void onPlayerRightClick(PlayerInteractEntityEvent event) throws EssentialsCommandException {
+		// make sure we click on a player
+		if(!(event.getRightClicked() instanceof Player)) {
+			return;
+		}
+		
+		// make sure the player is sneaking
+		if(!event.getPlayer().isSneaking()) {
+			return;
+		}
+		
+		// ok, request the trade
+		requestTrade(event.getPlayer(), (Player)event.getRightClicked());
+	}
 
 	public static void openTradeWindow(Player playerA, Player playerB) {
 		// create an inventory
@@ -509,6 +560,133 @@ public class Trade implements Listener {
 		// make each player open their inventory
 		playerA.openInventory(tradeInventoryA.getInventory());
 		playerB.openInventory(tradeInventoryB.getInventory());
+		
+		// send some alerts
+		ColourHandler.sendMessage(playerA, "&aYou are now trading with %s!", playerB.getName());
+		ColourHandler.sendMessage(playerB, "&aYou are now trading with %s!", playerA.getName());
+		
+		// play some sounds
+		SoundUtility.notifySound(playerA);
+		SoundUtility.notifySound(playerB);
+	}
+	
+	public static boolean isRequestingTradeFrom(Player target, Player from) {
+		LinkedList<Player> tradeRequesters = getTradeRequesters(from);
+		
+		// check our target against our trade requesters
+		if(!tradeRequesters.contains(target)) {
+			return false;
+		}
+		
+		// yup!
+		return true;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static LinkedList<Player> getTradeRequesters(Player player) {
+		// get our metadata
+		List<MetadataValue> mvl = player.getMetadata("tradeRequests");
+		if(mvl.size() != 1) {
+			return new LinkedList<Player>();
+		}
+		
+		// get a list of our trade requesters
+		return (LinkedList<Player>)mvl.get(0).value();
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static void requestTrade(Player player, Player target) throws EssentialsCommandException {
+		// check for ignoring trade requests
+		if(target.hasMetadata("ignoreTradeRequests")) {
+			throw new EssentialsCommandException("%s is ignoring all trade requests right now!", target.getName());
+		}
+		
+		// make sure they're within a radius
+		if(maxTradeDistance > 0 && player.getLocation().distance(target.getLocation()) > maxTradeDistance) {
+			throw new EssentialsCommandException("%s is too far away to trade with! (Must be within %d blocks!)",
+					target.getName(),
+					(int)maxTradeDistance);
+		}
+		
+		// check to see if they have requested a trade with us
+		if(isRequestingTradeFrom(target, player)) {
+			// yup, they have already requested a trade from us
+			// just do the trade
+			openTradeWindow(player, target);
+			
+			// and remove the request from the other player
+			LinkedList<Player> tradeRequesters = getTradeRequesters(player);
+			tradeRequesters.remove(target);
+			player.setMetadata("tradeRequests", new FixedMetadataValue(MCNSAEssentials.getInstance(), tradeRequesters));
+			
+			return;
+		}
+		
+		// ok, initiate the trade request
+		LinkedList<Player> requesters = new LinkedList<Player>();
+		if(target.hasMetadata("tradeRequests")) {
+			requesters = (LinkedList<Player>)target.getMetadata("tradeRequests").get(0).value();
+		}
+		// add our request
+		requesters.add(player);
+		// set the metadata
+		target.setMetadata("tradeRequests", new FixedMetadataValue(MCNSAEssentials.getInstance(), requesters));
+		
+		// inform the players
+		ColourHandler.sendMessage(player, "&aYour trade request has been sent to %s!", target.getName());
+		ColourHandler.sendMessage(target, "&3You have recieved a trade request from %s! Use /tradeaccept to accept their request!", player.getName());
+		
+		// play some sounds
+		SoundUtility.confirmSound(player);
+		SoundUtility.notifySound(target);
+	}
+	
+	@Command(command = "tradeaccept",
+			aliases = {"at", "accepttrade"},
+			arguments = {"player name"},
+			description = "accepts a trade accept",
+			permissions = "accept",
+			playerOnly = true)
+	public static boolean acceptTrade(CommandSender sender, String targetPlayer) throws EssentialsCommandException {
+		// get our player
+		Player player = (Player)sender;
+		
+		// try to get our our target player for trade
+		if(!player.hasMetadata("tradeRequests")) {
+			// we don't have any trade requests
+			throw new EssentialsCommandException("You don't have any pending trade requests!");
+		}
+
+		Player target = Bukkit.getServer().getPlayer(targetPlayer);
+		if(target == null) {
+			throw new EssentialsCommandException("I couldn't find the player '%s'!", targetPlayer);
+		}
+		
+		if(!isRequestingTradeFrom(target, player)) {
+			throw new EssentialsCommandException("You don't have any pending trade requests from '%s'!", target.getName());
+		}
+		
+		// make sure our target isn't currently trading
+		if(target.hasMetadata("tradeExchange")) {
+			throw new EssentialsCommandException("%s is currently in a trade, please wait until they're complete!", target.getName());
+		}
+		
+		// make sure they're within a radius
+		if(maxTradeDistance > 0 && player.getLocation().distance(target.getLocation()) > maxTradeDistance) {
+			throw new EssentialsCommandException("%s is too far away to trade with! (Must be within %d blocks!)",
+					target.getName(),
+					(int)maxTradeDistance);
+		}
+		
+		// ok, remove the trade requester
+		LinkedList<Player> tradeRequesters = getTradeRequesters(player);
+		tradeRequesters.remove(target);
+		player.setMetadata("tradeRequests", new FixedMetadataValue(MCNSAEssentials.getInstance(), tradeRequesters));
+		
+		// and start the trade
+		openTradeWindow(player, target);
+		
+		return true;
 	}
 	
 	@Command(command = "trade",
@@ -526,14 +704,70 @@ public class Trade implements Listener {
 			throw new EssentialsCommandException("I couldn't find the player '%s'!", targetPlayer);
 		}
 		
-		// TODO: trading radius
-		// TODO: trade requests (request trade, ability to cancel trade request, ignore trade requests)
-		// TODO: ability to right-click on players to trade them
-		// TODO: bug checking (especially duping)
-		// TODO: register an event for this plugin getting disabled, so we can shut down any trades
+		requestTrade(player, target);
 		
-		// ok, make them trade
-		openTradeWindow(player, target);
+		return true;
+	}
+	
+	@Command(command = "traderequests",
+			aliases = {"tr", "trades"},
+			description = "lists your pending trade requests",
+			permissions = "listrequests",
+			playerOnly = true)
+	public static boolean listTradeRequests(CommandSender sender) throws EssentialsCommandException {
+		// get our player
+		Player player = (Player)sender;
+		
+		// get our metadata
+		List<MetadataValue> mvl = player.getMetadata("tradeRequests");
+		if(mvl.size() != 1) {
+			// we don't have any trade requests
+			throw new EssentialsCommandException("You don't have any pending trade requests!");
+		}
+		
+		// get a list of our trade requesters
+		@SuppressWarnings("unchecked")
+		LinkedList<Player> tradeRequesters = (LinkedList<Player>)mvl.get(0).value();
+		
+		// and display them
+		StringBuilder playerList = new StringBuilder();
+		for(Player requester: tradeRequesters) {
+			if(!playerList.toString().equals("")) {
+				playerList.append("&a, ");
+			}
+			playerList.append("&f").append(requester.getName());
+		}
+		ColourHandler.sendMessage(sender, "&aYou currently have trade requests from: %s", playerList.toString());
+		
+		return true;
+	}
+	
+	@Command(command = "ignoretrades",
+			aliases = {"it"},
+			description = "ignores trade requests (toggle)",
+			permissions = "ignorerequests",
+			playerOnly = true)
+	public static boolean ignoreTradeRequests(CommandSender sender) throws EssentialsCommandException {
+		// get our player
+		Player player = (Player)sender;
+		
+		// determine if they're already ignoring requests or not
+		boolean ignore = true;
+		if(player.hasMetadata("ignoreTradeRequests")) {
+			ignore = false;
+		}
+		
+		// change it up
+		if(ignore) {
+			player.setMetadata("ignoreTradeRequests", new FixedMetadataValue(MCNSAEssentials.getInstance(), ignore));
+			ColourHandler.sendMessage(sender, "&aYou are now &lignoring &r&atrade requests");
+		}
+		else {
+			player.removeMetadata("ignoreTradeRequests", MCNSAEssentials.getInstance());
+			ColourHandler.sendMessage(sender, "&aYou are now &laccepting &r&atrade requests");
+		}
+		
+		SoundUtility.confirmSound(sender);
 		
 		return true;
 	}
