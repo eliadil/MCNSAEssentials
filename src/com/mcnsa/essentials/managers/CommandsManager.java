@@ -7,11 +7,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandMap;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
+import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.MetadataValue;
 
@@ -22,7 +26,7 @@ import com.mcnsa.essentials.utilities.ColourHandler;
 import com.mcnsa.essentials.utilities.Logger;
 import com.mcnsa.essentials.utilities.SoundUtility;
 
-public class CommandsManager implements CommandExecutor {
+public class CommandsManager implements TabExecutor {
 	// keep track of all known aliases we're using
 	private HashSet<String> knownAliases = new HashSet<String>();
 	
@@ -30,6 +34,9 @@ public class CommandsManager implements CommandExecutor {
 	public class EssentialsCommand extends org.bukkit.command.Command {
 		// keep track of our command executor
 		private CommandExecutor commandExecutor = null;
+		
+		// and tab completor
+		private TabCompleter tabCompleter = null;
 		
 		// just call our default constructor
 		protected EssentialsCommand(String name) {
@@ -40,13 +47,23 @@ public class CommandsManager implements CommandExecutor {
 		public boolean execute(CommandSender sender, String commandLabel, String[] args) {
 			if(commandExecutor != null) {
 				// execute the command!
-				commandExecutor.onCommand(sender, this, commandLabel, args);
+				return commandExecutor.onCommand(sender, this, commandLabel, args);
 			}
 			return false;
+		}
+		
+		@Override
+		public List<String> tabComplete(CommandSender sender, String label, String args[])
+				throws IllegalArgumentException {
+			return tabCompleter.onTabComplete(sender, this, label, args);
 		}
 
 		public void setExecutor(CommandExecutor commandExecutor) {
 			this.commandExecutor = commandExecutor;
+		}
+		
+		public void setCompleter(TabCompleter tabCompleter) {
+			this.tabCompleter = tabCompleter;
 		}
 	}
 	
@@ -105,6 +122,8 @@ public class CommandsManager implements CommandExecutor {
 				essentialsCommand.register(commandMap);
 				// set our new command's executor to be this class
 				essentialsCommand.setExecutor(this);
+				// and set our tab completor as well
+				essentialsCommand.setCompleter(this);
 			}
 			
 			// restore our commandMap to its former glory
@@ -340,10 +359,6 @@ public class CommandsManager implements CommandExecutor {
 			label = aliasMapping.get(label);
 		}
 		
-		/*for(String registrationToken: registeredCommands.keySet()) {
-			MCNSAEssentials.debug("possible registration: " + registrationToken);
-		}*/
-		
 		// find all our possibilities
 		String lastFailMessage = "";
 		for(String registrationToken: registeredCommands.keySet()) {
@@ -556,5 +571,39 @@ public class CommandsManager implements CommandExecutor {
 			SoundUtility.errorSound(sender);
 		}
 		return false;
+	}
+
+	@Override
+	public List<String> onTabComplete(CommandSender sender, org.bukkit.command.Command command, String label, String[] args) {
+		// handle aliases
+		if(aliasMapping.containsKey(label)) {
+			label = aliasMapping.get(label);
+		}
+		
+		// find all our possibilities
+		LinkedList<String> possibleArguments = new LinkedList<String>();
+		for(String registrationToken: registeredCommands.keySet()) {
+			// get the registration parts to find our command
+			String[] registrationParts = registrationToken.split(":");
+			if(!registrationParts[0].equals(label)) {
+				// not our command, continue
+				continue;
+			}
+			
+			// get our argument count
+			int argumentCount = args.length;
+			
+			// only allow commands that have at least as many arguments as the user provided
+			if(registeredCommands.get(registrationToken).command.arguments().length < argumentCount) {
+				continue;
+			}
+			
+			// TODO: better linting based on variable types, etc
+			
+			// add it
+			possibleArguments.add("<" + registeredCommands.get(registrationToken).command.arguments()[argumentCount - 1].replaceAll("\\s+", "_") + ">");
+		}
+		
+		return possibleArguments;
 	}
 }
