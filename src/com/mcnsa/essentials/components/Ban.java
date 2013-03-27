@@ -18,6 +18,7 @@ import com.mcnsa.essentials.MCNSAEssentials;
 import com.mcnsa.essentials.annotations.Command;
 import com.mcnsa.essentials.annotations.ComponentInfo;
 import com.mcnsa.essentials.annotations.DatabaseTableInfo;
+import com.mcnsa.essentials.enums.TabCompleteType;
 import com.mcnsa.essentials.exceptions.EssentialsCommandException;
 import com.mcnsa.essentials.interfaces.MultilineChatHandler;
 import com.mcnsa.essentials.managers.DatabaseManager;
@@ -246,6 +247,7 @@ public class Ban implements Listener, MultilineChatHandler {
 	// commands
 	@Command(command = "ban",
 			arguments = {"target player[s]"},
+			tabCompletions = {TabCompleteType.PLAYER},
 			description = "bans the target player[s] for the given reason",
 			permissions = {"ban.forever"},
 			playerOnly = true)
@@ -255,6 +257,7 @@ public class Ban implements Listener, MultilineChatHandler {
 	
 	@Command(command = "ban",
 			arguments = {"target player[s]", "expiry date"},
+			tabCompletions = {TabCompleteType.PLAYER, TabCompleteType.DATE},
 			description = "bans the target player[s] for the given reason until the expiry date",
 			permissions = {"ban.expiry"},
 			playerOnly = true)
@@ -283,6 +286,7 @@ public class Ban implements Listener, MultilineChatHandler {
 	}
 	@Command(command = "ban",
 			arguments = {"target player[s]"},
+			tabCompletions = {TabCompleteType.PLAYER},
 			description = "bans the target player[s]",
 			permissions = {"ban.forever"},
 			consoleOnly = true)
@@ -292,6 +296,7 @@ public class Ban implements Listener, MultilineChatHandler {
 	
 	@Command(command = "ban",
 			arguments = {"target player[s]", "expiry date"},
+			tabCompletions = {TabCompleteType.PLAYER, TabCompleteType.DATE},
 			description = "bans the target player[s] until the expiry date",
 			permissions = {"ban.expiry"},
 					consoleOnly = true)
@@ -330,6 +335,7 @@ public class Ban implements Listener, MultilineChatHandler {
 	 // ban IPS
 	@Command(command = "banip",
 			arguments = {"target ip"},
+			tabCompletions = {TabCompleteType.IP},
 			description = "bans the target ip for the given reason",
 			permissions = {"ip.forever"},
 			playerOnly = true)
@@ -339,6 +345,7 @@ public class Ban implements Listener, MultilineChatHandler {
 
 	@Command(command = "banip",
 			arguments = {"target ip", "expiry date"},
+			tabCompletions = {TabCompleteType.IP, TabCompleteType.DATE},
 			description = "bans the target ip for the given reason until the expiry date",
 			permissions = {"ip.expiry"},
 			playerOnly = true)
@@ -369,6 +376,7 @@ public class Ban implements Listener, MultilineChatHandler {
 	}
 	@Command(command = "banip",
 			arguments = {"target ip"},
+			tabCompletions = {TabCompleteType.IP},
 			description = "bans the target ip",
 			permissions = {"ip.forever"},
 			consoleOnly = true)
@@ -378,6 +386,7 @@ public class Ban implements Listener, MultilineChatHandler {
 	
 	@Command(command = "banip",
 			arguments = {"target ip", "expiry date"},
+			tabCompletions = {TabCompleteType.IP, TabCompleteType.DATE},
 			description = "bans the target ip until the expiry date",
 			permissions = {"ip.expiry"},
 			consoleOnly = true)
@@ -410,6 +419,7 @@ public class Ban implements Listener, MultilineChatHandler {
 	// unbans
 	@Command(command = "unban",
 			arguments = {"target player"},
+			tabCompletions = {TabCompleteType.PLAYER},
 			description = "unbans the target player for the given reason",
 			permissions = {"unban"},
 			playerOnly = true)
@@ -419,6 +429,7 @@ public class Ban implements Listener, MultilineChatHandler {
 	}
 	@Command(command = "unban",
 			arguments = {"target player"},
+			tabCompletions = {TabCompleteType.PLAYER},
 			description = "unbans the target player",
 			permissions = {"unban"},
 			consoleOnly = true)
@@ -429,8 +440,9 @@ public class Ban implements Listener, MultilineChatHandler {
 	
 	// unbans
 	@Command(command = "unbanip",
-			arguments = {"target player"},
-			description = "unbans the target player for the given reason",
+			arguments = {"target IP"},
+			tabCompletions = {TabCompleteType.IP},
+			description = "unbans the target IP for the given reason",
 			permissions = {"unip"},
 			playerOnly = true)
 	public static boolean unbanIP(CommandSender sender, String targetIP) throws EssentialsCommandException {
@@ -448,8 +460,9 @@ public class Ban implements Listener, MultilineChatHandler {
 		return true;
 	}
 	@Command(command = "unbanip",
-			arguments = {"target player"},
-			description = "unbans the target player",
+			arguments = {"target IP"},
+			tabCompletions = {TabCompleteType.IP},
+			description = "unbans the target IP",
 			permissions = {"unip"},
 			consoleOnly = true)
 	public static boolean unbanIPFromConsole(CommandSender sender, String targetIP) throws EssentialsCommandException {

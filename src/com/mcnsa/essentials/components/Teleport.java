@@ -20,6 +20,7 @@ import com.mcnsa.essentials.MCNSAEssentials;
 import com.mcnsa.essentials.annotations.Command;
 import com.mcnsa.essentials.annotations.ComponentInfo;
 import com.mcnsa.essentials.annotations.Setting;
+import com.mcnsa.essentials.enums.TabCompleteType;
 import com.mcnsa.essentials.exceptions.EssentialsCommandException;
 import com.mcnsa.essentials.utilities.ColourHandler;
 import com.mcnsa.essentials.utilities.PlayerSelector;
@@ -245,6 +246,7 @@ public class Teleport implements Listener {
 	
 	@Command(command = "bring",
 			arguments = {"target player[s]"},
+			tabCompletions = {TabCompleteType.PLAYER},
 			description = "teleports target player[s] to you",
 			permissions = { "teleport.bring" },
 			playerOnly = true)
@@ -256,6 +258,7 @@ public class Teleport implements Listener {
 	@Command(command = "tp",
 			aliases = {"teleport"},
 			arguments = {"target player[s]", "destination player"},
+			tabCompletions = {TabCompleteType.PLAYER, TabCompleteType.PLAYER},
 			description = "teleports <target player[s]> to <destination player>",
 			permissions = { "other" })
 	public static boolean teleport(CommandSender sender, String targetPlayer, /*String to, */String destinationPlayer) throws EssentialsCommandException {
@@ -301,6 +304,7 @@ public class Teleport implements Listener {
 	@Command(command = "tp",
 			aliases = {"teleport"},
 			arguments = {"x", "y", "z"},
+			tabCompletions = {TabCompleteType.NUMBER, TabCompleteType.NUMBER, TabCompleteType.NUMBER},
 			description = "teleports you to the given coordinates in your current world",
 			permissions = { "selfcoords" },
 			playerOnly = true)
@@ -311,6 +315,7 @@ public class Teleport implements Listener {
 	@Command(command = "tp",
 			aliases = {"teleport"},
 			arguments = {"world", "x", "y", "z"},
+			tabCompletions = {TabCompleteType.WORLD, TabCompleteType.NUMBER, TabCompleteType.NUMBER, TabCompleteType.NUMBER},
 			description = "teleports you to the given coordinates in the given world",
 			permissions = { "selfcoords" },
 			playerOnly = true)
@@ -321,6 +326,7 @@ public class Teleport implements Listener {
 	@Command(command = "tp",
 			aliases = {"teleport"},
 			arguments = {"target player[s]", "world name", "x", "y", "z"},
+					tabCompletions = {TabCompleteType.PLAYER, TabCompleteType.WORLD, TabCompleteType.NUMBER, TabCompleteType.NUMBER, TabCompleteType.NUMBER},
 			description = "teleports <player[s]> to the given coordinates in the given world",
 			permissions = { "othercoords" },
 			playerOnly = true)

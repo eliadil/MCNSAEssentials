@@ -11,6 +11,7 @@ import com.mcnsa.essentials.MCNSAEssentials;
 import com.mcnsa.essentials.annotations.Command;
 import com.mcnsa.essentials.annotations.ComponentInfo;
 import com.mcnsa.essentials.annotations.Translation;
+import com.mcnsa.essentials.enums.TabCompleteType;
 import com.mcnsa.essentials.exceptions.EssentialsCommandException;
 import com.mcnsa.essentials.managers.PermissionsManager;
 import com.mcnsa.essentials.utilities.ColourHandler;
@@ -55,6 +56,7 @@ public class ModTools {
 	@Translation(node = "sudo.has-run-command") public static String hasRunCommand = "&3%player% has run your command!";
 	@Command(command = "sudo",
 			arguments = {"target player[s]", "command"},
+			tabCompletions = {TabCompleteType.PLAYER, TabCompleteType.STRING},
 			description = "causes another player to execute a command",
 			permissions = {"sudo.call"})
 	public static boolean sudo(CommandSender sender, String targetPlayer, String... commandParts) throws EssentialsCommandException {

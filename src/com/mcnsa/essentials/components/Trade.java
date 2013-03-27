@@ -25,6 +25,7 @@ import com.mcnsa.essentials.MCNSAEssentials;
 import com.mcnsa.essentials.annotations.Command;
 import com.mcnsa.essentials.annotations.ComponentInfo;
 import com.mcnsa.essentials.annotations.Setting;
+import com.mcnsa.essentials.enums.TabCompleteType;
 import com.mcnsa.essentials.exceptions.EssentialsCommandException;
 import com.mcnsa.essentials.interfaces.DisableHandler;
 import com.mcnsa.essentials.utilities.ColourHandler;
@@ -644,6 +645,7 @@ public class Trade implements Listener, DisableHandler {
 	@Command(command = "tradeaccept",
 			aliases = {"at", "accepttrade"},
 			arguments = {"player name"},
+			tabCompletions = {TabCompleteType.PLAYER},
 			description = "accepts a trade accept",
 			permissions = "accept",
 			playerOnly = true)
@@ -691,6 +693,7 @@ public class Trade implements Listener, DisableHandler {
 	
 	@Command(command = "trade",
 			arguments = {"target player"},
+			tabCompletions = {TabCompleteType.PLAYER},
 			description = "attempts to trade with the target player",
 			permissions = {"request"},
 			playerOnly = true)

@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 import com.mcnsa.essentials.annotations.Command;
 import com.mcnsa.essentials.annotations.ComponentInfo;
 import com.mcnsa.essentials.annotations.Setting;
+import com.mcnsa.essentials.enums.TabCompleteType;
 import com.mcnsa.essentials.exceptions.EssentialsCommandException;
 import com.mcnsa.essentials.utilities.ColourHandler;
 import com.mcnsa.essentials.utilities.Logger;
@@ -60,6 +61,7 @@ public class Time {
 
 	@Command(command = "settime",
 			arguments = {"world"},
+			tabCompletions = {TabCompleteType.WORLD},
 			description = "sets the current time in the given world",
 			permissions = {"set"})
 	public static boolean setTime(CommandSender sender, String worldName, String newTime) throws EssentialsCommandException {

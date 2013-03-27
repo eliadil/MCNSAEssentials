@@ -17,6 +17,7 @@ import com.mcnsa.essentials.annotations.Command;
 import com.mcnsa.essentials.annotations.ComponentInfo;
 import com.mcnsa.essentials.annotations.DatabaseTableInfo;
 import com.mcnsa.essentials.annotations.Setting;
+import com.mcnsa.essentials.enums.TabCompleteType;
 import com.mcnsa.essentials.exceptions.EssentialsCommandException;
 import com.mcnsa.essentials.interfaces.MultilineChatHandler;
 import com.mcnsa.essentials.managers.DatabaseManager;
@@ -161,6 +162,7 @@ public class Rank implements MultilineChatHandler {
 	@Command(command = "promote",
 			aliases = {"pr"},
 			arguments = {"target player[s]"},
+			tabCompletions = {TabCompleteType.PLAYER},
 			description = "promotes the target player[s] for a given reason",
 			permissions = {"promote"},
 			playerOnly = true)
@@ -187,6 +189,7 @@ public class Rank implements MultilineChatHandler {
 	@Command(command = "promote",
 			aliases = {"pr"},
 			arguments = {"target player[s]"},
+			tabCompletions = {TabCompleteType.PLAYER},
 			description = "promotes the target player[s]",
 			permissions = {"promote"},
 			consoleOnly = true)
@@ -216,6 +219,7 @@ public class Rank implements MultilineChatHandler {
 	@Command(command = "demote",
 			aliases = {"de"},
 			arguments = {"target player[s]"},
+			tabCompletions = {TabCompleteType.PLAYER},
 			description = "demotes the target player[s] for a given reason",
 			permissions = {"demote"},
 			playerOnly = true)
@@ -242,6 +246,7 @@ public class Rank implements MultilineChatHandler {
 	@Command(command = "demote",
 			aliases = {"de"},
 			arguments = {"target player[s]"},
+			tabCompletions = {TabCompleteType.PLAYER},
 			description = "demotes the target player[s]",
 			permissions = {"demote"},
 			consoleOnly = true)
@@ -271,6 +276,7 @@ public class Rank implements MultilineChatHandler {
 	@Command(command = "hotdog",
 			aliases = {"hd"},
 			arguments = {"target player[s]"},
+			tabCompletions = {TabCompleteType.PLAYER},
 			description = "hotdogs the target player[s] for a given reason",
 			permissions = {"hotdog"},
 			playerOnly = true)
@@ -297,6 +303,7 @@ public class Rank implements MultilineChatHandler {
 	@Command(command = "hotdog",
 			aliases = {"hd"},
 			arguments = {"target player[s]"},
+			tabCompletions = {TabCompleteType.PLAYER},
 			description = "hotdogs the target player[s]",
 			permissions = {"hotdog"},
 			consoleOnly = true)

@@ -17,6 +17,7 @@ import com.mcnsa.essentials.annotations.Command;
 import com.mcnsa.essentials.annotations.ComponentInfo;
 import com.mcnsa.essentials.annotations.DatabaseTableInfo;
 import com.mcnsa.essentials.annotations.Setting;
+import com.mcnsa.essentials.enums.TabCompleteType;
 import com.mcnsa.essentials.exceptions.EssentialsCommandException;
 import com.mcnsa.essentials.managers.DatabaseManager;
 import com.mcnsa.essentials.utilities.ColourHandler;
@@ -80,6 +81,7 @@ public class Home implements Listener {
 
 	@Command(command = "homes",
 			arguments = {"player"},
+			tabCompletions = {TabCompleteType.PLAYER},
 			description = "lists the homes of the given player",
 			permissions = {"list.other"})
 	public static boolean homes(CommandSender sender, String playerTarget) throws EssentialsCommandException {
@@ -116,6 +118,7 @@ public class Home implements Listener {
 
 	@Command(command = "sethome",
 		arguments = {"home name"},
+		tabCompletions = {TabCompleteType.STRING},
 		description = "sets a to your current location",
 		permissions = {"set.self"},
 		playerOnly = true)
@@ -125,6 +128,7 @@ public class Home implements Listener {
 
 	@Command(command = "sethome",
 		arguments = {"target player[s]", "home name"},
+		tabCompletions = {TabCompleteType.PLAYER, TabCompleteType.STRING},
 		description = "sets target player[s] home[s] to your current location",
 		permissions = {"set.other"},
 		playerOnly = true)
@@ -220,6 +224,7 @@ public class Home implements Listener {
 
 	@Command(command = "home",
 		arguments = {"home name"},
+		tabCompletions = {TabCompleteType.STRING},
 		description = "takes you to your saved home",
 		permissions = {"other"},
 		playerOnly = true)
@@ -229,6 +234,7 @@ public class Home implements Listener {
 
 	@Command(command = "home",
 		arguments = {"player", "home name"},
+		tabCompletions = {TabCompleteType.PLAYER, TabCompleteType.STRING},
 		description = "takes you to the players saved home",
 		permissions = {"other"},
 		playerOnly = true)

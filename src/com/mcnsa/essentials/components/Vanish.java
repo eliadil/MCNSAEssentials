@@ -27,6 +27,7 @@ import com.mcnsa.essentials.MCNSAEssentials;
 import com.mcnsa.essentials.annotations.Command;
 import com.mcnsa.essentials.annotations.ComponentInfo;
 import com.mcnsa.essentials.annotations.Setting;
+import com.mcnsa.essentials.enums.TabCompleteType;
 import com.mcnsa.essentials.exceptions.EssentialsCommandException;
 import com.mcnsa.essentials.managers.PermissionsManager;
 import com.mcnsa.essentials.utilities.ColourHandler;
@@ -212,6 +213,7 @@ public class Vanish implements Listener {
 	@Command(command = "vanish",
 			aliases = {"poof"},
 			arguments = {"target player[s]"},
+			tabCompletions = {TabCompleteType.PLAYER},
 			description = "prevents players and mobs from seeing and interacting with the target player[s]",
 			permissions = {"others"})
 	public static boolean vanish(CommandSender sender, String targetPlayer) throws EssentialsCommandException {
@@ -267,6 +269,7 @@ public class Vanish implements Listener {
 	@Command(command = "unvanish",
 			aliases = {"appear"},
 			arguments = {"target player[s]"},
+			tabCompletions = {TabCompleteType.PLAYER},
 			description = "unvanishes target player[s]",
 			permissions = {"others"})
 	public static boolean unvanish(CommandSender sender, String targetPlayer) throws EssentialsCommandException {

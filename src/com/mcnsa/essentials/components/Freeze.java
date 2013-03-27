@@ -49,6 +49,7 @@ import com.mcnsa.essentials.annotations.Command;
 import com.mcnsa.essentials.annotations.ComponentInfo;
 //import com.mcnsa.essentials.annotations.ComponentInfo;
 import com.mcnsa.essentials.annotations.Setting;
+import com.mcnsa.essentials.enums.TabCompleteType;
 import com.mcnsa.essentials.exceptions.EssentialsCommandException;
 import com.mcnsa.essentials.utilities.ColourHandler;
 import com.mcnsa.essentials.utilities.PlayerSelector;
@@ -286,6 +287,7 @@ public class Freeze implements Listener {
 	// commands for controlling freezing
 	@Command(command = "freeze",
 			arguments = {"target player[s]"},
+			tabCompletions = {TabCompleteType.PLAYER},
 			description = "freezes the target players in their place",
 			permissions = {"freeze"})
 	public static boolean freeze(CommandSender sender, String targetPlayer) throws EssentialsCommandException {
@@ -334,6 +336,7 @@ public class Freeze implements Listener {
 	
 	@Command(command = "unfreeze",
 			arguments = {"target player[s]"},
+			tabCompletions = {TabCompleteType.PLAYER},
 			description = "unfreezes the target players in their place",
 			permissions = {"unfreeze"})
 	public static boolean unfreeze(CommandSender sender, String targetPlayer) throws EssentialsCommandException {

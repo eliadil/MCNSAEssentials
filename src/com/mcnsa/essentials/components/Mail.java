@@ -18,6 +18,7 @@ import com.mcnsa.essentials.annotations.Command;
 import com.mcnsa.essentials.annotations.ComponentInfo;
 import com.mcnsa.essentials.annotations.DatabaseTableInfo;
 import com.mcnsa.essentials.annotations.Setting;
+import com.mcnsa.essentials.enums.TabCompleteType;
 import com.mcnsa.essentials.exceptions.EssentialsCommandException;
 import com.mcnsa.essentials.interfaces.MultilineChatHandler;
 import com.mcnsa.essentials.managers.DatabaseManager;
@@ -72,6 +73,7 @@ public class Mail implements Listener, MultilineChatHandler {
 	
 	@Command(command = "mail",
 			arguments = {"page #"},
+			tabCompletions = {TabCompleteType.NUMBER},
 			description = "lists your mail messages",
 			permissions = {"read"},
 			playerOnly = true)
@@ -118,6 +120,7 @@ public class Mail implements Listener, MultilineChatHandler {
 	
 	@Command(command = "readmail",
 			arguments = {"mail ID"},
+			tabCompletions = {TabCompleteType.NUMBER},
 			description = "reads the mail message with the given ID",
 			permissions = {"read"},
 			playerOnly = true)
@@ -158,6 +161,7 @@ public class Mail implements Listener, MultilineChatHandler {
 	
 	@Command(command = "sendmail",
 			arguments = {"target player[s]", "subject"},
+			tabCompletions = {TabCompleteType.PLAYER, TabCompleteType.STRING},
 			description = "Starts writing mail to the target player[s] with the given subject",
 			permissions = {"send"},
 			playerOnly = true)

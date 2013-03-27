@@ -11,6 +11,7 @@ import org.bukkit.inventory.meta.SkullMeta;
 
 import com.mcnsa.essentials.annotations.Command;
 import com.mcnsa.essentials.annotations.ComponentInfo;
+import com.mcnsa.essentials.enums.TabCompleteType;
 import com.mcnsa.essentials.exceptions.EssentialsCommandException;
 import com.mcnsa.essentials.utilities.ColourHandler;
 import com.mcnsa.essentials.utilities.ItemSelector;
@@ -25,6 +26,7 @@ public class Items {
 	@Command(command = "givehead",
 			aliases = {"head"},
 			arguments = {"head type / player name"},
+			tabCompletions = {TabCompleteType.STRING},
 			description = "gives you a head",
 			permissions = {"head"},
 			playerOnly = true)
@@ -35,6 +37,7 @@ public class Items {
 	@Command(command = "givehead",
 			aliases = {"head"},
 			arguments = {"target player[s]", "head type / player name"},
+			tabCompletions = {TabCompleteType.PLAYER, TabCompleteType.STRING},
 			description = "gives target player[s] a head",
 			permissions = {"head"})
 	public static boolean giveHead(CommandSender sender, String targetPlayer, String headName) throws EssentialsCommandException {
@@ -101,6 +104,7 @@ public class Items {
 	@Command(command = "i",
 			aliases = {"item"},
 			arguments = {"item"},
+			tabCompletions = {TabCompleteType.ITEM_NAME},
 			description = "gives you an item",
 			permissions = {"give.self"},
 			playerOnly = true)
@@ -111,6 +115,7 @@ public class Items {
 	@Command(command = "i",
 			aliases = {"item"},
 			arguments = {"item", "amount"},
+			tabCompletions = {TabCompleteType.ITEM_NAME, TabCompleteType.NUMBER},
 			description = "gives you an item",
 			permissions = {"give.self"},
 			playerOnly = true)
@@ -120,6 +125,7 @@ public class Items {
 	
 	@Command(command = "give",
 			arguments = {"target player[s]", "item"},
+				tabCompletions = {TabCompleteType.PLAYER, TabCompleteType.ITEM_NAME},
 			description = "gives target player[s] an item",
 			permissions = {"give.other"})
 	public static boolean give(CommandSender sender, String targetPlayer, String item) throws EssentialsCommandException {
@@ -128,6 +134,7 @@ public class Items {
 	
 	@Command(command = "give",
 			arguments = {"target player[s]", "item", "amount"},
+			tabCompletions = {TabCompleteType.PLAYER, TabCompleteType.ITEM_NAME, TabCompleteType.NUMBER},
 			description = "gives target player[s] an item",
 			permissions = {"give.other"})
 	public static boolean give(CommandSender sender, String targetPlayer, String item, int number) throws EssentialsCommandException {

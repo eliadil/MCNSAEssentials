@@ -19,6 +19,7 @@ import com.mcnsa.essentials.annotations.Command;
 import com.mcnsa.essentials.annotations.ComponentInfo;
 import com.mcnsa.essentials.annotations.Setting;
 import com.mcnsa.essentials.annotations.Translation;
+import com.mcnsa.essentials.enums.TabCompleteType;
 import com.mcnsa.essentials.exceptions.EssentialsCommandException;
 import com.mcnsa.essentials.utilities.ColourHandler;
 import com.mcnsa.essentials.utilities.PlayerSelector;
@@ -70,6 +71,7 @@ public class Fun {
 	@Translation(node = "slap.broadcasted-slap") public static String broadcastedSlap = "&e%slappee% was slapped by %slapper%!";
 	@Command(command = "slap",
 			arguments = {"target player[s]"},
+			tabCompletions = {TabCompleteType.PLAYER},
 			description = "slaps target player[s]",
 			permissions = {"slap"})
 	public static boolean slap(CommandSender sender, String targetPlayer) throws EssentialsCommandException {
@@ -135,6 +137,7 @@ public class Fun {
 	@Translation(node = "rocket.broadcasted-rocket") public static String broadcastedRocket = "&e%rocketee% was slapped by %rocketer%!";
 	@Command(command = "rocket",
 			arguments = {"target player[s]"},
+			tabCompletions = {TabCompleteType.PLAYER},
 			description = "rockets target player[s]",
 			permissions = {"rocket"})
 	public static boolean rocket(CommandSender sender, String targetPlayer) throws EssentialsCommandException {
@@ -194,6 +197,7 @@ public class Fun {
 	@Translation(node = "immolate.broadcasted-immolate") public static String broadcastedImmolate = "&e%immolatee% was immolated by %immolater%!";
 	@Command(command = "immolate",
 			arguments = {"target player[s]"},
+			tabCompletions = {TabCompleteType.PLAYER},
 			description = "immolates target player[s]",
 			permissions = {"immolate"})
 	public static boolean immolate(CommandSender sender, String targetPlayer) throws EssentialsCommandException {

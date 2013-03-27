@@ -20,6 +20,7 @@ import org.bukkit.util.Vector;
 import com.mcnsa.essentials.MCNSAEssentials;
 import com.mcnsa.essentials.annotations.Command;
 import com.mcnsa.essentials.annotations.ComponentInfo;
+import com.mcnsa.essentials.enums.TabCompleteType;
 import com.mcnsa.essentials.exceptions.EssentialsCommandException;
 import com.mcnsa.essentials.utilities.ColourHandler;
 import com.mcnsa.essentials.utilities.PlayerSelector;
@@ -110,6 +111,7 @@ public class PlayerMode implements Listener {
 	@Command(command = "gamemode",
 			aliases = {"gm"},
 			arguments = {"mode name"},
+			tabCompletions = {TabCompleteType.STRING},
 			description = "changes your game mode",
 			permissions = {"gamemode.self"},
 			playerOnly = true)
@@ -120,6 +122,7 @@ public class PlayerMode implements Listener {
 	@Command(command = "gamemode",
 			aliases = {"gm"},
 			arguments = {"target player[s]", "mode name"},
+			tabCompletions = {TabCompleteType.PLAYER, TabCompleteType.STRING},
 			description = "changes the game mode of the target player[s]",
 			permissions = {"gamemode.others"})
 	public static boolean gameMode(CommandSender sender, String targetPlayer, String mode) throws EssentialsCommandException {
@@ -182,6 +185,7 @@ public class PlayerMode implements Listener {
 	
 	@Command(command = "god",
 			arguments = {"target player[s]"},
+			tabCompletions = {TabCompleteType.PLAYER},
 			description = "enables god mode on the target players",
 			permissions = {"god.others"})
 	public static boolean enableGodMode(CommandSender sender, String targetPlayer) throws EssentialsCommandException {
@@ -235,6 +239,7 @@ public class PlayerMode implements Listener {
 	
 	@Command(command = "ungod",
 			arguments = {"target player[s]"},
+			tabCompletions = {TabCompleteType.PLAYER},
 			description = "disables god mode on the target players",
 			permissions = {"god.others"})
 	public static boolean disableGodMode(CommandSender sender, String targetPlayer) throws EssentialsCommandException {

@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 import com.mcnsa.essentials.annotations.Command;
 import com.mcnsa.essentials.annotations.ComponentInfo;
 import com.mcnsa.essentials.annotations.DatabaseTableInfo;
+import com.mcnsa.essentials.enums.TabCompleteType;
 import com.mcnsa.essentials.exceptions.EssentialsCommandException;
 import com.mcnsa.essentials.interfaces.MultilineChatHandler;
 import com.mcnsa.essentials.managers.DatabaseManager;
@@ -46,6 +47,7 @@ public class Kick implements MultilineChatHandler {
 	
 	@Command(command = "kick",
 			arguments = {"target player[s]"},
+			tabCompletions = {TabCompleteType.PLAYER},
 			description = "kicks the target player[s] for a given reason",
 			permissions = {"kick"},
 			consoleOnly = true)
@@ -82,6 +84,7 @@ public class Kick implements MultilineChatHandler {
 	
 	@Command(command = "kick",
 			arguments = {"target player[s]"},
+			tabCompletions = {TabCompleteType.PLAYER},
 			description = "kicks the target player[s]",
 			permissions = {"kick"},
 			playerOnly = true)

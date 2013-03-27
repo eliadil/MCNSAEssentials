@@ -21,6 +21,7 @@ import org.bukkit.entity.Wolf;
 import com.mcnsa.essentials.annotations.Command;
 import com.mcnsa.essentials.annotations.ComponentInfo;
 import com.mcnsa.essentials.annotations.Setting;
+import com.mcnsa.essentials.enums.TabCompleteType;
 import com.mcnsa.essentials.exceptions.EssentialsCommandException;
 import com.mcnsa.essentials.utilities.ColourHandler;
 import com.mcnsa.essentials.utilities.ItemSelector;
@@ -168,6 +169,7 @@ public class Mobs {
 	// our commands
 	@Command(command = "spawnmob",
 			arguments = {"mob name:special"},
+			tabCompletions = {TabCompleteType.MOB_NAME},
 			description = "spawns the given mob at your location",
 			permissions = {"spawn"},
 			playerOnly = true)
@@ -177,6 +179,7 @@ public class Mobs {
 	
 	@Command(command = "spawnmob",
 			arguments = {"mob name:special", "number"},
+			tabCompletions = {TabCompleteType.MOB_NAME, TabCompleteType.NUMBER},
 			description = "spawns the given number of mobs at your location",
 			permissions = {"spawn"},
 			playerOnly = true)
@@ -186,6 +189,7 @@ public class Mobs {
 	
 	@Command(command = "spawnmob",
 			arguments = {"mob name:special", "number", "owner"},
+			tabCompletions = {TabCompleteType.MOB_NAME, TabCompleteType.NUMBER, TabCompleteType.PLAYER},
 			description = "spawns the given number of mobs at your location and sets their owner",
 			permissions = {"spawn"},
 			playerOnly = true)

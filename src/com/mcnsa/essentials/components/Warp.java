@@ -12,6 +12,7 @@ import com.mcnsa.essentials.annotations.Command;
 import com.mcnsa.essentials.annotations.ComponentInfo;
 import com.mcnsa.essentials.annotations.DatabaseTableInfo;
 import com.mcnsa.essentials.annotations.Setting;
+import com.mcnsa.essentials.enums.TabCompleteType;
 import com.mcnsa.essentials.exceptions.EssentialsCommandException;
 import com.mcnsa.essentials.managers.DatabaseManager;
 import com.mcnsa.essentials.managers.PermissionsManager;
@@ -35,6 +36,7 @@ public class Warp {
 
 	@Command(command = "warps",
 			arguments = {"page"},
+			tabCompletions = {TabCompleteType.NUMBER},
 			description = "lists warps available to you on a given page",
 			permissions = {"list"})
 	public static boolean warps(CommandSender sender, int page) throws EssentialsCommandException {
@@ -87,6 +89,7 @@ public class Warp {
 	
 	@Command(command = "setwarp",
 			arguments = {"name", "public/private"},
+			tabCompletions = {TabCompleteType.STRING, TabCompleteType.STRING},
 			description = "sets a warp",
 			permissions = {"set"},
 			playerOnly = true)
@@ -103,6 +106,7 @@ public class Warp {
 		
 	@Command(command = "setwarp",
 			arguments = {"name", "public/private"},
+			tabCompletions = {TabCompleteType.STRING, TabCompleteType.STRING},
 			description = "sets a warp",
 			permissions = {"set"})
 	public static boolean setWarp(CommandSender sender, String warpName, String privacy, String worldName, float x, float y, float z) throws EssentialsCommandException {
@@ -201,6 +205,7 @@ public class Warp {
 	
 	@Command(command = "deletewarp",
 			arguments = {"warp name"},
+			tabCompletions = {TabCompleteType.STRING},
 			description = "Deletes a given warp",
 			permissions = "delete.self")
 	public static boolean deleteWarp(CommandSender sender, String warpName) throws EssentialsCommandException {		
@@ -248,6 +253,7 @@ public class Warp {
 	
 	@Command(command = "warp",
 			arguments = {"warp name"},
+			tabCompletions = {TabCompleteType.STRING},
 			description = "Warps you to the given warp",
 			permissions = "warp.self",
 			playerOnly = true)

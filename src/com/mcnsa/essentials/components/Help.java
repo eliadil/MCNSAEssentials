@@ -9,6 +9,7 @@ import com.mcnsa.essentials.annotations.Command;
 import com.mcnsa.essentials.annotations.ComponentInfo;
 import com.mcnsa.essentials.annotations.Setting;
 import com.mcnsa.essentials.annotations.Translation;
+import com.mcnsa.essentials.enums.TabCompleteType;
 import com.mcnsa.essentials.exceptions.EssentialsCommandException;
 import com.mcnsa.essentials.managers.InformationManager;
 import com.mcnsa.essentials.managers.InformationManager.CommandHelp;
@@ -91,6 +92,7 @@ public class Help {
 	
 	@Command(command = "help",
 			arguments = {"section name"},
+			tabCompletions = {TabCompleteType.STRING},
 			description = "lists commands in a given section",
 			permissions = {"commands"})
 	public static boolean help(CommandSender sender, String component) throws EssentialsCommandException {
@@ -110,6 +112,7 @@ public class Help {
 	@Translation(node = "command-list-header") public static String commandListHeader = "&e--- &6%section% Commands (Page &f%page%&6/&f%numPages%&6) &e---";
 	@Command(command = "help",
 			arguments = {"section name", "page"},
+			tabCompletions = {TabCompleteType.STRING, TabCompleteType.NUMBER},
 			description = "lists commands in a given section",
 			permissions = {"commands"})
 	public static boolean help(CommandSender sender, String targetSection, int page) throws EssentialsCommandException {

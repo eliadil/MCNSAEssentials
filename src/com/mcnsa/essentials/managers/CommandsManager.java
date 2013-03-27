@@ -4,6 +4,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -11,6 +13,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandMap;
 import org.bukkit.command.CommandSender;
@@ -25,6 +28,7 @@ import com.mcnsa.essentials.managers.ComponentManager.Component;
 import com.mcnsa.essentials.utilities.ColourHandler;
 import com.mcnsa.essentials.utilities.Logger;
 import com.mcnsa.essentials.utilities.SoundUtility;
+import com.mcnsa.essentials.utilities.StringUtils;
 
 public class CommandsManager implements TabExecutor {
 	// keep track of all known aliases we're using
@@ -590,18 +594,139 @@ public class CommandsManager implements TabExecutor {
 				continue;
 			}
 			
+			// get our command info
+			CommandInfo ci = registeredCommands.get(registrationToken);
+			
 			// get our argument count
 			int argumentCount = args.length;
 			
 			// only allow commands that have at least as many arguments as the user provided
-			if(registeredCommands.get(registrationToken).command.arguments().length < argumentCount) {
+			if(ci.command.arguments().length < argumentCount) {
 				continue;
 			}
 			
-			// TODO: better linting based on variable types, etc
+			/*// get our method parameters
+			Class<?>[] params = ci.method.getParameterTypes();
 			
-			// add it
-			possibleArguments.add("<" + registeredCommands.get(registrationToken).command.arguments()[argumentCount - 1].replaceAll("\\s+", "_") + ">");
+			// check all our existing arguments for type
+			boolean passedArgChecks = true;
+			String imploded = "";
+			for(String arg: args) {
+				imploded += arg + ",";
+			}
+			// TODO: fix this
+			Logger.debug("---\narguments: %s", imploded);
+			Logger.debug("testing method %s", registrationToken);
+			for(int i = 0; i < (argumentCount - 1) && passedArgChecks; i++) {
+				// use [i + 1] on the params so we ignore the CommandSender argument
+				// check if the argument is an integer
+				if(params[i + 1].equals(int.class)) {
+					Logger.debug("\tmethod param[%d] is an int", (i+1));
+					// try to parse the given arg as an int
+					try {
+						Integer.parseInt(args[i]);
+					}
+					catch(NumberFormatException e) {
+						// nope, not an int
+						passedArgChecks = false;
+						Logger.debug("\t\t%s failed: not int param");
+						break;
+					}
+				}
+				// check if the argument is a float
+				else if(params[i + 1].equals(float.class)){
+					Logger.debug("\tmethod param[%d] is a float", (i+1));
+					// try to parse the given arg as a float
+					try {
+						Float.parseFloat(args[i]);
+					}
+					catch(NumberFormatException e) {
+						// nope, not a float
+						passedArgChecks = false;
+						Logger.debug("\t\t%s failed: not float param", registrationToken);
+						break;
+					}
+				}
+				// check if the argument is a string
+				else if(params[i + 1].equals(String.class)){
+					// yes, we automatically accept Strings
+					Logger.debug("\tmethod param[%d] is a string", (i+1));
+				}
+				else {
+					// something else?
+					passedArgChecks = false;
+					Logger.debug("\t\t%s failed: unknown param", registrationToken);
+					break;
+				}
+			}
+			
+			// make sure they passed our argument checks
+			if(!passedArgChecks) {
+				// nope, continue on!
+				continue;
+			}*/
+			
+			// ok, if they got here, that means that all arguments thus far have been decent
+			Logger.debug("num pab completions: %d, arg count: %d", ci.command.tabCompletions().length, argumentCount);
+			if(ci.command.tabCompletions().length >= argumentCount) {
+				Logger.debug("custom handler");
+				switch(ci.command.tabCompletions()[argumentCount - 1]) {
+				case PLAYER:
+					// a list of players
+					LinkedList<String> onlineNames = new LinkedList<String>();
+					Player[] onlinePlayers = Bukkit.getServer().getOnlinePlayers();
+					for(Player online: onlinePlayers) {
+						if(online.getName().startsWith(args[argumentCount - 1])) {
+							onlineNames.add(online.getName());
+						}
+					}
+					possibleArguments.addAll(onlineNames);
+					break;
+					
+				case WORLD:
+					// a list of worlds
+					LinkedList<String> worldNames = new LinkedList<String>();
+					List<World> worlds = Bukkit.getServer().getWorlds();
+					for(World world: worlds) {
+						if(world.getName().startsWith(args[argumentCount - 1])) {
+							worldNames.add(world.getName());
+						}
+					}
+					possibleArguments.addAll(worldNames);
+					break;
+					
+				case ITEM_NAME:
+					possibleArguments.add("<item name>");
+					break;
+					
+				case MOB_NAME:
+					possibleArguments.add("<mob name>");
+					break;
+
+				case NUMBER:
+				case STRING:
+					possibleArguments.add("<" + registeredCommands.get(registrationToken).command.arguments()[argumentCount - 1].replaceAll("\\s+", "_") + ">");
+					break;
+					
+				case IP:
+					possibleArguments.add("0.0.0.0");
+					break;
+					
+				case MINECRAFTTIME:
+					possibleArguments.add("00:00");
+					break;
+					
+				case DATE:
+					Date now = new Date();
+					possibleArguments.add(now.toString());
+					break;
+				}
+			}
+			else {
+				// add it
+				Logger.debug("derp");
+				possibleArguments.add("<" + registeredCommands.get(registrationToken).command.arguments()[argumentCount - 1].replaceAll("\\s+", "_") + ">");
+			}
 		}
 		
 		return possibleArguments;

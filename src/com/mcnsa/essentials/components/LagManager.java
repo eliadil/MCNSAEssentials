@@ -15,6 +15,7 @@ import com.mcnsa.essentials.annotations.Command;
 import com.mcnsa.essentials.annotations.ComponentInfo;
 import com.mcnsa.essentials.annotations.Setting;
 import com.mcnsa.essentials.annotations.Translation;
+import com.mcnsa.essentials.enums.TabCompleteType;
 import com.mcnsa.essentials.exceptions.EssentialsCommandException;
 import com.mcnsa.essentials.utilities.ColourHandler;
 
@@ -34,6 +35,7 @@ public class LagManager {
 
 	@Command(command = "findlag",
 			arguments = {"world name"},
+			tabCompletions = {TabCompleteType.WORLD},
 			description = "tries to find the region with the most loaded entities in the given world",
 			permissions = {"find"})
 	public static boolean findLag(CommandSender sender, String worldName) throws EssentialsCommandException {
@@ -42,6 +44,7 @@ public class LagManager {
 
 	@Command(command = "findlag",
 			arguments = {"entity radius"},
+			tabCompletions = {TabCompleteType.NUMBER},
 			description = "tries to find the region with the most loaded entities using the given radius",
 			permissions = {"find"})
 	public static boolean findLag(CommandSender sender, float radius) throws EssentialsCommandException {
@@ -61,7 +64,8 @@ public class LagManager {
 			" (&f%numMobs%&3 mobs, &f%numItems%&3 items)";
 	@Command(command = "findlag",
 			arguments = {"world name", "entity radius"},
-					description = "tries to find the region with the most loaded entities using the given radius in the given world",
+			tabCompletions = {TabCompleteType.WORLD, TabCompleteType.NUMBER},
+			description = "tries to find the region with the most loaded entities using the given radius in the given world",
 			permissions = {"find"})
 	public static boolean findLag(CommandSender sender, String worldName, float radius) throws EssentialsCommandException {
 		// find our world

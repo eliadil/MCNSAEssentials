@@ -16,6 +16,7 @@ import com.mcnsa.essentials.MCNSAEssentials;
 import com.mcnsa.essentials.annotations.Command;
 import com.mcnsa.essentials.annotations.ComponentInfo;
 import com.mcnsa.essentials.annotations.Setting;
+import com.mcnsa.essentials.enums.TabCompleteType;
 import com.mcnsa.essentials.utilities.ColourHandler;
 
 @ComponentInfo(friendlyName = "Spawn",
@@ -124,6 +125,7 @@ public class Spawn implements Listener {
 	@Command(command = "setspawn",
 			description = "sets the spawn at the given coordinates in the default world",
 			arguments = {"x", "y", "z"},
+			tabCompletions = {TabCompleteType.NUMBER, TabCompleteType.NUMBER, TabCompleteType.NUMBER},
 			permissions = {"set"})
 	public static boolean setSpawn(CommandSender sender, float x, float y, float z) {
 		return setSpawn(sender, Bukkit.getServer().getWorlds().get(0).getName(), x, y, z);

@@ -10,6 +10,7 @@ import org.bukkit.inventory.ItemStack;
 import com.mcnsa.essentials.annotations.Command;
 import com.mcnsa.essentials.annotations.ComponentInfo;
 import com.mcnsa.essentials.annotations.DatabaseTableInfo;
+import com.mcnsa.essentials.enums.TabCompleteType;
 import com.mcnsa.essentials.exceptions.EssentialsCommandException;
 import com.mcnsa.essentials.managers.DatabaseManager;
 import com.mcnsa.essentials.utilities.ColourHandler;
@@ -42,6 +43,7 @@ public class Kit {
 	@Command(command = "newkit",
 			aliases = {"addkit"},
 			arguments = {"name", "items"},
+			tabCompletions = {TabCompleteType.STRING, TabCompleteType.STRING},
 			description = "Adds a new kit with a specific name and the list of items (separated with ;'s)",
 			permissions = {"new"})
 	public static boolean newKit(CommandSender sender, String kitName, String kitItems) throws EssentialsCommandException {
@@ -64,6 +66,7 @@ public class Kit {
 
 	@Command(command = "kit",
 			arguments = {"desired kit"},
+			tabCompletions = {TabCompleteType.STRING},
 			description = "gives you your desired kit",
 			permissions = {"give.self"},
 			playerOnly = true)
@@ -73,6 +76,7 @@ public class Kit {
 
 	@Command(command = "kit",
 			arguments = {"target player[s]", "desired kit"},
+			tabCompletions = {TabCompleteType.PLAYER, TabCompleteType.STRING},
 			description = "gives target player[s] your desired kit",
 			permissions = {"give.others"})
 	public static boolean kit(CommandSender sender, String targetPlayer, String kit) throws EssentialsCommandException {
