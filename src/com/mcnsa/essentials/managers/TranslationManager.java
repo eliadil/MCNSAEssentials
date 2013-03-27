@@ -107,9 +107,9 @@ public class TranslationManager {
 			Class<?> type = field.getType();
 			
 			// make sure it's a string
-			if(!type.equals(String.class)) {
+			if(!type.equals(String.class) && !type.equals(String[].class)) {
 				// nope
-				Logger.warning("Can't set translation '%s.%s' - translations MUST be strings!",
+				Logger.warning("Can't set translation '%s.%s' - translations MUST be strings (or string arrays)!",
 						clazz.getName(), field.getName());
 				continue;
 			}
@@ -120,8 +120,17 @@ public class TranslationManager {
 			
 			// and get the translation
 			try {
-				yaml.addDefault(node, (String)field.get(null));
-				field.set(null, yaml.getString(node, (String)field.get(null)));
+				if(type.equals(String.class)) {
+					// a single string
+					yaml.addDefault(node, (String)field.get(null));
+					field.set(null, yaml.getString(node, (String)field.get(null)));
+				}
+				else {
+					// an array of strings
+					yaml.addDefault(node, (String[])field.get(null));
+					List<String> result = yaml.getStringList(node);
+					field.set(null, result.toArray(new String[result.size()]));
+				}
 			} catch (IllegalArgumentException e) {
 				Logger.warning("Can't set translation '%s.%s' - invalid arguments!",
 						clazz.getName(), field.getName());

@@ -22,17 +22,18 @@ public class Debug {
 			"&9Timing clock test for %testTime% seconds...\n&cDO NOT &9change the world time or do anything stressful during this test!";
 	@Translation(node = "metadata-cleared") public static String metadataCleared = "&aAll metadata values cleared!";
 	
+	@Translation(node = "ping-replies") public static String[] pingReplies = {
+		"&ePong!",
+		"&eYup, I'm still here!",
+		"&eI heard %player% likes cute asian boys!",
+		"&eI said a hip hop, the hippie, the hippie, to the hip hip hop, you don't stop!"
+	};
 	@Command(command = "ping",
 			description = "pings the server to make sure it is still responding",
 			permissions = {"ping"})
 	public static boolean Ping(CommandSender sender) {
-		String[] replies = {
-				"Pong!",
-				"Yup, I'm still here!",
-				"I heard " + sender.getName() + " likes cute asian boys!",
-				"I said a hip hop, the hippie, the hippie, to the hip hip hop, you don't stop!"
-		};
-		ColourHandler.sendMessage(sender, "&e" + replies[(new Random()).nextInt(replies.length)]);
+		ColourHandler.sendMessage(sender, "&e" + pingReplies[(new Random()).nextInt(pingReplies.length)]
+				.replaceAll("%player%", sender.getName()));
 		return true;
 	}
 	
