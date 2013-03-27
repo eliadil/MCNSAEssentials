@@ -5,6 +5,7 @@ import org.bukkit.command.CommandSender;
 import com.mcnsa.essentials.annotations.Command;
 import com.mcnsa.essentials.annotations.ComponentInfo;
 import com.mcnsa.essentials.annotations.Translation;
+import com.mcnsa.essentials.enums.TabCompleteType;
 import com.mcnsa.essentials.exceptions.EssentialsCommandException;
 import com.mcnsa.essentials.utilities.ColourHandler;
 import com.mcnsa.essentials.utilities.MathEval;
@@ -22,6 +23,7 @@ public class Calculator {
 	
 	@Command(command = "calc",
 			arguments = {"expression"},
+			tabCompletions = {TabCompleteType.STRING},
 			description = "evaluates the expression and returns the result",
 			permissions = {"calc"})
 	public static boolean calculate(CommandSender sender, String... expressions) throws EssentialsCommandException {

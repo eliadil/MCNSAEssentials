@@ -11,6 +11,7 @@ import com.mcnsa.essentials.MCNSAEssentials;
 import com.mcnsa.essentials.annotations.Command;
 import com.mcnsa.essentials.annotations.ComponentInfo;
 import com.mcnsa.essentials.annotations.Translation;
+import com.mcnsa.essentials.enums.TabCompleteType;
 import com.mcnsa.essentials.runnables.TPSTimerTask;
 import com.mcnsa.essentials.utilities.ColourHandler;
 import com.mcnsa.essentials.utilities.SoundUtility;
@@ -48,6 +49,7 @@ public class Debug {
 	
 	@Command(command = "tps",
 			arguments = {"test time"},
+			tabCompletions = {TabCompleteType.NUMBER},
 			description = "tells you the current ticks per second (should be 20.0)",
 			permissions = {"tps"})
 	// pretty much a copy of commandbook's TPS

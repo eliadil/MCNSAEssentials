@@ -20,6 +20,7 @@ import com.mcnsa.essentials.MCNSAEssentials;
 import com.mcnsa.essentials.annotations.Command;
 import com.mcnsa.essentials.annotations.ComponentInfo;
 import com.mcnsa.essentials.annotations.Translation;
+import com.mcnsa.essentials.enums.TabCompleteType;
 import com.mcnsa.essentials.exceptions.EssentialsCommandException;
 import com.mcnsa.essentials.managers.PermissionsManager;
 
@@ -141,6 +142,7 @@ public class Backpack implements Listener {
 
 	@Command(command = "backpack",
 			arguments = {"target player"},
+			tabCompletions = {TabCompleteType.PLAYER},
 			description = "opens target player's backpack",
 			permissions = {"other"},
 			playerOnly = true)
