@@ -257,6 +257,11 @@ public class Trade implements Listener, DisableHandler {
 			playerA.closeInventory();
 			playerB.closeInventory();
 			
+			// update each players inventory
+			// Deprecated, and not best practice, but it works
+			playerA.updateInventory();
+			playerB.updateInventory();
+			
 			// and clear both players of their trading metadata
 			playerA.removeMetadata("tradeExchange", MCNSAEssentials.getInstance());
 			playerB.removeMetadata("tradeExchange", MCNSAEssentials.getInstance());
@@ -307,6 +312,11 @@ public class Trade implements Listener, DisableHandler {
 			playerA.closeInventory();
 			playerB.closeInventory();
 			
+			// update each players inventory
+			// Deprecated, and not best practice, but it works
+			playerA.updateInventory();
+			playerB.updateInventory();
+			
 			// and clear both players of their trading metadata
 			playerA.removeMetadata("tradeExchange", MCNSAEssentials.getInstance());
 			playerB.removeMetadata("tradeExchange", MCNSAEssentials.getInstance());
@@ -334,6 +344,11 @@ public class Trade implements Listener, DisableHandler {
 			// close the inventories
 			playerA.closeInventory();
 			playerB.closeInventory();
+			
+			// update each players inventory
+			// Deprecated, and not best practice, but it works
+			playerA.updateInventory();
+			playerB.updateInventory();
 			
 			// and clear both players of their trading metadata
 			playerA.removeMetadata("tradeExchange", MCNSAEssentials.getInstance());

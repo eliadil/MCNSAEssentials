@@ -364,7 +364,7 @@ public class CommandsManager implements TabExecutor {
 			label = aliasMapping.get(label);
 		}
 		
-		Logger.debug("%s ran command %s with args: %s", sender.getName(), command.getName(), StringUtils.implode(", ", args));
+		//Logger.debug("%s ran command %s with args: %s", sender.getName(), command.getName(), StringUtils.implode(", ", args));
 		
 		// find all our possibilities
 		String lastFailMessage = "";
