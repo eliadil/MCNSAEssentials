@@ -1,5 +1,11 @@
 package com.mcnsa.essentials.utilities;
 
+import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
 import com.mcnsa.essentials.exceptions.EssentialsCommandException;
 
 public class DateUtils {
@@ -22,7 +28,7 @@ public class DateUtils {
 		return String.format("%02d:%02d", hours, minutes);
 	}
 	
-	public static long parseTime(String stringTime) throws EssentialsCommandException {
+	public static long parseMinecraftTime(String stringTime) throws EssentialsCommandException {
 		// match just an integer to start with
 		try {
 			int time = Integer.parseInt(stringTime);
@@ -69,7 +75,116 @@ public class DateUtils {
 			return 16000;
 		}
 		
+		// nope? ok, try some regex
+		if(stringTime.matches("[0-9]+:[0-9]+")) {
+			// break it up
+			String[] parts = stringTime.split(":");
+			int hours = 0, minutes = 0;
+			try {
+				hours = Integer.parseInt(parts[0]);
+				minutes = Integer.parseInt(parts[1]);
+			}
+			catch(Exception e) {
+				throw new EssentialsCommandException("Unknown time input format '%s'!", stringTime);
+			}
+			
+			// ok, calculate and adjust
+			return (long)((((hours - dawnOffsetHours) % 24) * 1000) + (minutes % 60) / 60.0 * 1000);
+		}
+		
 		// couldn't find it?
 		throw new EssentialsCommandException("Unknown time input format '%s'!", stringTime);
+	}
+	
+	// utility function to figure when the next given weekday is
+	private static long nextWeekDay(int newDay) {
+		// figure out what day of the week we're on now
+		Calendar now = Calendar.getInstance();
+		int currentDay = now.get(Calendar.DAY_OF_WEEK);
+		
+		// figure out how many days to add
+		int daysFromNow = newDay - currentDay;
+		if(daysFromNow < 1) {
+			daysFromNow += 7;
+		}
+		// add it
+		
+		now.add(Calendar.DAY_OF_YEAR, daysFromNow);
+		
+		// and return
+		return now.getTimeInMillis();
+	}
+	
+	// atempt to parse a real-world date string
+	public static Timestamp parseTimestamp(String stringTime) throws EssentialsCommandException {
+		// try some shortcuts first
+		if(stringTime.equalsIgnoreCase("tomorrow")) {
+			return new Timestamp(System.currentTimeMillis() + (24 * 60 * 60 * 1000));
+		}
+		else if(stringTime.equalsIgnoreCase("sunday")) {
+			return new Timestamp(nextWeekDay(Calendar.SUNDAY));
+		}
+		else if(stringTime.equalsIgnoreCase("monday")) {
+			return new Timestamp(nextWeekDay(Calendar.MONDAY));
+		}
+		else if(stringTime.equalsIgnoreCase("tuesday")) {
+			return new Timestamp(nextWeekDay(Calendar.TUESDAY));
+		}
+		else if(stringTime.equalsIgnoreCase("wednesday")) {
+			return new Timestamp(nextWeekDay(Calendar.WEDNESDAY));
+		}
+		else if(stringTime.equalsIgnoreCase("thursday")) {
+			return new Timestamp(nextWeekDay(Calendar.THURSDAY));
+		}
+		else if(stringTime.equalsIgnoreCase("friday")) {
+			return new Timestamp(nextWeekDay(Calendar.FRIDAY));
+		}
+		else if(stringTime.equalsIgnoreCase("saturday")) {
+			return new Timestamp(nextWeekDay(Calendar.SATURDAY));
+		}
+		
+		// go through a list of different formats
+		String[] formats = new String[]{
+				"yyyy-MM-dd hh:mm:ss a",
+				"yyyy-MM-dd hh:mm:ssa",
+				"yy-MM-dd hh:mm:ss a",
+				"yy-MM-dd hh:mm:ssa",
+				"yyyy-MM-dd hh:mm a",
+				"yy-MM-dd hh:mm a",
+				"yyyy-MM-dd hh:mma",
+				"yy-MM-dd hh:mma",
+				"yyyy-MM-dd HH:mm:ss",
+				"yyyy-MM-dd HH:mm:ss",
+				"yy-MM-dd HH:mm:ss",
+				"yy-MM-dd HH:mm:ss",
+				"yyyy-MM-dd HH:mm",
+				"yy-MM-dd HH:mm",
+				"yyyy-MM-dd HH:mm",
+				"yy-MM-dd HH:mm",
+				"yyyy-MM-dd",
+				"yy-MM-dd",
+				"MMM dd, yyyy",
+				"MMM dd, yy",
+				"EEE MMM dd, yyyy",
+				"EEE MMM dd, yy"
+		};
+		
+		// try some different patterns
+		SimpleDateFormat dateParser = new SimpleDateFormat();
+		for(String format: formats) {
+			try {
+				dateParser.applyPattern(format);
+				Date date = dateParser.parse(stringTime);
+				return new Timestamp(date.getTime());
+			}
+			catch(ParseException ignored) { }
+		}
+		
+		throw new EssentialsCommandException("Unknown time input format '%s'!", stringTime);
+	}
+	
+	public static String formatTimestamp(Timestamp timestamp) {
+		SimpleDateFormat format = new SimpleDateFormat("EEE, MMM dd, yyyy hh:mm a");
+		return format.format(new Date(timestamp.getTime()));
 	}
 }

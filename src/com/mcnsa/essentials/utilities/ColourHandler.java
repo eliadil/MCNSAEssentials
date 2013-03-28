@@ -151,7 +151,11 @@ public class ColourHandler {
 		String[] lines = message.split("\n");
 		for(String line: lines) {
 			if(sender instanceof Player) {
-				sender.sendMessage(processColours(line).replaceAll("\t", tabSpaces));
+				line = processColours(line).replaceAll("\t", tabSpaces);
+				// done send empty lines
+				if(!line.matches("^\\s*$")) {
+					sender.sendMessage(line);
+				}
 			}
 			else {
 				consoleMessage(line);

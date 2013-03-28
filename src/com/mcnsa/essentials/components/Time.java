@@ -72,7 +72,7 @@ public class Time {
 		}
 		
 		// ok, parse the time string
-		long time = DateUtils.parseTime(newTime);
+		long time = DateUtils.parseMinecraftTime(newTime);
 		
 		// and set it!
 		targetWorld.setTime(time);
