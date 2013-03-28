@@ -1,6 +1,7 @@
 package com.mcnsa.essentials.managers;
 
 import java.io.File;
+import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -297,5 +298,65 @@ public class InformationManager {
 		
 		// yup!
 		return possibleCommands;
+	}
+
+	public static void dumpCommandInformation() throws EssentialsCommandException {
+		// open our file
+		File fileDump = new File(MCNSAEssentials.getInstance().getDataFolder(), "commands.md");
+		try {
+			PrintWriter out = new PrintWriter(new FileWriter(fileDump));
+
+			// write the header
+			out.println("## Components\n")
+
+			// get all of our components
+			HashMap<String, Component> components = ComponentManager.getRegisteredComponents();
+			// loop through all our components
+			for(String componentName: components.keySet()) {
+				// grab our component
+				Component component = components.get(componentName);
+
+				// print out the component header
+				out.println("### " + component.componentInfo.friendlyName() + "\n");
+				out.println(component.componentInfo.description() + "\n");
+
+				// start building a table
+				out.println("<table>");
+				out.println("\t<tr>");
+				out.println("\t\t<th>Command</th>");
+				out.println("\t\t<th>Aliases</th>");
+				out.println("\t\t<th>Arguments</th>");
+				out.println("\t\t<th>Permission Node[s]</th>");
+				out.println("\t\t<th>Description</th>");
+				out.println("\t</tr>");
+
+				// get our commands
+				LinkedList<CommandsManager.CommandInfo> commands = component.commands;
+				// loop over them all
+				for(CommandsManager.CommandInfo ci: commands) {
+					// get our command
+					Command command = ci.command;
+
+					// add a row to the table
+					out.println("\t<tr>");
+					out.println("\t\t<td>" + command.command() + "</td>");
+					out.println("\t\t<td>" + StringUtils.implode(", ", command.aliases()) + "</td>");
+					out.println("\t\t<td>" + StringUtils.implode(", ", command.arguments()) + "</td>");
+					out.println("\t\t<td>" + StringUtils.implode(", ", command.permissions()) + "</td>");
+					out.println("\t\t<td>" + command.description() + "</td>");
+					out.println("\t</tr>");
+				}
+
+				// finish off our table
+				out.println("</table>\n");
+			}
+
+			// close our file
+			out.close();
+
+		}
+		catch(Exception e) {
+			throw new EssentialsCommandException("Failed to dump commands!");
+		}
 	}
 }

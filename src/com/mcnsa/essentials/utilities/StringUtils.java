@@ -8,6 +8,7 @@ public class StringUtils {
 		for(String part: parts) {
 			if(first) {
 				sb.append(part);
+				first = false;
 			}
 			else {
 				sb.append(joiner).append(part);

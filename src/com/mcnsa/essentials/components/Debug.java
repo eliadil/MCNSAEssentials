@@ -136,4 +136,17 @@ public class Debug {
 		
 		return true;
 	}
+
+	@Command(command = "dumpcommands",
+			description = "dumps all command information to a file",
+			permissions = {"dumpcommands"})
+	public static boolean dumpCommands(CommandSender sender) throw EssentialsCommandException {
+		// do it
+		InformationManager.dumpCommandInformation();
+
+		// alert them
+		ColourHandler.sendMessage(sender, "&3Commands dumped");
+
+		return true;
+	}
 }
