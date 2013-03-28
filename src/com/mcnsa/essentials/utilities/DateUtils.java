@@ -184,6 +184,10 @@ public class DateUtils {
 	}
 	
 	public static String formatTimestamp(Timestamp timestamp) {
+		if(timestamp.toString().equals(Timestamp.valueOf("2020-02-02 02:02:02").toString())) {
+			return "forever";
+		}
+		
 		SimpleDateFormat format = new SimpleDateFormat("EEE, MMM dd, yyyy hh:mm a");
 		return format.format(new Date(timestamp.getTime()));
 	}

@@ -1,6 +1,7 @@
 package com.mcnsa.essentials.utilities;
 
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.text.ParseException;
 
@@ -32,5 +33,22 @@ public class IPUtils {
 		catch (UnknownHostException e) {
 			throw new Error("UnknownHostException somehow thrown when creating an InetAddress", e);
 		}
+	}
+	
+	public static String stripIP(InetSocketAddress addr) {
+		return stripIP(addr.getAddress());
+	}
+	
+	public static String stripIP(InetAddress addr) {
+		String ipString = addr.toString();
+		// strip off the starting '/'
+		if(ipString.startsWith("/")) {
+			ipString = ipString.substring(1);
+		}
+		// strip off the back port number
+		if(ipString.contains(":")) {
+			ipString = ipString.split(":", 2)[0];
+		}
+		return ipString;
 	}
 }

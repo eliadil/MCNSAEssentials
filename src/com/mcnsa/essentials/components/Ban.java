@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -52,13 +53,7 @@ public class Ban implements Listener, MultilineChatHandler {
 	
 	private static void ban(String banee, CommandSender banner, String reason, Timestamp expiry, boolean doKick) throws EssentialsCommandException {
 		// create a pretty expiry string
-		String expiryString = expiry.toString();
-		if(expiry.toString().equals(Timestamp.valueOf("2020-02-02 02:02:02").toString())) {
-			expiryString = "forever";
-		}
-		else {
-			expiryString = DateUtils.formatTimestamp(expiry);
-		}
+		String expiryString = DateUtils.formatTimestamp(expiry);
 		
 		// determine if the banee is a player name or an IP
 		if(doKick) {
@@ -80,6 +75,9 @@ public class Ban implements Listener, MultilineChatHandler {
 						online.kickPlayer(message);
 					}
 				}
+				
+				// ban the IP in bukkit
+				Bukkit.getServer().banIP(IPUtils.stripIP(ip));
 			}
 			catch(ParseException e) {
 				// nope, it must be a player
@@ -96,16 +94,10 @@ public class Ban implements Listener, MultilineChatHandler {
 				}
 				
 				// "Smart" ban them (ban their IP as well, for the next smartBanHours hours)
-				String ipString = player.getAddress().toString();
-				// strip off the starting '/'
-				if(ipString.startsWith("/")) {
-					ipString = ipString.substring(1);
-				}
-				// strip off the back port number
-				if(ipString.contains(":")) {
-					ipString = ipString.split(":", 2)[0];
-				}
-				ban(ipString, banner, reason, new Timestamp(System.currentTimeMillis() + (smartBanHours * 60 * 60 * 1000)), false);
+				ban(IPUtils.stripIP(player.getAddress()), banner, reason, new Timestamp(System.currentTimeMillis() + (smartBanHours * 60 * 60 * 1000)), false);
+				
+				// and ban them in bukkit
+				player.setBanned(true);
 			}
 		}
 		
@@ -143,6 +135,24 @@ public class Ban implements Listener, MultilineChatHandler {
 		// make sure it worked!
 		if(results == 0) {
 			throw new EssentialsCommandException("Failed to log unban!");
+		}
+		
+		// determine if it is an ip or not
+		try {
+			// try to parse the ip
+			InetAddress ip = IPUtils.parseIpAddress(unbanee);
+			
+			// unban them in bukkit
+			Bukkit.getServer().unbanIP(IPUtils.stripIP(ip));
+		}
+		catch(ParseException e) {
+			// nope
+			// try to get the offline player
+			OfflinePlayer player = Bukkit.getServer().getOfflinePlayer(unbanee);
+			// and unban them in bukkit
+			if(player.isBanned()) {
+				player.setBanned(false);
+			}
 		}
 	}
 
@@ -207,19 +217,10 @@ public class Ban implements Listener, MultilineChatHandler {
 		try {
 			// see if they're banned or not			
 			// query the database
-			String ipString = event.getAddress().toString();
-			// strip off the starting '/'
-			if(ipString.startsWith("/")) {
-				ipString = ipString.substring(1);
-			}
-			// strip off the back port number
-			if(ipString.contains(":")) {
-				ipString = ipString.split(":", 2)[0];
-			}
 			ArrayList<HashMap<String, Object>> results = DatabaseManager.accessQuery(
 					"select * from banlogs where banee=? or banee=? order by date desc limit 1;",
 					event.getName(),
-					ipString);
+					IPUtils.stripIP(event.getAddress()));
 			
 			// check their results
 			if(results.size() > 0) {
@@ -228,13 +229,7 @@ public class Ban implements Listener, MultilineChatHandler {
 				Timestamp now = new Timestamp(System.currentTimeMillis());
 				
 				// create a pretty expiry string
-				String expiryString = expiry.toString();
-				if(expiry.toString().equals(Timestamp.valueOf("2020-02-02 02:02:02").toString())) {
-					expiryString = "forever";
-				}
-				else {
-					expiryString = DateUtils.formatTimestamp(expiry);
-				}
+				String expiryString = DateUtils.formatTimestamp(expiry);
 				
 				if(expiry.after(now)) {
 					// nope, they're banned
@@ -274,13 +269,10 @@ public class Ban implements Listener, MultilineChatHandler {
 		try {
 			// try to parse the ip
 			InetAddress ip = IPUtils.parseIpAddress(targetPlayer);
-			String ipString = ip.toString();
-			if(ipString.startsWith("/")) {
-				ipString = ipString.substring(1);
-			}
+			String ipString = IPUtils.stripIP(ip);
 			
 			// call our multiline chat handler
-			ColourHandler.sendMessage(sender, "&cPlease enter a reason for why you're banning this %s:", ip.toString());
+			ColourHandler.sendMessage(sender, "&cPlease enter a reason for why you're banning this %s:", ipString);
 			ConversationManager.startConversation(sender, instance, ipString, expiryTimestamp);
 		}
 		catch(ParseException e) {
