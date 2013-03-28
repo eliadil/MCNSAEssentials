@@ -22,6 +22,7 @@ import com.mcnsa.essentials.annotations.ComponentInfo;
 import com.mcnsa.essentials.annotations.Setting;
 import com.mcnsa.essentials.enums.TabCompleteType;
 import com.mcnsa.essentials.exceptions.EssentialsCommandException;
+import com.mcnsa.essentials.managers.PermissionsManager;
 import com.mcnsa.essentials.utilities.ColourHandler;
 import com.mcnsa.essentials.utilities.PlayerSelector;
 
@@ -42,6 +43,26 @@ public class Teleport implements Listener {
 			return false;
 		}
 		return player.getMetadata("ignoreTP").get(0).asBoolean();
+	}
+	
+	private static boolean tpDisabled(Player player) {
+		if(!player.hasMetadata("tpDisabled") || player.getMetadata("tpDisabled").size() != 1) {
+			return false;
+		}
+		return player.getMetadata("tpDisabled").get(0).asBoolean();
+	}
+	
+	private static void disableTP(Player player, boolean disable) {
+		if(disable) {
+			if(!player.hasMetadata("tpDisabled")) {
+				player.setMetadata("tpDisabled", new FixedMetadataValue(MCNSAEssentials.getInstance(), true));
+			}
+		}
+		else {
+			if(player.hasMetadata("tpDisabled")) {
+				player.removeMetadata("tpDisabled", MCNSAEssentials.getInstance());
+			}
+		}
 	}
 	
 	private static void ignoreTeleport(Player player, boolean ignore) {
@@ -251,7 +272,7 @@ public class Teleport implements Listener {
 			permissions = { "teleport.bring" },
 			playerOnly = true)
 	public static boolean bring(CommandSender sender, String targetPlayer) throws EssentialsCommandException {
-		teleport(sender, targetPlayer, /*"to", */sender.getName());
+		teleport(sender, targetPlayer, sender.getName());
 		return true;
 	}
 	
@@ -261,17 +282,16 @@ public class Teleport implements Listener {
 			tabCompletions = {TabCompleteType.PLAYER, TabCompleteType.PLAYER},
 			description = "teleports <target player[s]> to <destination player>",
 			permissions = { "other" })
-	public static boolean teleport(CommandSender sender, String targetPlayer, /*String to, */String destinationPlayer) throws EssentialsCommandException {
-		// ridddles request
-		// match our 'to'
-		/*if(!to.equalsIgnoreCase("to")) {
-			throw new EssentialsCommandException("%s should be 'to'!", to);
-		}*/
-		
+	public static boolean teleport(CommandSender sender, String targetPlayer, String destinationPlayer) throws EssentialsCommandException {
 		// try to find the destination player
 		Player destination = Bukkit.getServer().getPlayer(destinationPlayer);
 		if(destination == null) {
 			throw new EssentialsCommandException("&cI couldn't find player '%s' to teleport to!", destination);
+		}
+		
+		// make sure that player doesn't have teleporting disabled
+		if(tpDisabled(destination) && !PermissionsManager.playerHasPermission(sender, "teleport.toggle.override")) {
+			throw new EssentialsCommandException("%s &chas disabled teleports!", destination.getName());
 		}
 		
 		// get a list of all target players
@@ -286,6 +306,12 @@ public class Teleport implements Listener {
 		for(Iterator<Player> it = targetPlayers.iterator(); it.hasNext();) {
 			// get the player
 			Player target = it.next();
+			
+			// make sure that player doesn't have teleporting disabled
+			if(tpDisabled(target) && !PermissionsManager.playerHasPermission(sender, "teleport.toggle.override")) {
+				ColourHandler.sendMessage(sender, "%s &cdoesn't have teleporting enabled!", target.getName());
+				continue;
+			}
 			
 			// do it!
 			target.teleport(destination);
@@ -350,6 +376,12 @@ public class Teleport implements Listener {
 			// get the player
 			Player target = it.next();
 			
+			// make sure that player doesn't have teleporting disabled
+			if(tpDisabled(target) && !PermissionsManager.playerHasPermission(sender, "teleport.toggle.override")) {
+				ColourHandler.sendMessage(sender, "%s &cdoesn't have teleporting enabled!", target.getName());
+				continue;
+			}
+			
 			// build their destination
 			Location destination = new Location(targetWorld, x, y, z, target.getLocation().getYaw(), target.getLocation().getPitch());
 			
@@ -359,6 +391,29 @@ public class Teleport implements Listener {
 			// alert everyone
 			ColourHandler.sendMessage(target, "&6You have been teleported to (" + destination.getBlockX() + ", " + destination.getBlockY() + ", " + destination.getBlockZ() + ") in world: " + destination.getWorld().getName() + " by " + sender.getName());
 			ColourHandler.sendMessage(target, "&6" + target.getName() + " has been teleported to (" + destination.getBlockX() + ", " + destination.getBlockY() + ", " + destination.getBlockZ() + ") in world: " + destination.getWorld().getName());
+		}
+		
+		return true;
+	}
+	
+	@Command(command = "tptoggle",
+			aliases = "notp",
+			description = "prevents other players from teleporting you / to you",
+			permissions = { "teleport.toggle" },
+			playerOnly = true)
+	public static boolean tpToggle(CommandSender sender) throws EssentialsCommandException {
+		// determine whether they have teleporting disabled or not
+		boolean disabled = tpDisabled((Player)sender);
+		
+		// change their status
+		disableTP((Player)sender, !disabled);
+		
+		// alert them
+		if(!disabled) {
+			ColourHandler.sendMessage(sender, "&3Teleports have been turned off");
+		}
+		else {
+			ColourHandler.sendMessage(sender, "&3Teleports have been turned on");
 		}
 		
 		return true;
