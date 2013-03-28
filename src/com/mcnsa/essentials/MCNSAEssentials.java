@@ -23,7 +23,7 @@ public class MCNSAEssentials extends JavaPlugin {
 	
 	// our managers
 	PermissionsManager permissionsManager = null;
-	ComponentManager componentManager = null;
+	static ComponentManager componentManager = null;
 	ConfigurationManager configurationManager = null;
 	TranslationManager translationManager = null;
 	CommandsManager commandsManager = null;
@@ -108,5 +108,9 @@ public class MCNSAEssentials extends JavaPlugin {
 	private static LinkedList<DisableHandler> disableHandlers = new LinkedList<DisableHandler>();
 	public static void registerDisable(DisableHandler handler) {
 		disableHandlers.add(handler);
+	}
+
+	public static ComponentManager getComponentManager() {
+		return componentManager;
 	}
 }

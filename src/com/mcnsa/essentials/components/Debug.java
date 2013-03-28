@@ -12,6 +12,8 @@ import com.mcnsa.essentials.annotations.Command;
 import com.mcnsa.essentials.annotations.ComponentInfo;
 import com.mcnsa.essentials.annotations.Translation;
 import com.mcnsa.essentials.enums.TabCompleteType;
+import com.mcnsa.essentials.exceptions.EssentialsCommandException;
+import com.mcnsa.essentials.managers.InformationManager;
 import com.mcnsa.essentials.runnables.TPSTimerTask;
 import com.mcnsa.essentials.utilities.ColourHandler;
 import com.mcnsa.essentials.utilities.SoundUtility;
@@ -142,7 +144,7 @@ public class Debug {
 			permissions = {"dumpcommands"})
 	public static boolean dumpCommands(CommandSender sender) throws EssentialsCommandException {
 		// do it
-		InformationManager.dumpCommandInformation();
+		InformationManager.instance.dumpCommandInformation();
 
 		// alert them
 		ColourHandler.sendMessage(sender, "&3Commands dumped");

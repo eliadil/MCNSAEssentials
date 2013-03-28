@@ -1,6 +1,7 @@
 package com.mcnsa.essentials.managers;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -14,9 +15,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.ChatPaginator;
 
 import com.mcnsa.essentials.MCNSAEssentials;
+import com.mcnsa.essentials.annotations.Command;
 import com.mcnsa.essentials.annotations.Translation;
 import com.mcnsa.essentials.exceptions.EssentialsCommandException;
 import com.mcnsa.essentials.managers.ComponentManager.Component;
+import com.mcnsa.essentials.utilities.StringUtils;
 
 public class InformationManager {
 	public class CommandHelp {
@@ -34,6 +37,9 @@ public class InformationManager {
 		public String description = null;
 		public LinkedList<CommandHelp> commands = new LinkedList<CommandHelp>();
 	}
+
+	// store our instance
+	public static InformationManager instance = null;
 	
 	//private static LinkedList<Component> components = new LinkedList<Component>();
 	private static LinkedList<HelpSection> sections = new LinkedList<HelpSection>();
@@ -41,6 +47,9 @@ public class InformationManager {
 	private static File fileConfig = new File(MCNSAEssentials.getInstance().getDataFolder(), "help.yml");
 	private static YamlConfiguration yamlConfig = new YamlConfiguration();
 	public InformationManager(ComponentManager componentManager) {
+		// get our instance
+		instance = this;
+
 		// pull all of our registered components that aren't disabled
 		HashMap<String, Component> registeredComponents = componentManager.getRegisteredComponents();
 		for(String key: registeredComponents.keySet()) {
@@ -300,7 +309,7 @@ public class InformationManager {
 		return possibleCommands;
 	}
 
-	public static void dumpCommandInformation() throws EssentialsCommandException {
+	public void dumpCommandInformation() throws EssentialsCommandException {
 		// open our file
 		File fileDump = new File(MCNSAEssentials.getInstance().getDataFolder(), "commands.md");
 		try {
@@ -310,7 +319,7 @@ public class InformationManager {
 			out.println("## Components\n");
 
 			// get all of our components
-			HashMap<String, Component> components = ComponentManager.getRegisteredComponents();
+			HashMap<String, Component> components = MCNSAEssentials.getComponentManager().getRegisteredComponents();
 			// loop through all our components
 			for(String componentName: components.keySet()) {
 				// grab our component
