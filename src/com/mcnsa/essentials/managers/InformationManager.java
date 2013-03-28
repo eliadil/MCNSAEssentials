@@ -307,7 +307,7 @@ public class InformationManager {
 			PrintWriter out = new PrintWriter(new FileWriter(fileDump));
 
 			// write the header
-			out.println("## Components\n")
+			out.println("## Components\n");
 
 			// get all of our components
 			HashMap<String, Component> components = ComponentManager.getRegisteredComponents();

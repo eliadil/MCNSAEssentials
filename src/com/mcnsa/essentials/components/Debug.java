@@ -140,7 +140,7 @@ public class Debug {
 	@Command(command = "dumpcommands",
 			description = "dumps all command information to a file",
 			permissions = {"dumpcommands"})
-	public static boolean dumpCommands(CommandSender sender) throw EssentialsCommandException {
+	public static boolean dumpCommands(CommandSender sender) throws EssentialsCommandException {
 		// do it
 		InformationManager.dumpCommandInformation();
 
