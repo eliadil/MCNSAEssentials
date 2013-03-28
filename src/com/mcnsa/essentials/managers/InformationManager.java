@@ -334,7 +334,6 @@ public class InformationManager {
 				out.println("\t<tr>");
 				out.println("\t\t<th>Command</th>");
 				out.println("\t\t<th>Aliases</th>");
-				out.println("\t\t<th>Arguments</th>");
 				out.println("\t\t<th>Permission Node[s]</th>");
 				out.println("\t\t<th>Description</th>");
 				out.println("\t</tr>");
@@ -346,12 +345,21 @@ public class InformationManager {
 					// get our command
 					Command command = ci.command;
 
+					String[] args = command.arguments();
+					for(int i = 0; i < args.length; i++) {
+						args[i] = "&lt;" + args[i] + "&gt;";
+					}
+
+					String[] perms = command.permissions();
+					for(int i = 0; i < perms.length; i++) {
+						perms[i] = "mcnsaessentials." + component.componentInfo.permsSettingsPrefix() + "." + perms[i];
+					}
+
 					// add a row to the table
 					out.println("\t<tr>");
-					out.println("\t\t<td>" + command.command() + "</td>");
+					out.println("\t\t<td>" + ("/" + command.command() + " " + StringUtils.implode(" ", args)).trim() + "</td>");
 					out.println("\t\t<td>" + StringUtils.implode(", ", command.aliases()) + "</td>");
-					out.println("\t\t<td>" + StringUtils.implode(", ", command.arguments()) + "</td>");
-					out.println("\t\t<td>" + StringUtils.implode(", ", command.permissions()) + "</td>");
+					out.println("\t\t<td>" + StringUtils.implode(", ", perms) + "</td>");
 					out.println("\t\t<td>" + command.description() + "</td>");
 					out.println("\t</tr>");
 				}
