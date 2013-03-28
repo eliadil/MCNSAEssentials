@@ -13,7 +13,6 @@ import com.mcnsa.essentials.annotations.ComponentInfo;
 import com.mcnsa.essentials.annotations.Translation;
 import com.mcnsa.essentials.enums.TabCompleteType;
 import com.mcnsa.essentials.exceptions.EssentialsCommandException;
-import com.mcnsa.essentials.managers.PermissionsManager;
 import com.mcnsa.essentials.utilities.ColourHandler;
 import com.mcnsa.essentials.utilities.PlayerSelector;
 import com.mcnsa.essentials.utilities.StringUtils;
@@ -59,7 +58,7 @@ public class ModTools {
 			tabCompletions = {TabCompleteType.PLAYER, TabCompleteType.STRING},
 			description = "causes another player to execute a command",
 			permissions = {"sudo.call"})
-	public static boolean sudo(CommandSender sender, String targetPlayer, String... commandParts) throws EssentialsCommandException {
+	public static boolean sudo(CommandSender sender, String targetPlayer, String[] commandParts) throws EssentialsCommandException {
 		// get a list of all target players
 		ArrayList<Player> targetPlayers = PlayerSelector.selectPlayersExact(targetPlayer);
 		
@@ -77,10 +76,10 @@ public class ModTools {
 		// loop over our player
 		for(Player player: targetPlayers) {
 			// see if they're exempt from sudo
-			if(PermissionsManager.playerHasPermission(player, "modtools.sudo.exempt")) {
+			/*if(PermissionsManager.playerHasPermission(player, "modtools.sudo.exempt")) {
 				ColourHandler.sendMessage(sender, exempt.replaceAll("%player%", player.getName()));
 				continue;
-			}
+			}*/
 			
 			// warn them
 			ColourHandler.sendMessage(player, madeToRunCommand.replaceAll("%player%", sender.getName()).replaceAll("%command%", command));

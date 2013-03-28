@@ -24,7 +24,7 @@ import com.mcnsa.essentials.interfaces.MultilineChatHandler;
 import com.mcnsa.essentials.managers.ConversationManager;
 import com.mcnsa.essentials.managers.DatabaseManager;
 import com.mcnsa.essentials.utilities.ColourHandler;
-import com.mcnsa.essentials.utilities.IPUtilities;
+import com.mcnsa.essentials.utilities.IPUtils;
 import com.mcnsa.essentials.utilities.PlayerSelector;
 
 @ComponentInfo(friendlyName = "Ban",
@@ -363,7 +363,7 @@ public class Ban implements Listener, MultilineChatHandler {
 		// try to parse our IP
 		InetAddress IP = null;
 		try {
-			IP = IPUtilities.parseIpAddress(targetIP);
+			IP = IPUtils.parseIpAddress(targetIP);
 		}
 		catch(Exception e) {
 			// nope
@@ -405,7 +405,7 @@ public class Ban implements Listener, MultilineChatHandler {
 		// try to parse our IP
 		InetAddress IP = null;
 		try {
-			IP = IPUtilities.parseIpAddress(targetIP);
+			IP = IPUtils.parseIpAddress(targetIP);
 		}
 		catch(Exception e) {
 			// nope
@@ -452,7 +452,7 @@ public class Ban implements Listener, MultilineChatHandler {
 		// try to parse our IP
 		InetAddress IP = null;
 		try {
-			IP = IPUtilities.parseIpAddress(targetIP);
+			IP = IPUtils.parseIpAddress(targetIP);
 		}
 		catch(Exception e) {
 			// nope
@@ -473,7 +473,7 @@ public class Ban implements Listener, MultilineChatHandler {
 		// try to parse our IP
 		InetAddress IP = null;
 		try {
-			IP = IPUtilities.parseIpAddress(targetIP);
+			IP = IPUtils.parseIpAddress(targetIP);
 		}
 		catch(Exception e) {
 			// nope

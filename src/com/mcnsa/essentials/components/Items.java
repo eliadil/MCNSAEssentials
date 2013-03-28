@@ -16,8 +16,8 @@ import com.mcnsa.essentials.exceptions.EssentialsCommandException;
 import com.mcnsa.essentials.utilities.ColourHandler;
 import com.mcnsa.essentials.utilities.ItemSelector;
 import com.mcnsa.essentials.utilities.PlayerSelector;
-import com.mcnsa.essentials.utilities.SoundUtility;
-import com.mcnsa.essentials.utilities.SoundUtility.SoundType;
+import com.mcnsa.essentials.utilities.SoundUtils;
+import com.mcnsa.essentials.utilities.SoundUtils.SoundType;
 
 @ComponentInfo(friendlyName = "Items",
 				description = "Allows easy giving and enchanting of items",
@@ -95,7 +95,7 @@ public class Items {
 			}
 			
 			// play a sound
-			SoundUtility.playSound(player, SoundType.CONFIRM);
+			SoundUtils.playSound(player, SoundType.CONFIRM);
 		}
 		
 		return true;
@@ -166,7 +166,7 @@ public class Items {
 			}
 			
 			// play a sound
-			SoundUtility.playSound(target, SoundType.CONFIRM);
+			SoundUtils.playSound(target, SoundType.CONFIRM);
 		}
 		
 		return true;

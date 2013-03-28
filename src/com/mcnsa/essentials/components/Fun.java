@@ -23,7 +23,7 @@ import com.mcnsa.essentials.enums.TabCompleteType;
 import com.mcnsa.essentials.exceptions.EssentialsCommandException;
 import com.mcnsa.essentials.utilities.ColourHandler;
 import com.mcnsa.essentials.utilities.PlayerSelector;
-import com.mcnsa.essentials.utilities.SoundUtility;
+import com.mcnsa.essentials.utilities.SoundUtils;
 
 @ComponentInfo(friendlyName = "Fun",
 				description = "Some fun commands",
@@ -107,7 +107,7 @@ public class Fun {
 			}
 			
 			// play a sound
-			SoundUtility.playSound(target, Sound.FALL_SMALL, broadcast);
+			SoundUtils.playSound(target, Sound.FALL_SMALL, broadcast);
 			
 			// broadcast?
 			if(broadcast && count < broadcastLimit) {
@@ -167,7 +167,7 @@ public class Fun {
 			}
 			
 			// play a sound
-			SoundUtility.playSound(target, Sound.EXPLODE, broadcast);
+			SoundUtils.playSound(target, Sound.EXPLODE, broadcast);
 			
 			// broadcast?
 			if(broadcast && count < broadcastLimit) {
@@ -227,7 +227,7 @@ public class Fun {
 			}
 			
 			// play a sound
-			SoundUtility.playSound(target, Sound.FIRE, broadcast);
+			SoundUtils.playSound(target, Sound.FIRE, broadcast);
 			
 			// broadcast?
 			if(broadcast && count < broadcastLimit) {

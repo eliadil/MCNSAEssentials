@@ -20,7 +20,6 @@ import com.mcnsa.essentials.annotations.Setting;
 import com.mcnsa.essentials.exceptions.EssentialsCommandException;
 import com.mcnsa.essentials.interfaces.MultilineChatHandler;
 import com.mcnsa.essentials.utilities.ColourHandler;
-import com.mcnsa.essentials.utilities.Logger;
 
 public class ConversationManager implements ConversationAbandonedListener {
 	@Setting(node = "conversation-timeout-seconds") public static int conversationTimeoutSeconds = 30;
@@ -73,7 +72,6 @@ public class ConversationManager implements ConversationAbandonedListener {
 	@Override
 	public void conversationAbandoned(ConversationAbandonedEvent event) {
 		if(event.gracefulExit()) {
-			Logger.debug("Conversation ended gracefully");
 			// get our chat data
 			MultilineChatData chatData = chatters.get(event.getContext().getForWhom());
 			try {
@@ -99,7 +97,6 @@ public class ConversationManager implements ConversationAbandonedListener {
 			}
 		}
 		else {
-			Logger.debug("Conversation was abandoned by: %s", event.getCanceller().getClass().getName());
 			if(event.getCanceller() instanceof InactivityConversationCanceller) {
 				event.getContext().getForWhom().sendRawMessage(ColourHandler.processColours("&cYour text entry timed out!"));
 			}
@@ -120,11 +117,6 @@ public class ConversationManager implements ConversationAbandonedListener {
 		public Prompt acceptInput(ConversationContext context, String input) {
 			// check to see if they're done or cancelling
 			if(input.equalsIgnoreCase("/done")) {
-				Logger.debug("Conversation finished");
-				return Prompt.END_OF_CONVERSATION;
-			}
-			else if(input.equalsIgnoreCase("/cancel")) {
-				Logger.debug("Conversation cancelled");
 				return Prompt.END_OF_CONVERSATION;
 			}
 			
@@ -133,7 +125,6 @@ public class ConversationManager implements ConversationAbandonedListener {
 			LinkedList<String> textInputs = (LinkedList<String>)context.getSessionData("textInputs");
 			textInputs.add(input);
 			context.setSessionData("textInputs", textInputs);
-			Logger.debug("Added to conversation: %s", input);
 			return new AddTextPrompt();
 		}
 

@@ -16,7 +16,7 @@ import com.mcnsa.essentials.annotations.Command;
 import com.mcnsa.essentials.annotations.ComponentInfo;
 import com.mcnsa.essentials.annotations.Setting;
 import com.mcnsa.essentials.utilities.ColourHandler;
-import com.mcnsa.essentials.utilities.TimeFormat;
+import com.mcnsa.essentials.utilities.DateUtils;
 
 @ComponentInfo(friendlyName = "Information",
 				description = "Provides information to players",
@@ -40,7 +40,7 @@ public class Information implements Listener {
 		World world = (sender instanceof Player) ? ((Player)sender).getWorld() : Bukkit.getServer().getWorlds().get(0);
 		String motd = new String(Information.motd);
 		motd = motd.replaceAll("%name%", sender.getName());
-		motd = motd.replaceAll("%time%", TimeFormat.formatMinecraftTime(world.getTime()));
+		motd = motd.replaceAll("%time%", DateUtils.formatMinecraftTime(world.getTime()));
 		motd = motd.replaceAll("%world%", world.getName());
 		
 		String[] lines = motd.split("\n");

@@ -28,7 +28,7 @@ import com.mcnsa.essentials.exceptions.EssentialsCommandException;
 import com.mcnsa.essentials.managers.ComponentManager.Component;
 import com.mcnsa.essentials.utilities.ColourHandler;
 import com.mcnsa.essentials.utilities.Logger;
-import com.mcnsa.essentials.utilities.SoundUtility;
+import com.mcnsa.essentials.utilities.SoundUtils;
 import com.mcnsa.essentials.utilities.StringUtils;
 
 public class CommandsManager implements TabExecutor {
@@ -364,6 +364,8 @@ public class CommandsManager implements TabExecutor {
 			label = aliasMapping.get(label);
 		}
 		
+		Logger.debug("%s ran command %s with args: %s", sender.getName(), command.getName(), StringUtils.implode(", ", args));
+		
 		// find all our possibilities
 		String lastFailMessage = "";
 		for(String registrationToken: registeredCommands.keySet()) {
@@ -394,7 +396,7 @@ public class CommandsManager implements TabExecutor {
 			// check the number of arguments
 			boolean hasVarArg = false;
 			for(int i = 0; i < params.length && !hasVarArg; i++) {
-				if(params[i].getClass().equals(String[].class)) {
+				if(params[i].equals(String[].class)) {
 					hasVarArg = true;
 				}
 			}
@@ -437,29 +439,22 @@ public class CommandsManager implements TabExecutor {
 				}
 				// strings now
 				else if(params[i].equals(String.class)) {
-					try {
-						arguments[i] = args[i - 1];
-					}
-					catch(Exception e) {
-						possible = false;
-					}
+					arguments[i] = args[i - 1];
 				}
 				// string array
 				else if(params[i].equals(String[].class)) {
-					try {
-						String[] argsArray = new String[args.length - (i - 1)];
-						
-						// fill in the array
-						for(int j = 0; j < argsArray.length; j++) {
-							argsArray[j] = args[i - 1 + j];
-						}
-						
-						// store the argument
-						arguments[i] = argsArray;
+					String[] argsArray = new String[args.length - (i - 1)];
+					
+					// fill in the array
+					for(int j = 0; j < argsArray.length; j++) {
+						argsArray[j] = args[i - 1 + j];
 					}
-					catch(Exception e) {
-						possible = false;
-					}
+					
+					// store the argument
+					arguments[i] = argsArray;
+					
+					// and get out of here, we're done
+					i = params.length;
 				}
 				// something else?
 				else {
@@ -515,12 +510,12 @@ public class CommandsManager implements TabExecutor {
 				catch(Exception e) {					
 					if(e.getCause() instanceof EssentialsCommandException) {
 						ColourHandler.sendMessage(sender, "&c" + e.getCause().getMessage());
-						SoundUtility.errorSound(sender);
+						SoundUtils.errorSound(sender);
 						return true;
 					}
 					else {
 						ColourHandler.sendMessage(sender, "&cSomething went wrong! Alert an administrator!");
-						SoundUtility.errorSound(sender);
+						SoundUtils.errorSound(sender);
 						Logger.error("failed to execute command: " + label + " (" + e.getMessage() + ")");
 						e.printStackTrace();
 						return false;
@@ -543,7 +538,7 @@ public class CommandsManager implements TabExecutor {
 			// inform them
 			if(!usage.equals("")) {
 				ColourHandler.sendMessage(sender, "&cInvalid command usage! Proper usage:");
-				SoundUtility.notifySound(sender);
+				SoundUtils.notifySound(sender);
 				ColourHandler.sendMessage(sender, usage);
 			}
 			else {
@@ -553,7 +548,7 @@ public class CommandsManager implements TabExecutor {
 				if(!possibleUsage.equals("")) {
 					// found something maybe?
 					ColourHandler.sendMessage(sender, "&cInvalid command! Did you mean one of the following?");
-					SoundUtility.notifySound(sender);
+					SoundUtils.notifySound(sender);
 					ColourHandler.sendMessage(sender, possibleUsage);
 				}
 				else {
@@ -567,13 +562,13 @@ public class CommandsManager implements TabExecutor {
 					else {
 						ColourHandler.sendMessage(sender, "&cInvalid command!");
 					}
-					SoundUtility.errorSound(sender);
+					SoundUtils.errorSound(sender);
 				}
 			}
 		}
 		else {
 			ColourHandler.sendMessage(sender, lastFailMessage);
-			SoundUtility.errorSound(sender);
+			SoundUtils.errorSound(sender);
 		}
 		return false;
 	}

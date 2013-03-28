@@ -15,7 +15,7 @@ import com.mcnsa.essentials.exceptions.EssentialsCommandException;
 import com.mcnsa.essentials.utilities.ColourHandler;
 import com.mcnsa.essentials.utilities.Logger;
 import com.mcnsa.essentials.utilities.PlayerSelector;
-import com.mcnsa.essentials.utilities.TimeFormat;
+import com.mcnsa.essentials.utilities.DateUtils;
 
 @ComponentInfo(friendlyName = "Time",
 				description = "Allows you to query and set the world time",
@@ -46,7 +46,7 @@ public class Time {
 		}
 		
 		// tell them the time!
-		ColourHandler.sendMessage(sender, "&dThe current time in world '" + world.getName() + "' is: &f" + TimeFormat.formatMinecraftTime(world.getTime()));
+		ColourHandler.sendMessage(sender, "&dThe current time in world '" + world.getName() + "' is: &f" + DateUtils.formatMinecraftTime(world.getTime()));
 		
 		return true;
 	}
@@ -72,13 +72,13 @@ public class Time {
 		}
 		
 		// ok, parse the time string
-		long time = TimeFormat.parseTime(newTime);
+		long time = DateUtils.parseTime(newTime);
 		
 		// and set it!
 		targetWorld.setTime(time);
 		
 		// get a formatted new time
-		newTime = TimeFormat.formatMinecraftTime(time);
+		newTime = DateUtils.formatMinecraftTime(time);
 		
 		// alert!
 		if(broadcastTimeChanges) {

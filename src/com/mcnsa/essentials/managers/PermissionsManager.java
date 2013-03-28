@@ -16,7 +16,7 @@ public class PermissionsManager {
 	@Setting(node = "global-permissions-prefix") public static String globalPermissionsPrefix = "mcnsaessentials.";
 	
 	// keep track of permissions
-	static ru.tehkode.permissions.PermissionManager permissions = null;
+	public static ru.tehkode.permissions.PermissionManager permissions = null;
 	
 	public PermissionsManager() {
 		// set up permissions
