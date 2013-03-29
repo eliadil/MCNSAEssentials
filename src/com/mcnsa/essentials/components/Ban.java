@@ -53,7 +53,7 @@ public class Ban implements Listener, MultilineChatHandler {
 	
 	private static void ban(String banee, CommandSender banner, String reason, Timestamp expiry, boolean doKick) throws EssentialsCommandException {
 		// create a pretty expiry string
-		String expiryString = DateUtils.formatTimestamp(expiry);
+		String expiryString = DateUtils.formatTimestamp(expiry, false);
 		
 		// determine if the banee is a player name or an IP
 		if(doKick) {
@@ -229,7 +229,7 @@ public class Ban implements Listener, MultilineChatHandler {
 				Timestamp now = new Timestamp(System.currentTimeMillis());
 				
 				// create a pretty expiry string
-				String expiryString = DateUtils.formatTimestamp(expiry);
+				String expiryString = DateUtils.formatTimestamp(expiry, false);
 				
 				if(expiry.after(now)) {
 					// nope, they're banned
@@ -277,7 +277,7 @@ public class Ban implements Listener, MultilineChatHandler {
 		}
 		catch(ParseException e) {
 			// get a list of all target players
-			ArrayList<Player> targetPlayers = PlayerSelector.selectPlayersExact(targetPlayer);
+			ArrayList<Player> targetPlayers = PlayerSelector.selectPlayers(targetPlayer);
 			
 			// make sure we have at least one target player
 			if(targetPlayers.size() == 0) {
@@ -331,9 +331,9 @@ public class Ban implements Listener, MultilineChatHandler {
 		// yup, they are
 		ColourHandler.sendMessage(sender, "%s &6was banned on &8%s&6 by &a%s &6 until &8%s&6: &7%s",
 				(String)results.get(0).get("banee"),
-				DateUtils.formatTimestamp(((Timestamp)results.get(0).get("date"))),
+				DateUtils.formatTimestamp(((Timestamp)results.get(0).get("date")), false),
 				(String)results.get(0).get("banner"),
-				DateUtils.formatTimestamp(((Timestamp)results.get(0).get("expiry"))),
+				DateUtils.formatTimestamp(((Timestamp)results.get(0).get("expiry")), false),
 				(String)results.get(0).get("reason")
 				);
 		

@@ -85,10 +85,10 @@ public class Time {
 			// get our affected players
 			ArrayList<Player> targetPlayers = null;
 			if(broadcastOnlyInAffectedWorld) {
-				targetPlayers = PlayerSelector.selectPlayersExact(String.format("world:%s;*", targetWorld.getName()));
+				targetPlayers = PlayerSelector.selectPlayers(String.format("world:%s;*", targetWorld.getName()));
 			}
 			else {
-				targetPlayers = PlayerSelector.selectPlayersExact("*");
+				targetPlayers = PlayerSelector.selectPlayers("*");
 			}
 			
 			// broadcast it!

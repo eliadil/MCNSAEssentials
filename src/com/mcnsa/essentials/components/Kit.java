@@ -81,7 +81,7 @@ public class Kit {
 			permissions = {"give.others"})
 	public static boolean kit(CommandSender sender, String targetPlayer, String kit) throws EssentialsCommandException {
 		// get a list of all target players
-		ArrayList<Player> targetPlayers = PlayerSelector.selectPlayersExact(targetPlayer);
+		ArrayList<Player> targetPlayers = PlayerSelector.selectPlayers(targetPlayer);
 		
 		// make sure we have at least one target player
 		if(targetPlayers.size() == 0) {

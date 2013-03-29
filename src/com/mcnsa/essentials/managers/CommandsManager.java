@@ -3,9 +3,8 @@ package com.mcnsa.essentials.managers;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -27,9 +26,9 @@ import com.mcnsa.essentials.annotations.Command;
 import com.mcnsa.essentials.exceptions.EssentialsCommandException;
 import com.mcnsa.essentials.managers.ComponentManager.Component;
 import com.mcnsa.essentials.utilities.ColourHandler;
+import com.mcnsa.essentials.utilities.DateUtils;
 import com.mcnsa.essentials.utilities.Logger;
 import com.mcnsa.essentials.utilities.SoundUtils;
-import com.mcnsa.essentials.utilities.StringUtils;
 
 public class CommandsManager implements TabExecutor {
 	// keep track of all known aliases we're using
@@ -572,6 +571,26 @@ public class CommandsManager implements TabExecutor {
 		}
 		return false;
 	}
+	
+	private static boolean isInteger(String text) {
+		try {
+			Integer.parseInt(text);
+			return true;
+		}
+		catch(NumberFormatException e) {
+			return false;
+		}
+	}
+	
+	private static boolean isFloat(String text) {
+		try {
+			Float.parseFloat(text);
+			return true;
+		}
+		catch(NumberFormatException e) {
+			return false;
+		}
+	}
 
 	@Override
 	public List<String> onTabComplete(CommandSender sender, org.bukkit.command.Command command, String label, String[] args) {
@@ -597,75 +616,53 @@ public class CommandsManager implements TabExecutor {
 			int argumentCount = args.length;
 			
 			// only allow commands that have at least as many arguments as the user provided
-			if(ci.command.arguments().length < argumentCount) {
+			if(argumentCount > ci.command.arguments().length) {
 				continue;
 			}
 			
-			/*// get our method parameters
+			// get our method parameters
 			Class<?>[] params = ci.method.getParameterTypes();
 			
 			// check all our existing arguments for type
-			boolean passedArgChecks = true;
-			String imploded = "";
-			for(String arg: args) {
-				imploded += arg + ",";
-			}
-			// TODO: fix this
-			Logger.debug("---\narguments: %s", imploded);
-			Logger.debug("testing method %s", registrationToken);
-			for(int i = 0; i < (argumentCount - 1) && passedArgChecks; i++) {
-				// use [i + 1] on the params so we ignore the CommandSender argument
-				// check if the argument is an integer
-				if(params[i + 1].equals(int.class)) {
-					Logger.debug("\tmethod param[%d] is an int", (i+1));
-					// try to parse the given arg as an int
-					try {
-						Integer.parseInt(args[i]);
+			boolean passedArgsCheck = true;
+			for(int i = 0; i < (argumentCount - 1) && passedArgsCheck; i++) {
+				// check supplied types now
+				if(isFloat(args[i])) {
+					if(params[i+1].equals(float.class)) {
+						// yup!
 					}
-					catch(NumberFormatException e) {
-						// nope, not an int
-						passedArgChecks = false;
-						Logger.debug("\t\t%s failed: not int param");
-						break;
+					else if(params[i+1].equals(int.class)) {
+						// try to parse it now as an int
+						if(!isInteger(args[i])) {
+							// we tried to parse it as an integer
+							// but that failed
+							// so, no
+							passedArgsCheck = false;
+						}
 					}
-				}
-				// check if the argument is a float
-				else if(params[i + 1].equals(float.class)){
-					Logger.debug("\tmethod param[%d] is a float", (i+1));
-					// try to parse the given arg as a float
-					try {
-						Float.parseFloat(args[i]);
+					else {
+						// nope
+						// it is a number
+						// but our params are neither float nor int
+						// so...
+						passedArgsCheck = false;
 					}
-					catch(NumberFormatException e) {
-						// nope, not a float
-						passedArgChecks = false;
-						Logger.debug("\t\t%s failed: not float param", registrationToken);
-						break;
-					}
-				}
-				// check if the argument is a string
-				else if(params[i + 1].equals(String.class)){
-					// yes, we automatically accept Strings
-					Logger.debug("\tmethod param[%d] is a string", (i+1));
 				}
 				else {
-					// something else?
-					passedArgChecks = false;
-					Logger.debug("\t\t%s failed: unknown param", registrationToken);
-					break;
+					if(!params[i+1].equals(String.class)) {
+						passedArgsCheck = false;
+					}
 				}
 			}
 			
-			// make sure they passed our argument checks
-			if(!passedArgChecks) {
-				// nope, continue on!
+			// make sure we passed the arguments check
+			if(!passedArgsCheck) {
+				// nope!
 				continue;
-			}*/
+			}
 			
 			// ok, if they got here, that means that all arguments thus far have been decent
-			Logger.debug("num pab completions: %d, arg count: %d", ci.command.tabCompletions().length, argumentCount);
 			if(ci.command.tabCompletions().length >= argumentCount) {
-				Logger.debug("custom handler");
 				switch(ci.command.tabCompletions()[argumentCount - 1]) {
 				case PLAYER:
 					// a list of players
@@ -700,9 +697,6 @@ public class CommandsManager implements TabExecutor {
 					break;
 
 				case NUMBER:
-					possibleArguments.add("1");
-					break;
-					
 				case STRING:
 					possibleArguments.add("<" + registeredCommands.get(registrationToken).command.arguments()[argumentCount - 1].replaceAll("\\s+", "_") + ">");
 					break;
@@ -716,14 +710,12 @@ public class CommandsManager implements TabExecutor {
 					break;
 					
 				case DATE:
-					Date now = new Date();
-					possibleArguments.add(now.toString());
+					possibleArguments.add(DateUtils.formatTimestamp(new Timestamp(System.currentTimeMillis()), true));
 					break;
 				}
 			}
 			else {
 				// add it
-				Logger.debug("derp");
 				possibleArguments.add("<" + registeredCommands.get(registrationToken).command.arguments()[argumentCount - 1].replaceAll("\\s+", "_") + ">");
 			}
 		}

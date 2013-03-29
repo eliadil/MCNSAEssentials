@@ -53,7 +53,7 @@ public class Kick implements MultilineChatHandler {
 			consoleOnly = true)
 	public static boolean kickFromConsole(CommandSender sender, String targetPlayer) throws EssentialsCommandException {
 		// get a list of all target players
-		ArrayList<Player> targetPlayers = PlayerSelector.selectPlayersExact(targetPlayer);
+		ArrayList<Player> targetPlayers = PlayerSelector.selectPlayers(targetPlayer);
 		
 		// make sure we have at least one target player
 		if(targetPlayers.size() == 0) {
@@ -90,7 +90,7 @@ public class Kick implements MultilineChatHandler {
 			playerOnly = true)
 	public static boolean kick(CommandSender sender, String targetPlayer) throws EssentialsCommandException {
 		// get a list of all target players
-		ArrayList<Player> targetPlayers = PlayerSelector.selectPlayersExact(targetPlayer);
+		ArrayList<Player> targetPlayers = PlayerSelector.selectPlayers(targetPlayer);
 		
 		// make sure we have at least one target player
 		if(targetPlayers.size() == 0) {

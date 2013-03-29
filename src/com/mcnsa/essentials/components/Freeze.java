@@ -292,7 +292,7 @@ public class Freeze implements Listener {
 			permissions = {"freeze"})
 	public static boolean freeze(CommandSender sender, String targetPlayer) throws EssentialsCommandException {
 		// get a list of all target players
-		ArrayList<Player> targetPlayers = PlayerSelector.selectPlayersExact(targetPlayer);
+		ArrayList<Player> targetPlayers = PlayerSelector.selectPlayers(targetPlayer);
 		
 		// make sure we have at least one target player
 		if(targetPlayers.size() == 0) {
@@ -341,7 +341,7 @@ public class Freeze implements Listener {
 			permissions = {"unfreeze"})
 	public static boolean unfreeze(CommandSender sender, String targetPlayer) throws EssentialsCommandException {
 		// get a list of all target players
-		ArrayList<Player> targetPlayers = PlayerSelector.selectPlayersExact(targetPlayer);
+		ArrayList<Player> targetPlayers = PlayerSelector.selectPlayers(targetPlayer);
 		
 		// make sure we have at least one target player
 		if(targetPlayers.size() == 0) {

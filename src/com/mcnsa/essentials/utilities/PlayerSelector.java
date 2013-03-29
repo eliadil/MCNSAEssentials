@@ -15,7 +15,7 @@ public class PlayerSelector {
 		return Bukkit.getServer().getOfflinePlayer(target);
 	}
 	
-	public static ArrayList<Player> selectPlayersExact(String target) throws EssentialsCommandException {
+	public static ArrayList<Player> selectPlayers(String target) throws EssentialsCommandException {
 		ArrayList<Player> matchedPlayers = new ArrayList<Player>();
 		if(target.equals("*")) {
 			matchedPlayers = new ArrayList<Player>(Arrays.asList(Bukkit.getServer().getOnlinePlayers()));
@@ -40,7 +40,7 @@ public class PlayerSelector {
 			
 			// ok, world exists
 			// get all players that we're targeting
-			ArrayList<Player> players = selectPlayersExact(parts[1]);
+			ArrayList<Player> players = selectPlayers(parts[1]);
 			
 			// go through and make sure that the players are in the correct world
 			for(Player player: players) {

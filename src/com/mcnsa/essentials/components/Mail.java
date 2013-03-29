@@ -167,7 +167,7 @@ public class Mail implements Listener, MultilineChatHandler {
 			playerOnly = true)
 	public static boolean sendMail(CommandSender sender, String targetPlayer, String subject) throws EssentialsCommandException {
 		// get a list of all target players
-		ArrayList<Player> targetPlayers = PlayerSelector.selectPlayersExact(targetPlayer);
+		ArrayList<Player> targetPlayers = PlayerSelector.selectPlayers(targetPlayer);
 		
 		// make sure we have at least one target player
 		if(targetPlayers.size() == 0) {

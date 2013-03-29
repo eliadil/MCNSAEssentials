@@ -183,12 +183,12 @@ public class DateUtils {
 		throw new EssentialsCommandException("Unknown time input format '%s'!", stringTime);
 	}
 	
-	public static String formatTimestamp(Timestamp timestamp) {
+	public static String formatTimestamp(Timestamp timestamp, boolean basic) {
 		if(timestamp.toString().equals(Timestamp.valueOf("2020-02-02 02:02:02").toString())) {
 			return "forever";
 		}
 		
-		SimpleDateFormat format = new SimpleDateFormat("EEE, MMM dd, yyyy hh:mm a");
+		SimpleDateFormat format = new SimpleDateFormat(basic ? "yyyy-MM-dd" : "EEE, MMM dd, yyyy hh:mm a");
 		return format.format(new Date(timestamp.getTime()));
 	}
 }

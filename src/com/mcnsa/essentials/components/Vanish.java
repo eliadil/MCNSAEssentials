@@ -218,7 +218,7 @@ public class Vanish implements Listener {
 			permissions = {"others"})
 	public static boolean vanish(CommandSender sender, String targetPlayer) throws EssentialsCommandException {
 		// get a list of all target players
-		ArrayList<Player> targetPlayers = PlayerSelector.selectPlayersExact(targetPlayer);
+		ArrayList<Player> targetPlayers = PlayerSelector.selectPlayers(targetPlayer);
 		
 		// make sure we have at least one target player
 		if(targetPlayers.size() == 0) {
@@ -274,7 +274,7 @@ public class Vanish implements Listener {
 			permissions = {"others"})
 	public static boolean unvanish(CommandSender sender, String targetPlayer) throws EssentialsCommandException {
 		// get a list of all target players
-		ArrayList<Player> targetPlayers = PlayerSelector.selectPlayersExact(targetPlayer);
+		ArrayList<Player> targetPlayers = PlayerSelector.selectPlayers(targetPlayer);
 		
 		// make sure we have at least one target player
 		if(targetPlayers.size() == 0) {
