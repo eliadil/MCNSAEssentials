@@ -2,7 +2,6 @@ package com.mcnsa.essentials.managers;
 
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.Map;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.conversations.Conversable;
@@ -40,9 +39,6 @@ public class ConversationManager implements ConversationAbandonedListener {
 	}
 	
 	public void load() {
-		Map<Object, Object> sessionData = new HashMap<Object, Object>();
-		sessionData.put("textInputs", new LinkedList<String>());
-
 		// build our conversation factory
 		factory = new ConversationFactory(MCNSAEssentials.getInstance())
 			.withModality(true)
@@ -50,7 +46,6 @@ public class ConversationManager implements ConversationAbandonedListener {
 			.withFirstPrompt(instance.new AddTextPrompt())
 			.withEscapeSequence("/cancel")
 			.withTimeout(conversationTimeoutSeconds)
-			.withInitialSessionData(sessionData)
 			.withLocalEcho(false)
 			.addConversationAbandonedListener(instance);
 	}
@@ -107,9 +102,6 @@ public class ConversationManager implements ConversationAbandonedListener {
 		
 		// remove us from the chatter list
 		chatters.remove(event.getContext().getForWhom());
-		
-		// remove our session data
-		event.getContext().setSessionData("textInputs", new LinkedList<String>());
 	}
 	
 	private class AddTextPrompt extends StringPrompt {
@@ -123,6 +115,9 @@ public class ConversationManager implements ConversationAbandonedListener {
 			// now just add it to the list
 			@SuppressWarnings("unchecked")
 			LinkedList<String> textInputs = (LinkedList<String>)context.getSessionData("textInputs");
+			if(textInputs == null) {
+				textInputs = new LinkedList<String>();
+			}
 			textInputs.add(input);
 			context.setSessionData("textInputs", textInputs);
 			return new AddTextPrompt();
@@ -136,7 +131,7 @@ public class ConversationManager implements ConversationAbandonedListener {
 			// but if we have at least one line already, use that instead
 			@SuppressWarnings("unchecked")
 			LinkedList<String> textInputs = (LinkedList<String>)context.getSessionData("textInputs");
-			if(textInputs.size() > 0) {
+			if(textInputs != null && textInputs.size() > 0) {
 				result = "&9Added text: &f" + textInputs.getLast();
 			}
 			
