@@ -13,6 +13,7 @@ import ru.tehkode.permissions.PermissionUser;
 import com.mcnsa.essentials.annotations.Command;
 import com.mcnsa.essentials.annotations.ComponentInfo;
 import com.mcnsa.essentials.annotations.DatabaseTableInfo;
+import com.mcnsa.essentials.annotations.Translation;
 import com.mcnsa.essentials.enums.TabCompleteType;
 import com.mcnsa.essentials.exceptions.EssentialsCommandException;
 import com.mcnsa.essentials.interfaces.MultilineChatHandler;
@@ -43,6 +44,8 @@ public class Macros implements MultilineChatHandler {
 	}
 	
 	// allow players to define macros
+	@Translation(node = "begin-entering-commands") public static String beginEnteringCommands =
+			"Begin entering commands for the macro '%macro%'...";
 	@Command(command  = "definemacro",
 			arguments = {"macro name", "required permission", "temporary group"},
 			tabCompletions = {TabCompleteType.STRING, TabCompleteType.STRING, TabCompleteType.STRING},
@@ -68,7 +71,7 @@ public class Macros implements MultilineChatHandler {
 		}
 		
 		// alert them
-		ColourHandler.sendMessage(sender, "Begin entering commands for the macro '%s'...", macroName);
+		ColourHandler.sendMessage(sender, beginEnteringCommands.replaceAll("%macro%", macroName));
 		
 		// and start a conversation
 		ConversationManager.startConversation(sender, instance, macroName, requiredPermission, tempGroup, exists);
@@ -77,6 +80,7 @@ public class Macros implements MultilineChatHandler {
 	}
 
 	// actually store defined macros in the database here
+	@Translation(node = "macro-saved") public static String macroSaved = "Your macro '%macro%' has been saved!";
 	@Override
 	public void onChatComplete(CommandSender sender, String commands, Object... args) throws EssentialsCommandException {
 		// make sure we received all of our arguments correctly
@@ -122,10 +126,12 @@ public class Macros implements MultilineChatHandler {
 		}
 		
 		// alert them
-		ColourHandler.sendMessage(sender, "Your macro '%s' has been saved!", macroName);
+		ColourHandler.sendMessage(sender, macroSaved.replaceAll("%macro%", macroName));
 	}
 	
 	// list all macros that the sender can use
+	@Translation(node = "accessible-macros") public static String accessibleMacros =
+			"&6You have access to the following macros: %macros%";
 	@Command(command  = "macros",
 			aliases = "listmacros",
 			description = "list all macros that you have permission to use",
@@ -149,12 +155,14 @@ public class Macros implements MultilineChatHandler {
 		}
 		
 		// tell them
-		ColourHandler.sendMessage(sender, "&6You have access to the following macros: %s", validMacrosString);
+		ColourHandler.sendMessage(sender, accessibleMacros.replaceAll("%macros%", validMacrosString.toString()));
 		
 		return true;
 	}
 	
 	// list all the commands that a macro will run
+	@Translation(node = "executes-commands-header") public static String executesCommandsHeader =
+			"&6The macro '&f%macro%&6' executes the following commands:";
 	@Command(command  = "viewmacro",
 			aliases = {"inspectmacro", "macrocommands"},
 			arguments = {"macro name"},
@@ -175,13 +183,14 @@ public class Macros implements MultilineChatHandler {
 		}
 		
 		// inform them!
-		ColourHandler.sendMessage(sender, "&6The macro '&f%s&6' executes the following commands:", macroName);
+		ColourHandler.sendMessage(sender, executesCommandsHeader.replaceAll("%macro%", macroName));
 		ColourHandler.sendMessage(sender, (String)results.get(0).get("command"));
 		
 		return true;
 	}
 	
 	// delete an existing macro
+	@Translation(node = "deleted-macro") public static String deletedMacro = "The macro '%macro%' has been deleted!";
 	@Command(command  = "deletemacro",
 			arguments = {"macro name"},
 			tabCompletions = {TabCompleteType.STRING},
@@ -210,12 +219,14 @@ public class Macros implements MultilineChatHandler {
 		}
 		
 		// and tell them
-		ColourHandler.sendMessage(sender, "The macro '%s' has been deleted!", macroName);
+		ColourHandler.sendMessage(sender, deletedMacro.replaceAll("%macro%", macroName));
 		
 		return true;
 	}
 	
 	// actually run a macro
+	@Translation(node = "running-commands") public static String runningCommands = "&6Running commands...";
+	@Translation(node = "done-commands") public static String doneCommands = "&6Done!";
 	@Command(command  = "macro",
 			arguments = {"macro name"},
 			tabCompletions = {TabCompleteType.STRING},
@@ -261,7 +272,7 @@ public class Macros implements MultilineChatHandler {
 		String[] commands = ((String)results.get(0).get("command")).split("\n");
 		
 		// inform them that they're doing something
-		ColourHandler.sendMessage(sender, "&6Running commands...");
+		ColourHandler.sendMessage(sender, runningCommands);
 		
 		// and loop over the commands, running each one
 		for(String command: commands) {
@@ -277,7 +288,7 @@ public class Macros implements MultilineChatHandler {
 		}
 		
 		// and that they're done
-		ColourHandler.sendMessage(sender, "&6Done!");
+		ColourHandler.sendMessage(sender, doneCommands);
 		
 		// remove them from the temporary group
 		if(sender instanceof Player && !tempGroup.equals("")) {

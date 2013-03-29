@@ -18,6 +18,7 @@ import com.mcnsa.essentials.annotations.Command;
 import com.mcnsa.essentials.annotations.ComponentInfo;
 import com.mcnsa.essentials.annotations.DatabaseTableInfo;
 import com.mcnsa.essentials.annotations.Setting;
+import com.mcnsa.essentials.annotations.Translation;
 import com.mcnsa.essentials.enums.TabCompleteType;
 import com.mcnsa.essentials.exceptions.EssentialsCommandException;
 import com.mcnsa.essentials.interfaces.MultilineChatHandler;
@@ -58,9 +59,11 @@ public class Mail implements Listener, MultilineChatHandler {
 		return results.size();
 	}
 	
+	@Translation(node = "num-unread-mail") public static String numUnreadMail = "&6You have %numUnread% unread mail messages!";
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerJoin(PlayerJoinEvent event) throws EssentialsCommandException {
-		ColourHandler.sendMessage(event.getPlayer(), "&6You have %d unread mail messages!", countNumberUnread(event.getPlayer()));
+		ColourHandler.sendMessage(event.getPlayer(),
+				numUnreadMail.replaceAll("%numUnread%", String.valueOf(countNumberUnread(event.getPlayer()))));
 	}
 	
 	@Command(command = "mail",
@@ -71,6 +74,8 @@ public class Mail implements Listener, MultilineChatHandler {
 		return checkMail(sender, 1);
 	}
 	
+	@Translation(node = "inbox-header") public static String inboxHeader = "&6%s's Inbox (page %page%/%totalPages%):";
+	@Translation(node = "inbox-format") public static String inboxFormat = "&7[%d]&f%s &9%s&7: &f%s &7(%s)";
 	@Command(command = "mail",
 			arguments = {"page #"},
 			tabCompletions = {TabCompleteType.NUMBER},
@@ -104,20 +109,24 @@ public class Mail implements Listener, MultilineChatHandler {
 		}
 		
 		// show our mail
-		ColourHandler.sendMessage(sender, "&6%s's Inbox (page %d/%d):", sender.getName(), (page+1), totalPages);
+		ColourHandler.sendMessage(sender, inboxHeader
+				.replaceAll("%player%", sender.getName())
+				.replaceAll("%page%", String.valueOf(page + 1))
+				.replaceAll("%totalPages%", String.valueOf(totalPages)));
 		for(int i = start; i < end; i++) {
 			ColourHandler.sendMessage(sender,
-					"&7[%d]&f%s &9%s&7: &f%s &7(%s)",
-					(Integer)results.get(i).get("id"),
-					(Boolean)results.get(i).get("unread") ? "*" : "",
-					(String)results.get(i).get("sender"),
-					(String)results.get(i).get("subject"),
-					((Timestamp)results.get(i).get("date")).toString());
+					inboxFormat
+					.replaceAll("%id%", String.valueOf((Integer)results.get(i).get("id")))
+					.replaceAll("%unread%", String.valueOf((Boolean)results.get(i).get("unread") ? "*" : ""))
+					.replaceAll("%sender%", (String)results.get(i).get("sender"))
+					.replaceAll("%subject%", (String)results.get(i).get("subject"))
+					.replaceAll("%date%", ((Timestamp)results.get(i).get("date")).toString()));
 		}
 		
 		return true;
 	}
 	
+	@Translation(node = "mail-header") public static String mailHeader = "&9Mail from %sender%: %subject% (on %date%):";
 	@Command(command = "readmail",
 			arguments = {"mail ID"},
 			tabCompletions = {TabCompleteType.NUMBER},
@@ -140,7 +149,10 @@ public class Mail implements Listener, MultilineChatHandler {
 		String subject = (String)results.get(0).get("subject");
 		String contents = ColourHandler.processColours((String)results.get(0).get("contents"));
 		Timestamp date = (Timestamp)results.get(0).get("date");
-		ColourHandler.sendMessage(sender, "&9Mail from %s: %s (on %s):", mailSender, subject, date.toString());
+		ColourHandler.sendMessage(sender, mailHeader
+				.replaceAll("%sender%", mailSender)
+				.replaceAll("%subject%", subject)
+				.replaceAll("%date%", date.toString()));
 		String[] lines = ChatPaginator.wordWrap(contents, ChatPaginator.AVERAGE_CHAT_PAGE_WIDTH);
 		for(String line: lines) {
 			ColourHandler.sendMessage(sender, line);
@@ -175,7 +187,6 @@ public class Mail implements Listener, MultilineChatHandler {
 		}
 		
 		// call our multiline chat handler
-		//MultilineChatEntry.scheduleMultilineTextEntry((Player)sender, instance, targetPlayers, subject);
 		ConversationManager.startConversation(sender, instance, targetPlayers, subject);
 		
 		return true;

@@ -15,6 +15,7 @@ import com.mcnsa.essentials.MCNSAEssentials;
 import com.mcnsa.essentials.annotations.Command;
 import com.mcnsa.essentials.annotations.ComponentInfo;
 import com.mcnsa.essentials.annotations.Setting;
+import com.mcnsa.essentials.annotations.Translation;
 import com.mcnsa.essentials.utilities.ColourHandler;
 import com.mcnsa.essentials.utilities.DateUtils;
 
@@ -49,10 +50,14 @@ public class Information implements Listener {
 		}
 	}
 	
+	@Translation(node = "rules-header") public static String rulesHeader = "&e--- &6RULES &e---";
+	@Translation(node = "rules-format") public static String rulesFormat = "&6%number%. %rule%";
 	private static void sendRules(CommandSender sender) {
-		ColourHandler.sendMessage(sender, "&e--- &6RULES &e---");
+		ColourHandler.sendMessage(sender, rulesHeader);
 		for(int i = 0; i < rules.length; i++) {
-			ColourHandler.sendMessage(sender, "&6" + (i+1) + ". " + rules[i]);
+			ColourHandler.sendMessage(sender,
+					rulesFormat.replaceAll("%number%", String.valueOf(i + 1))
+					.replaceAll("%rule%", rules[i]));
 		}
 	}
 	
@@ -87,6 +92,8 @@ public class Information implements Listener {
 		return true;
 	}
 	
+	@Translation(node = "online-players-format") public static String onlinePlayersFormat =
+			"&6Current online players (&f%numOnline%d&6): %onlinePlayers%";
 	@Command(command = "who",
 			aliases = {"list"},
 			description = "lists people who are on the server",
@@ -94,14 +101,16 @@ public class Information implements Listener {
 	public static boolean who(CommandSender sender) {
 		// get a list of all online players
 		Player[] onlinePlayers = Bukkit.getServer().getOnlinePlayers();
-		String messageString = String.format("&6Current online players (&f%d&6): ", onlinePlayers.length);
+		String messageString = "";
 		for(int i = 0; i < onlinePlayers.length; i++) {
 			if(i != 0) {
 				messageString += "&6, ";
 			}
 			messageString += "&f" + onlinePlayers[i].getName();
 		}
-		ColourHandler.sendMessage(sender, messageString);
+		ColourHandler.sendMessage(sender, onlinePlayersFormat
+				.replaceAll("%numOnline%", String.valueOf(onlinePlayers.length))
+				.replaceAll("%onlinePlayers%", messageString));
 		
 		return true;
 	}

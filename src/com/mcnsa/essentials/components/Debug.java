@@ -115,6 +115,7 @@ public class Debug {
 		"frozen",
 		"tpHistory",
 		"ignoreTP",
+		"tpDisabled",
 		"ignorePermissions"
 	};
 	@Command(command = "resetmeta",

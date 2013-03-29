@@ -17,6 +17,7 @@ import com.mcnsa.essentials.annotations.Command;
 import com.mcnsa.essentials.annotations.ComponentInfo;
 import com.mcnsa.essentials.annotations.DatabaseTableInfo;
 import com.mcnsa.essentials.annotations.Setting;
+import com.mcnsa.essentials.annotations.Translation;
 import com.mcnsa.essentials.enums.TabCompleteType;
 import com.mcnsa.essentials.exceptions.EssentialsCommandException;
 import com.mcnsa.essentials.managers.DatabaseManager;
@@ -79,6 +80,8 @@ public class Home implements Listener {
 		return homes(sender, sender.getName());
 	}
 
+	@Translation(node = "no-homes-defined") public static String noHomesDefined = "&e'%player%' doesn't have any homes defined!";
+	@Translation(node = "players-homes-headers") public static String playersHomesHeader = "%player%&6's homes:";
 	@Command(command = "homes",
 			arguments = {"player"},
 			tabCompletions = {TabCompleteType.PLAYER},
@@ -91,11 +94,11 @@ public class Home implements Listener {
 		// get a resultset of all our kits
 		ArrayList<HashMap<String, Object>> results = DatabaseManager.accessQuery("select * from homes where owner=?;", playerTarget);
 		if(results.size() == 0) {
-			ColourHandler.sendMessage(sender, "&e'%s' doesn't have any homes defined!", playerTarget);
+			ColourHandler.sendMessage(sender, noHomesDefined.replaceAll("%player%", playerTarget));
 			return true;
 		}
 		
-		ColourHandler.sendMessage(sender, "%s&6's homes:", playerTarget);
+		ColourHandler.sendMessage(sender, playersHomesHeader.replaceAll("%player%", playerTarget));
 		String homeList = "";
 		for(int i = 0; i < results.size(); i++) {
 			if(i != 0) {
@@ -126,6 +129,8 @@ public class Home implements Listener {
 		return setHome(sender, sender.getName(), homeName);
 	}
 
+	@Translation(node = "home-been-set") public static String homeBeenSet = "&a%player%'s home '%home%' has been set!";
+	@Translation(node = "too-many-homes") public static String tooManyHomes = "&6%player% already has too many homes!";
 	@Command(command = "sethome",
 		arguments = {"target player[s]", "home name"},
 		tabCompletions = {TabCompleteType.PLAYER, TabCompleteType.STRING},
@@ -169,12 +174,14 @@ public class Home implements Listener {
 				throw new EssentialsCommandException("Failed to set your home!");
 			}
 			
-			ColourHandler.sendMessage(sender, "&a%s's home '%s' has been set!", targetPlayer, homeName);
+			ColourHandler.sendMessage(sender,
+					homeBeenSet.replaceAll("%player%", targetPlayer)
+					.replaceAll("%home%", homeName));
 		}
 		else {
 			// insert, but only if we don't have too many homes already
 			if(currentNumberOfHomes >= maxHomes) {
-				ColourHandler.sendMessage(sender, "&6%s already has too many homes!", targetPlayer);
+				ColourHandler.sendMessage(sender, tooManyHomes.replaceAll("%player%", targetPlayer));
 				return true;
 			}
 			
@@ -192,8 +199,10 @@ public class Home implements Listener {
 			if(insertionResults == 0) {
 				throw new EssentialsCommandException("Failed to set your home!");
 			}
-			
-			ColourHandler.sendMessage(sender, "&a%s's home '%s' has been set!", targetPlayer, homeName);
+
+			ColourHandler.sendMessage(sender,
+					homeBeenSet.replaceAll("%player%", targetPlayer)
+					.replaceAll("%home%", homeName));
 		}
 		
 		return true;
@@ -232,6 +241,10 @@ public class Home implements Listener {
 		return home(sender, sender.getName(), homeName);
 	}
 
+	@Translation(node = "welcome-home") public static String welcomeHome =
+			"&6Welcome to your home '%home%'!";
+	@Translation(node = "welcome-home-other") public static String welcomeHomeOther =
+			"&6Welcome to %player%'s home '%home%'!";
 	@Command(command = "home",
 		arguments = {"player", "home name"},
 		tabCompletions = {TabCompleteType.PLAYER, TabCompleteType.STRING},
@@ -248,7 +261,8 @@ public class Home implements Listener {
 		// first, determine if our home already exists
 		// and count home many homes we have
 		// get a resultset of all our kits
-		ArrayList<HashMap<String, Object>> results = DatabaseManager.accessQuery("select * from homes where owner=? and name=?;", playerTarget, homeName);
+		ArrayList<HashMap<String, Object>> results = DatabaseManager.accessQuery(
+				"select * from homes where owner=? and name=?;", playerTarget, homeName);
 		for(int i = 0; i < results.size(); i++) {
 			if(((String)results.get(i).get("name")).equals(homeName)) {
 				// we found it!
@@ -264,10 +278,12 @@ public class Home implements Listener {
 				
 				// alert
 				if(sender.getName().equals(playerTarget)){
-					ColourHandler.sendMessage(sender, "&6Welcome to your home '%s'!", homeName);
+					ColourHandler.sendMessage(sender, welcomeHome.replaceAll("%home%", homeName));
 				}
 				else {
-					ColourHandler.sendMessage(sender, "&6Welcome to %s's home '%s'!", playerTarget, homeName);
+					ColourHandler.sendMessage(sender, welcomeHomeOther
+							.replaceAll("%home%", homeName)
+							.replaceAll("%player%", playerTarget));
 				}
 				return true;
 			}

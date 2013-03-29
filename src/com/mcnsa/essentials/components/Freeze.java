@@ -47,6 +47,7 @@ import org.bukkit.metadata.MetadataValue;
 import com.mcnsa.essentials.MCNSAEssentials;
 import com.mcnsa.essentials.annotations.Command;
 import com.mcnsa.essentials.annotations.ComponentInfo;
+import com.mcnsa.essentials.annotations.Translation;
 //import com.mcnsa.essentials.annotations.ComponentInfo;
 import com.mcnsa.essentials.annotations.Setting;
 import com.mcnsa.essentials.enums.TabCompleteType;
@@ -285,6 +286,11 @@ public class Freeze implements Listener {
 	}
 	
 	// commands for controlling freezing
+	@Translation(node = "already-frozen") public static String alreadyFrozen = "&b%player% was already frozen!";
+	@Translation(node = "were-frozen") public static String wereFrozen =
+			"&bYou have been frozen by %freezer%! You may only talk until you are unfrozen!";
+	@Translation(node = "has-been-frozen") public static String hasBeenFrozen =
+			"&b%player% has been frozen!";
 	@Command(command = "freeze",
 			arguments = {"target player[s]"},
 			tabCompletions = {TabCompleteType.PLAYER},
@@ -306,12 +312,7 @@ public class Freeze implements Listener {
 			
 			// only if they aren't already frozen
 			if(isFrozen(target)) {
-				if(sender.getName().equals(target.getName())) {
-					ColourHandler.sendMessage(target, "&bYou are already frozen!");
-				}
-				else {
-					ColourHandler.sendMessage(sender, "&b" + target.getName() + " was already frozen!");
-				}
+				ColourHandler.sendMessage(sender, alreadyFrozen.replaceAll("%player%", target.getName()));
 				continue;
 			}
 			
@@ -322,18 +323,16 @@ public class Freeze implements Listener {
 			SoundUtils.errorSound(target);
 			
 			// alert them
-			if(sender.getName().equals(target.getName())) {
-				ColourHandler.sendMessage(target, "&bYou froze yourself!");
-			}
-			else {
-				ColourHandler.sendMessage(target, "&bYou have been frozen by %s! You may only talk until you are unfrozen!", sender.getName());
-				ColourHandler.sendMessage(sender, "&b" + target.getName() + " has been frozen!");
-			}
+			ColourHandler.sendMessage(target, wereFrozen.replaceAll("%freezer%", sender.getName()));
+			ColourHandler.sendMessage(sender, hasBeenFrozen.replaceAll("%player%", target.getName()));
 		}
 		
 		return true;
 	}
 	
+	@Translation(node = "wasnt-frozen") public static String wasntFrozen = "&b%player% wasn't frozen anyway!";
+	@Translation(node = "unfrozen-by") public static String unfrozenBy = "&bYou have been unfrozen by %player%!";
+	@Translation(node = "was-unfrozen") public static String wasUnfrozen = "&b%player% has been unfrozen!";
 	@Command(command = "unfreeze",
 			arguments = {"target player[s]"},
 			tabCompletions = {TabCompleteType.PLAYER},
@@ -355,12 +354,7 @@ public class Freeze implements Listener {
 			
 			// only if they aren't already frozen
 			if(!isFrozen(target)) {
-				if(sender.getName().equals(target.getName())) {
-					ColourHandler.sendMessage(target, "&bYou weren't even frozen!");
-				}
-				else {
-					ColourHandler.sendMessage(sender, "&b%s wasn't frozen anyway!", target.getName());
-				}
+				ColourHandler.sendMessage(sender, wasntFrozen.replaceAll("%player%", target.getName()));
 				continue;
 			}
 			
@@ -371,13 +365,8 @@ public class Freeze implements Listener {
 			SoundUtils.confirmSound(target);
 			
 			// alert them
-			if(sender.getName().equals(target.getName())) {
-				ColourHandler.sendMessage(target, "&bYou unfroze yourself!");
-			}
-			else {
-				ColourHandler.sendMessage(target, "&bYou have been unfrozen by %s!", sender.getName());
-				ColourHandler.sendMessage(sender, "&b" + target.getName() + " has been unfrozen!");
-			}
+			ColourHandler.sendMessage(target, unfrozenBy.replaceAll("%player%", sender.getName()));
+			ColourHandler.sendMessage(sender, wasUnfrozen.replaceAll("%player%", target.getName()));
 		}
 		
 		return true;

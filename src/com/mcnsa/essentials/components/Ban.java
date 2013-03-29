@@ -21,6 +21,7 @@ import com.mcnsa.essentials.annotations.Command;
 import com.mcnsa.essentials.annotations.ComponentInfo;
 import com.mcnsa.essentials.annotations.DatabaseTableInfo;
 import com.mcnsa.essentials.annotations.Setting;
+import com.mcnsa.essentials.annotations.Translation;
 import com.mcnsa.essentials.enums.TabCompleteType;
 import com.mcnsa.essentials.exceptions.EssentialsCommandException;
 import com.mcnsa.essentials.interfaces.MultilineChatHandler;
@@ -51,6 +52,10 @@ public class Ban implements Listener, MultilineChatHandler {
 		ban(banee, banner, reason, expiry, true);
 	}
 	
+	@Translation(node = "you-have-been-banned") public static String youHaveBeenBanned =
+			"&cYou have been banned until %expiry% by %banner%: %reason%";
+	@Translation(node = "you-banned") public static String youBanned =
+			"&6You have banned %player% until %expiry%!";
 	private static void ban(String banee, CommandSender banner, String reason, Timestamp expiry, boolean doKick) throws EssentialsCommandException {
 		// create a pretty expiry string
 		String expiryString = DateUtils.formatTimestamp(expiry, false);
@@ -67,10 +72,10 @@ public class Ban implements Listener, MultilineChatHandler {
 				for(Player online: onlinePlayers) {
 					if(online.getAddress().getAddress().toString().equalsIgnoreCase(ip.toString())) {
 						// yup, we found em!
-						String message = ColourHandler.processColours("&cYou have been banned until %s by %s: %s",
-								expiryString,
-								banner.getName(),
-								reason);
+						String message = ColourHandler.processColours(youHaveBeenBanned
+								.replaceAll("%expiry%", expiryString)
+								.replaceAll("%banner%", banner.getName())
+								.replaceAll("%reason%", reason));
 						ColourHandler.sendMessage(online, message);
 						online.kickPlayer(message);
 					}
@@ -85,10 +90,10 @@ public class Ban implements Listener, MultilineChatHandler {
 				Player player = Bukkit.getServer().getPlayer(banee);
 				if(player != null) {
 					// yup, we found em!
-					String message = ColourHandler.processColours("&cYou have been banned until %s by %s: %s",
-							expiryString,
-							banner.getName(),
-							reason);
+					String message = ColourHandler.processColours(youHaveBeenBanned
+							.replaceAll("%expiry%", expiryString)
+							.replaceAll("%banner%", banner.getName())
+							.replaceAll("%reason%", reason));
 					ColourHandler.sendMessage(player, message);
 					player.kickPlayer(message);
 				}
@@ -102,7 +107,9 @@ public class Ban implements Listener, MultilineChatHandler {
 		}
 		
 		// and alert the banner
-		ColourHandler.sendMessage(banner, "&6You have banned %s until %s!", banee, expiryString);
+		ColourHandler.sendMessage(banner, youBanned
+				.replaceAll("%player%", banee)
+				.replaceAll("%expiry%", expiryString));
 		
 		// record our ban
 		int results = DatabaseManager.updateQuery(
@@ -119,9 +126,10 @@ public class Ban implements Listener, MultilineChatHandler {
 		}
 	}
 	
+	@Translation(node = "you-unbanned") public static String youUnbanned = "&6You have unbanned %player%!";
 	private static void unban(String unbanee, CommandSender unbanner, String reason) throws EssentialsCommandException {
 		// and alert the unbanner
-		ColourHandler.sendMessage(unbanner, "&6You have unbanned %s!", unbanee);
+		ColourHandler.sendMessage(unbanner, youUnbanned.replaceAll("%player%", unbanee));
 		
 		// record our unban
 		int results = DatabaseManager.updateQuery(
@@ -212,6 +220,7 @@ public class Ban implements Listener, MultilineChatHandler {
 	}
 	
 	// bukkit events
+	@Translation(node = "login-banned") public static String loginBanned = "&cYou are banned until &f%expiry%&c: &f%reason%";
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void onPlayerPreLoginEvent(AsyncPlayerPreLoginEvent event) {
 		try {
@@ -234,9 +243,10 @@ public class Ban implements Listener, MultilineChatHandler {
 				if(expiry.after(now)) {
 					// nope, they're banned
 					event.disallow(Result.KICK_BANNED, ColourHandler.processColours(String.format(
-							"&cYou are banned until &f%s&c: &f%s",
-							expiryString,
-							(String)results.get(0).get("reason"))));
+							loginBanned
+								.replaceAll("%expiry%", expiryString)
+								.replaceAll("%reason%", (String)results.get(0).get("reason"))
+								.replaceAll("%banner%", (String)results.get(0).get("banner")))));
 				}
 			}
 		}
@@ -255,6 +265,7 @@ public class Ban implements Listener, MultilineChatHandler {
 		return ban(sender, targetPlayer, "2020-02-02 02:02:02");
 	}
 	
+	@Translation(node = "provide-reason") public static String provideReason = "&cPlease enter a reason for why you're banning %player%:";
 	@Command(command = "ban",
 			arguments = {"target player[s] / IP address", "expiry date"},
 			tabCompletions = {TabCompleteType.PLAYER, TabCompleteType.DATE},
@@ -272,7 +283,7 @@ public class Ban implements Listener, MultilineChatHandler {
 			String ipString = IPUtils.stripIP(ip);
 			
 			// call our multiline chat handler
-			ColourHandler.sendMessage(sender, "&cPlease enter a reason for why you're banning this %s:", ipString);
+			ColourHandler.sendMessage(sender, provideReason.replaceAll("%player%", ipString));
 			ConversationManager.startConversation(sender, instance, ipString, expiryTimestamp);
 		}
 		catch(ParseException e) {
@@ -285,7 +296,7 @@ public class Ban implements Listener, MultilineChatHandler {
 			}
 			
 			// call our multiline chat handler
-			ColourHandler.sendMessage(sender, "&cPlease enter a reason for why you're banning %s:", targetPlayer);
+			ColourHandler.sendMessage(sender, provideReason.replaceAll("%player%", targetPlayer));
 			ConversationManager.startConversation(sender, instance, targetPlayers, expiryTimestamp);
 		}
 		
@@ -293,6 +304,7 @@ public class Ban implements Listener, MultilineChatHandler {
 	}
 	
 	// unbans
+	@Translation(node = "isnt-banned") public static String isntBanned = "%player% isn't banned!";
 	@Command(command = "unban",
 			arguments = {"target player / IP address"},
 			tabCompletions = {TabCompleteType.PLAYER},
@@ -304,7 +316,7 @@ public class Ban implements Listener, MultilineChatHandler {
 				"select * from banlogs where banee=? order by date desc limit 1;",
 				targetPlayer);
 		if(results.size() != 1) {
-			throw new EssentialsCommandException("Player / ip '%s' isn't banned!", targetPlayer);
+			throw new EssentialsCommandException(isntBanned.replaceAll("%player", targetPlayer));
 		}
 		
 		ColourHandler.sendMessage(sender, "&cPlease enter a reason for why you're unbanning %s:", targetPlayer);
@@ -313,6 +325,8 @@ public class Ban implements Listener, MultilineChatHandler {
 	}
 	
 	// determine whether someone is banned or not
+	@Translation(node = "ban-info") public static String banInfo =
+			"%player% &6was banned on &8%date%&6 by &a%banner% &6 until &8%expiry%&6: &7%reason%";
 	@Command(command = "isbanned",
 			arguments = {"target player / IP address"},
 			tabCompletions = {TabCompleteType.STRING},
@@ -324,17 +338,17 @@ public class Ban implements Listener, MultilineChatHandler {
 				"select * from banlogs where banee=? order by date desc limit 1;",
 				targetPlayer);
 		if(results.size() != 1) {
-			ColourHandler.sendMessage(sender, "&a%s is &lNOT&r&a banned!", targetPlayer);
+			ColourHandler.sendMessage(sender, isntBanned.replaceAll("%player", targetPlayer));
 			return true;
 		}
 		
 		// yup, they are
-		ColourHandler.sendMessage(sender, "%s &6was banned on &8%s&6 by &a%s &6 until &8%s&6: &7%s",
-				(String)results.get(0).get("banee"),
-				DateUtils.formatTimestamp(((Timestamp)results.get(0).get("date")), false),
-				(String)results.get(0).get("banner"),
-				DateUtils.formatTimestamp(((Timestamp)results.get(0).get("expiry")), false),
-				(String)results.get(0).get("reason")
+		ColourHandler.sendMessage(sender, banInfo
+				.replaceAll("%player%", (String)results.get(0).get("banee"))
+				.replaceAll("%date%", DateUtils.formatTimestamp(((Timestamp)results.get(0).get("date")), false))
+				.replaceAll("%banner%", (String)results.get(0).get("banner"))
+				.replaceAll("%expiry%", DateUtils.formatTimestamp(((Timestamp)results.get(0).get("expiry")), false))
+				.replaceAll("%reason%", (String)results.get(0).get("reason"))
 				);
 		
 		return true;

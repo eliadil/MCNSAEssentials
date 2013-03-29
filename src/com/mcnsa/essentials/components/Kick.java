@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 import com.mcnsa.essentials.annotations.Command;
 import com.mcnsa.essentials.annotations.ComponentInfo;
 import com.mcnsa.essentials.annotations.DatabaseTableInfo;
+import com.mcnsa.essentials.annotations.Translation;
 import com.mcnsa.essentials.enums.TabCompleteType;
 import com.mcnsa.essentials.exceptions.EssentialsCommandException;
 import com.mcnsa.essentials.interfaces.MultilineChatHandler;
@@ -48,46 +49,8 @@ public class Kick implements MultilineChatHandler {
 	@Command(command = "kick",
 			arguments = {"target player[s]"},
 			tabCompletions = {TabCompleteType.PLAYER},
-			description = "kicks the target player[s] for a given reason",
-			permissions = {"kick"},
-			consoleOnly = true)
-	public static boolean kickFromConsole(CommandSender sender, String targetPlayer) throws EssentialsCommandException {
-		// get a list of all target players
-		ArrayList<Player> targetPlayers = PlayerSelector.selectPlayers(targetPlayer);
-		
-		// make sure we have at least one target player
-		if(targetPlayers.size() == 0) {
-			throw new EssentialsCommandException("I couldn't find / parse target player[s] '%s' to kick!", targetPlayer);
-		}
-		
-		// dummy reason
-		String reason = "no good reason";
-		String playerName = sender.getName();
-		
-		// loop over all our targets
-		String playerListString = "";
-		for(Player target: targetPlayers) {
-			if(!playerListString.equals("")) {
-				playerListString += "&6, ";
-			}
-			ColourHandler.sendMessage(target, "&cYou have been kicked by %s: %s", playerName, reason);
-			target.kickPlayer(reason);
-			playerListString += "&e" + target.getName();
-			
-			// log it
-			Logger.log("%s kicked %s: %s", playerName, target.getName(), reason);
-			recordKick(playerName, target.getName(), reason);
-		}
-		
-		return true;
-	}
-	
-	@Command(command = "kick",
-			arguments = {"target player[s]"},
-			tabCompletions = {TabCompleteType.PLAYER},
 			description = "kicks the target player[s]",
-			permissions = {"kick"},
-			playerOnly = true)
+			permissions = {"kick"})
 	public static boolean kick(CommandSender sender, String targetPlayer) throws EssentialsCommandException {
 		// get a list of all target players
 		ArrayList<Player> targetPlayers = PlayerSelector.selectPlayers(targetPlayer);
@@ -98,12 +61,13 @@ public class Kick implements MultilineChatHandler {
 		}
 		
 		// call our multiline chat handler
-		//MultilineChatEntry.scheduleMultilineTextEntry((Player)sender, instance, targetPlayers);
 		ConversationManager.startConversation(sender, instance, targetPlayers);
 		
 		return true;
 	}
 
+	@Translation(node = "kicked-by") public static String kickedBy = "&cYou have been kicked by %kicker%: %reason%";
+	@Translation(node = "kicked") public static String kicked = "&6You kicked the following people:";
 	@Override
 	public void onChatComplete(CommandSender sender, String reason, Object... playerList) throws EssentialsCommandException {
 		// kick everyone on our list
@@ -121,7 +85,9 @@ public class Kick implements MultilineChatHandler {
 			if(!playerListString.equals("")) {
 				playerListString += "&6, ";
 			}
-			ColourHandler.sendMessage(target, "&cYou have been kicked by %s: %s", playerName, reason);
+			ColourHandler.sendMessage(target, kickedBy
+					.replaceAll("%kicker%", sender.getName())
+					.replaceAll("%reason%", reason));
 			target.kickPlayer(reason);
 			playerListString += "&e" + target.getName();
 			
@@ -132,7 +98,7 @@ public class Kick implements MultilineChatHandler {
 		
 		// send the message to the kicking player
 		if(sender != null) {
-			ColourHandler.sendMessage(sender, "&6You kicked the following people:");
+			ColourHandler.sendMessage(sender, kicked);
 			ColourHandler.sendMessage(sender, playerListString);
 		}
 	}

@@ -11,6 +11,7 @@ import org.bukkit.inventory.meta.SkullMeta;
 
 import com.mcnsa.essentials.annotations.Command;
 import com.mcnsa.essentials.annotations.ComponentInfo;
+import com.mcnsa.essentials.annotations.Translation;
 import com.mcnsa.essentials.enums.TabCompleteType;
 import com.mcnsa.essentials.exceptions.EssentialsCommandException;
 import com.mcnsa.essentials.utilities.ColourHandler;
@@ -34,6 +35,7 @@ public class Items {
 		return giveHead(sender, sender.getName(), headName);
 	}
 	
+	@Translation(node = "given-head") public static String givenHead = "&aYou've been given the head of %head% by %player%";
 	@Command(command = "givehead",
 			aliases = {"head"},
 			arguments = {"target player[s]", "head type / player name"},
@@ -87,12 +89,9 @@ public class Items {
 			player.getInventory().addItem(stack);
 			
 			// alert them!
-			if(!player.getName().equals(sender.getName())) {
-				ColourHandler.sendMessage(player, "&aYou've been given the head of " + headName + " by " + sender.getName());
-			}
-			else {
-				ColourHandler.sendMessage(player, "&aHere's the head of " + headName + "!");
-			}
+			ColourHandler.sendMessage(player, givenHead
+					.replaceAll("%head%", headName)
+					.replaceAll("%player%", sender.getName()));
 			
 			// play a sound
 			SoundUtils.playSound(player, SoundType.CONFIRM);
@@ -132,6 +131,8 @@ public class Items {
 		return give(sender, targetPlayer, item, 1);
 	}
 	
+	@Translation(node = "given-item") public static String givenItem =
+			"&a%player% gave you %amount% '&f%item%&a'!";
 	@Command(command = "give",
 			arguments = {"target player[s]", "item", "amount"},
 			tabCompletions = {TabCompleteType.PLAYER, TabCompleteType.ITEM_NAME, TabCompleteType.NUMBER},
@@ -157,13 +158,11 @@ public class Items {
 		for(Player target: targetPlayers) {
 			// give them the item
 			target.getInventory().addItem(itemStack);
-			
-			if(sender.getName().equalsIgnoreCase(target.getName())) {
-				ColourHandler.sendMessage(target, "&aHere's your %d &f%s&a!", number, item);
-			}
-			else {
-				ColourHandler.sendMessage(target, "&a%s gave you %d '&f%s&a'!", sender.getName(), number, item);
-			}
+
+			ColourHandler.sendMessage(target, givenItem
+					.replaceAll("%player%", sender.getName())
+					.replaceAll("%amount%", String.valueOf(number))
+					.replaceAll("%item%", itemStack.getType().name().replaceAll("_", " ").toLowerCase()));
 			
 			// play a sound
 			SoundUtils.playSound(target, SoundType.CONFIRM);

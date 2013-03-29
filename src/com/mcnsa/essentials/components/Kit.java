@@ -10,6 +10,7 @@ import org.bukkit.inventory.ItemStack;
 import com.mcnsa.essentials.annotations.Command;
 import com.mcnsa.essentials.annotations.ComponentInfo;
 import com.mcnsa.essentials.annotations.DatabaseTableInfo;
+import com.mcnsa.essentials.annotations.Translation;
 import com.mcnsa.essentials.enums.TabCompleteType;
 import com.mcnsa.essentials.exceptions.EssentialsCommandException;
 import com.mcnsa.essentials.managers.DatabaseManager;
@@ -25,6 +26,8 @@ import com.mcnsa.essentials.utilities.SoundUtils.SoundType;
 @DatabaseTableInfo(name = "kits",
 					fields = { "name TINYTEXT", "items TINYTEXT" })
 public class Kit {
+	@Translation(node = "available-kits-header") public static String availableKitsHeader = "&6Available Kits:";
+	@Translation(node = "available-kits-format") public static String availableKitsFormat = "%s &e(%s)";
 	@Command(command = "kits",
 			description = "lists all available kits",
 			permissions = {"list"})
@@ -32,14 +35,17 @@ public class Kit {
 		// get a resultset of all our kits
 		ArrayList<HashMap<String, Object>> results = DatabaseManager.accessQuery("select * from kits;");
 
-		ColourHandler.sendMessage(sender, "&6Available Kits:");
+		ColourHandler.sendMessage(sender, availableKitsHeader);
 		for(HashMap<String, Object> row: results) {
-			ColourHandler.sendMessage(sender, "%s &e(%s)", row.get("name"), row.get("items"));
+			ColourHandler.sendMessage(sender, availableKitsFormat
+					.replaceAll("%name%", (String)row.get("name"))
+					.replaceAll("%items%", (String)row.get("items")));
 		}
 		
 		return true;
 	}
 
+	@Translation(node = "kit-added") public static String kitAdded = "&aYour kit '%name%' has been added!";
 	@Command(command = "newkit",
 			aliases = {"addkit"},
 			arguments = {"name", "items"},
@@ -56,7 +62,7 @@ public class Kit {
 			throw new EssentialsCommandException("Failed to add a new kit!");
 		}
 		
-		ColourHandler.sendMessage(sender, "&aYour kit '%s' has been added!", kitName);
+		ColourHandler.sendMessage(sender, kitAdded.replaceAll("%name%", kitName));
 		
 		// play a sound
 		SoundUtils.playSound(sender, SoundType.CONFIRM);
@@ -74,6 +80,7 @@ public class Kit {
 		return kit(sender, sender.getName(), kit);
 	}
 
+	@Translation(node = "recieved-kit") public static String recievedKit = "&aYou recieved the kit '&f%kit%&a'!";
 	@Command(command = "kit",
 			arguments = {"target player[s]", "desired kit"},
 			tabCompletions = {TabCompleteType.PLAYER, TabCompleteType.STRING},
@@ -112,7 +119,7 @@ public class Kit {
 			// give our players their items
 			target.getInventory().addItem(items.toArray(new ItemStack[items.size()]));
 			
-			ColourHandler.sendMessage(target, "&aYou recieved the kit '&f%s&a'!", kit);
+			ColourHandler.sendMessage(target, recievedKit.replaceAll("%kit%", kit));
 			
 			// play a sound
 			SoundUtils.playSound(target, SoundType.CONFIRM);
