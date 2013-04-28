@@ -77,12 +77,12 @@ public class Teleport implements Listener {
 	@SuppressWarnings("unchecked")
 	private static void addTeleportHistory(Player player, Location location) throws EssentialsCommandException {
 		LinkedList<Location> history = null;
-		if(player.hasMetadata("tpHistory")) {
+		if(player.hasMetadata("tpHistory") && player.getMetadata("tpHistory").size() > 0) {
 			if(player.getMetadata("tpHistory").get(0).value() instanceof LinkedList<?>) {
 				history = (LinkedList<Location>)player.getMetadata("tpHistory").get(0).value();
 			}
 			else {
-				throw new EssentialsCommandException("Error: something went horribly wrong!");
+				throw new EssentialsCommandException("Error: something went horribly wrong! " + player.getMetadata("tpHistory").get(0).value().getClass().getName());
 			}
 		}
 		else {
@@ -104,12 +104,12 @@ public class Teleport implements Listener {
 	@SuppressWarnings("unchecked")
 	private static Location getLastLocation(Player player) throws EssentialsCommandException {
 		LinkedList<Location> history = null;
-		if(player.hasMetadata("tpHistory")) {
+		if(player.hasMetadata("tpHistory") && player.getMetadata("tpHistory").size() > 0) {
 			if(player.getMetadata("tpHistory").get(0).value() instanceof LinkedList<?>) {
 				history = (LinkedList<Location>)player.getMetadata("tpHistory").get(0).value();
 			}
 			else {
-				throw new EssentialsCommandException("Error: something went horribly wrong!");
+				throw new EssentialsCommandException("Error: something went horribly wrong!" + player.getMetadata("tpHistory").get(0).value().getClass().getName());
 			}
 		}
 		else {
@@ -135,12 +135,12 @@ public class Teleport implements Listener {
 	@SuppressWarnings("unchecked")
 	private static Location getFirstLocationAndClear(Player player) throws EssentialsCommandException {
 		LinkedList<Location> history = null;
-		if(player.hasMetadata("tpHistory")) {
+		if(player.hasMetadata("tpHistory") && player.getMetadata("tpHistory").size() > 0) {
 			if(player.getMetadata("tpHistory").get(0).value() instanceof LinkedList<?>) {
 				history = (LinkedList<Location>)player.getMetadata("tpHistory").get(0).value();
 			}
 			else {
-				throw new EssentialsCommandException("Error: something went horribly wrong!");
+				throw new EssentialsCommandException("Error: something went horribly wrong! " + player.getMetadata("tpHistory").get(0).value().getClass().getName());
 			}
 		}
 		else {
