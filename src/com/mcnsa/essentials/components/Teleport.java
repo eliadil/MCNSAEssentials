@@ -356,8 +356,7 @@ public class Teleport implements Listener {
 			arguments = {"target player[s]", "world name", "x", "y", "z"},
 					tabCompletions = {TabCompleteType.PLAYER, TabCompleteType.WORLD, TabCompleteType.NUMBER, TabCompleteType.NUMBER, TabCompleteType.NUMBER},
 			description = "teleports <player[s]> to the given coordinates in the given world",
-			permissions = { "othercoords" },
-			playerOnly = true)
+			permissions = { "othercoords" })
 	public static boolean teleport(CommandSender sender, String targetPlayer, String worldName, float x, float y, float z) throws EssentialsCommandException {
 		// make sure the world exists
 		World targetWorld = Bukkit.getServer().getWorld(worldName);
@@ -393,7 +392,7 @@ public class Teleport implements Listener {
 			// alert everyone
 			ColourHandler.sendMessage(target, "&6You have been teleported to (" + destination.getBlockX() + ", " + destination.getBlockY() + ", " + destination.getBlockZ() + ") in world: " + destination.getWorld().getName() + " by " + sender.getName());
 			if(!target.getName().equals(sender.getName())) {
-				ColourHandler.sendMessage(target, "&6" + target.getName() + " has been teleported to (" + destination.getBlockX() + ", " + destination.getBlockY() + ", " + destination.getBlockZ() + ") in world: " + destination.getWorld().getName());
+				ColourHandler.sendMessage(sender, "&6" + target.getName() + " has been teleported to (" + destination.getBlockX() + ", " + destination.getBlockY() + ", " + destination.getBlockZ() + ") in world: " + destination.getWorld().getName());
 			}
 		}
 		
