@@ -21,7 +21,7 @@ import com.mcnsa.essentials.utilities.PlayerSelector;
 
 @ComponentInfo(friendlyName = "Kick",
 				description = "Commands to kick players",
-				permsSettingsPrefix = "kick")
+				permsSettingsPrefix = "kicks")
 @DatabaseTableInfo(name = "kicklogs",
 					fields = { "kickee TINYTEXT", "kicker TINYTEXT", "date TIMESTAMP", "reason TINYTEXT" })
 public class Kick implements MultilineChatHandler {

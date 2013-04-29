@@ -22,7 +22,7 @@ import com.mcnsa.essentials.utilities.SoundUtils.SoundType;
 
 @ComponentInfo(friendlyName = "Kit",
 				description = "Commands to give sets of items",
-				permsSettingsPrefix = "kit")
+				permsSettingsPrefix = "kits")
 @DatabaseTableInfo(name = "kits",
 					fields = { "name TINYTEXT", "items TINYTEXT" })
 public class Kit {

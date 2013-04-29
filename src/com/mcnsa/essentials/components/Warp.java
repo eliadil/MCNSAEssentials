@@ -20,7 +20,7 @@ import com.mcnsa.essentials.utilities.ColourHandler;
 
 @ComponentInfo(friendlyName = "Warp",
 				description = "Lets players warp around",
-				permsSettingsPrefix = "warp")
+				permsSettingsPrefix = "warps")
 @DatabaseTableInfo(name = "warps",
 					fields = { "owner TINYTEXT", "name TINYTEXT", "world TINYTEXT", "x FLOAT", "y FLOAT", "z FLOAT", "yaw FLOAT", "pitch FLOAT", "public BOOL" })
 public class Warp {

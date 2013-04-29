@@ -26,7 +26,7 @@ import com.mcnsa.essentials.utilities.PlayerSelector;
 
 @ComponentInfo(friendlyName = "Home",
 				description = "Lets players specify homes",
-				permsSettingsPrefix = "home")
+				permsSettingsPrefix = "homes")
 @DatabaseTableInfo(name = "homes",
 					fields = { "owner TINYTEXT", "name TINYTEXT", "world TINYTEXT", "x FLOAT", "y FLOAT", "z FLOAT" })
 public class Home implements Listener {
