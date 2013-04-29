@@ -46,7 +46,7 @@ public class Warp {
 				true,
 				sender.getName());
 		if(results.size() == 0) {
-			ColourHandler.sendMessage(sender, "&eThere aren't want warps available!");
+			ColourHandler.sendMessage(sender, "&eThere aren't any warps available!");
 			return true;
 		}
 		

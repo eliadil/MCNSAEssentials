@@ -31,6 +31,7 @@ import com.mcnsa.essentials.interfaces.DisableHandler;
 import com.mcnsa.essentials.utilities.ColourHandler;
 import com.mcnsa.essentials.utilities.SoundUtils;
 
+@SuppressWarnings("deprecation")
 @ComponentInfo(friendlyName = "Trade",
 				description = "Allows safe trading between players",
 				permsSettingsPrefix = "trade")

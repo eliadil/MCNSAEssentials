@@ -160,7 +160,6 @@ public class Rank implements MultilineChatHandler {
 	}
 	
 	@Command(command = "promote",
-			aliases = {"pr"},
 			arguments = {"target player[s]"},
 			tabCompletions = {TabCompleteType.PLAYER},
 			description = "promotes the target player[s] for a given reason",
@@ -188,7 +187,6 @@ public class Rank implements MultilineChatHandler {
 	}
 	
 	@Command(command = "promote",
-			aliases = {"pr"},
 			arguments = {"target player[s]"},
 			tabCompletions = {TabCompleteType.PLAYER},
 			description = "promotes the target player[s]",
@@ -218,7 +216,6 @@ public class Rank implements MultilineChatHandler {
 	}
 	
 	@Command(command = "demote",
-			aliases = {"de"},
 			arguments = {"target player[s]"},
 			tabCompletions = {TabCompleteType.PLAYER},
 			description = "demotes the target player[s] for a given reason",
@@ -246,7 +243,6 @@ public class Rank implements MultilineChatHandler {
 	}
 	
 	@Command(command = "demote",
-			aliases = {"de"},
 			arguments = {"target player[s]"},
 			tabCompletions = {TabCompleteType.PLAYER},
 			description = "demotes the target player[s]",
@@ -276,7 +272,6 @@ public class Rank implements MultilineChatHandler {
 	}
 	
 	@Command(command = "hotdog",
-			aliases = {"hd"},
 			arguments = {"target player[s]"},
 			tabCompletions = {TabCompleteType.PLAYER},
 			description = "hotdogs the target player[s] for a given reason",
@@ -304,7 +299,6 @@ public class Rank implements MultilineChatHandler {
 	}
 	
 	@Command(command = "hotdog",
-			aliases = {"hd"},
 			arguments = {"target player[s]"},
 			tabCompletions = {TabCompleteType.PLAYER},
 			description = "hotdogs the target player[s]",

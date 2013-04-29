@@ -127,13 +127,13 @@ public class PlayerMode implements Listener {
 			permissions = {"gamemode.others"})
 	public static boolean gameMode(CommandSender sender, String targetPlayer, String mode) throws EssentialsCommandException {
 		GameMode targetMode = null;
-		if(mode.equalsIgnoreCase("survival") || mode.equalsIgnoreCase("s")) {
+		if(mode.equalsIgnoreCase("survival") || mode.equalsIgnoreCase("s") || mode.equals("0")) {
 			targetMode = GameMode.SURVIVAL;
 		}
-		else if(mode.equalsIgnoreCase("creative") || mode.equalsIgnoreCase("c")) {
+		else if(mode.equalsIgnoreCase("creative") || mode.equalsIgnoreCase("c") || mode.equals("1")) {
 			targetMode = GameMode.CREATIVE;
 		}
-		else if(mode.equalsIgnoreCase("adventure") || mode.equalsIgnoreCase("a")) {
+		else if(mode.equalsIgnoreCase("adventure") || mode.equalsIgnoreCase("a") || mode.equals("2")) {
 			targetMode = GameMode.ADVENTURE;
 		}
 		else {

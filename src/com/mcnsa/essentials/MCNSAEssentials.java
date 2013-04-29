@@ -35,7 +35,7 @@ public class MCNSAEssentials extends JavaPlugin {
 		instance = this;
 	}
 	
-	public void onEnable() {		
+	public void onEnable() {
 		// initialize our permissions manager
 		permissionsManager = new PermissionsManager();
 		
