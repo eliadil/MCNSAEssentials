@@ -217,6 +217,16 @@ public class Vanish implements Listener {
 			description = "prevents players and mobs from seeing and interacting with the target player[s]",
 			permissions = {"others"})
 	public static boolean vanish(CommandSender sender, String targetPlayer) throws EssentialsCommandException {
+		return vanish(sender, targetPlayer, "");
+	}
+	
+	@Command(command = "vanish",
+			aliases = {"poof"},
+			arguments = {"target player[s]", "silent"},
+			tabCompletions = {TabCompleteType.PLAYER, TabCompleteType.SILENT},
+			description = "prevents players and mobs from seeing and interacting with the target player[s] (silently)",
+			permissions = {"others"})
+	public static boolean vanish(CommandSender sender, String targetPlayer, String silent) throws EssentialsCommandException {
 		// get a list of all target players
 		ArrayList<Player> targetPlayers = PlayerSelector.selectPlayers(targetPlayer);
 		
@@ -231,12 +241,14 @@ public class Vanish implements Listener {
 			Player target = it.next();
 			
 			// make sure they're not already vanished
-			if(isVanished(target)) {	
-				if(sender.getName().equals(target.getName())) {
-					ColourHandler.sendMessage(target, "&6You were already vanished!");
-				}
-				else {
-					ColourHandler.sendMessage(sender, "&6%s was already vanished!", target.getName());
+			if(isVanished(target)) {
+				if(!silent.equalsIgnoreCase("s") && !silent.equalsIgnoreCase("silent")) {
+					if(sender.getName().equals(target.getName())) {
+						ColourHandler.sendMessage(target, "&6You were already vanished!");
+					}
+					else {
+						ColourHandler.sendMessage(sender, "&6%s was already vanished!", target.getName());
+					}
 				}
 				continue;
 			}
@@ -244,13 +256,15 @@ public class Vanish implements Listener {
 			// vanish them
 			vanishShowPlayer(target, true);
 			
-			// alert them		
-			if(sender.getName().equals(target.getName())) {
-				ColourHandler.sendMessage(target, "&6You have been vanished!");
-			}
-			else {
-				ColourHandler.sendMessage(target, "&6You have been vanished by %s", sender.getName());
-				ColourHandler.sendMessage(sender, "&6%s has been vanished!", target.getName());
+			// alert them
+			if(!silent.equalsIgnoreCase("s") && !silent.equalsIgnoreCase("silent")) {
+				if(sender.getName().equals(target.getName())) {
+					ColourHandler.sendMessage(target, "&6You have been vanished!");
+				}
+				else {
+					ColourHandler.sendMessage(target, "&6You have been vanished by %s", sender.getName());
+					ColourHandler.sendMessage(sender, "&6%s has been vanished!", target.getName());
+				}
 			}
 		}
 		
@@ -273,6 +287,16 @@ public class Vanish implements Listener {
 			description = "unvanishes target player[s]",
 			permissions = {"others"})
 	public static boolean unvanish(CommandSender sender, String targetPlayer) throws EssentialsCommandException {
+		return unvanish(sender, targetPlayer, "");
+	}
+	
+	@Command(command = "unvanish",
+			aliases = {"appear"},
+			arguments = {"target player[s]", "silent"},
+			tabCompletions = {TabCompleteType.PLAYER, TabCompleteType.SILENT},
+			description = "unvanishes target player[s] (silently)",
+			permissions = {"others"})
+	public static boolean unvanish(CommandSender sender, String targetPlayer, String silent) throws EssentialsCommandException {
 		// get a list of all target players
 		ArrayList<Player> targetPlayers = PlayerSelector.selectPlayers(targetPlayer);
 		
@@ -287,12 +311,14 @@ public class Vanish implements Listener {
 			Player target = it.next();
 			
 			// make sure they're already vanished
-			if(!isVanished(target)) {	
-				if(sender.getName().equals(target.getName())) {
-					ColourHandler.sendMessage(target, "&6You weren't vanished!");
-				}
-				else {
-					ColourHandler.sendMessage(sender, "&6%s wasn't vanished!", target.getName());
+			if(!isVanished(target)) {
+				if(!silent.equalsIgnoreCase("s") && !silent.equalsIgnoreCase("silent")) {
+					if(sender.getName().equals(target.getName())) {
+						ColourHandler.sendMessage(target, "&6You weren't vanished!");
+					}
+					else {
+						ColourHandler.sendMessage(sender, "&6%s wasn't vanished!", target.getName());
+					}
 				}
 				continue;
 			}
@@ -300,13 +326,15 @@ public class Vanish implements Listener {
 			// vanish them
 			vanishShowPlayer(target, false);
 			
-			// alert them		
-			if(sender.getName().equals(target.getName())) {
-				ColourHandler.sendMessage(target, "&6You have been appeared!");
-			}
-			else {
-				ColourHandler.sendMessage(target, "&6You have been appeared by %s", sender.getName());
-				ColourHandler.sendMessage(sender, "&6%s has been appeared!", target.getName());
+			// alert them
+			if(!silent.equalsIgnoreCase("s") && !silent.equalsIgnoreCase("silent")) {
+				if(sender.getName().equals(target.getName())) {
+					ColourHandler.sendMessage(target, "&6You have been appeared!");
+				}
+				else {
+					ColourHandler.sendMessage(target, "&6You have been appeared by %s", sender.getName());
+					ColourHandler.sendMessage(sender, "&6%s has been appeared!", target.getName());
+				}
 			}
 		}
 		

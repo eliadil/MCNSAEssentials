@@ -125,7 +125,17 @@ public class PlayerMode implements Listener {
 			tabCompletions = {TabCompleteType.PLAYER, TabCompleteType.STRING},
 			description = "changes the game mode of the target player[s]",
 			permissions = {"gamemode.others"})
-	public static boolean gameMode(CommandSender sender, String targetPlayer, String mode) throws EssentialsCommandException {
+	public static boolean gameMode(CommandSender sender, String targetPlayer, String mode) throws EssentialsCommandException {	
+		return gameMode(sender, targetPlayer, mode, "");
+	}
+
+	@Command(command = "gamemode",
+			aliases = {"gm"},
+			arguments = {"target player[s]", "mode name", "silent"},
+			tabCompletions = {TabCompleteType.PLAYER, TabCompleteType.STRING, TabCompleteType.SILENT},
+			description = "changes the game mode of the target player[s] (silently)",
+			permissions = {"gamemode.others"})
+	public static boolean gameMode(CommandSender sender, String targetPlayer, String mode, String silent) throws EssentialsCommandException {
 		GameMode targetMode = null;
 		if(mode.equalsIgnoreCase("survival") || mode.equalsIgnoreCase("s") || mode.equals("0")) {
 			targetMode = GameMode.SURVIVAL;
@@ -162,12 +172,14 @@ public class PlayerMode implements Listener {
 			}
 			
 			// and alert them!
-			if(sender.getName().equals(target.getName())) {
-				ColourHandler.sendMessage(target, "&6Your game mode has been changed to: " + targetMode.name());
-			}
-			else {
-				ColourHandler.sendMessage(target, "&6Your game mode has been changed to: " + targetMode.name() + " by " + sender.getName());
-				ColourHandler.sendMessage(sender, "&6" + target.getName() + "'s game mode has been changed to: " + targetMode.name());
+			if(!silent.equalsIgnoreCase("s") && !silent.equalsIgnoreCase("silent")) {
+				if(sender.getName().equals(target.getName())) {
+					ColourHandler.sendMessage(target, "&6Your game mode has been changed to: " + targetMode.name());
+				}
+				else {
+					ColourHandler.sendMessage(target, "&6Your game mode has been changed to: " + targetMode.name() + " by " + sender.getName());
+					ColourHandler.sendMessage(sender, "&6" + target.getName() + "'s game mode has been changed to: " + targetMode.name());
+				}
 			}
 		}
 		
@@ -189,6 +201,15 @@ public class PlayerMode implements Listener {
 			description = "enables god mode on the target players",
 			permissions = {"god.others"})
 	public static boolean enableGodMode(CommandSender sender, String targetPlayer) throws EssentialsCommandException {
+		return enableGodMode(sender, targetPlayer, "");
+	}
+	
+	@Command(command = "god",
+			arguments = {"target player[s]", "silent"},
+			tabCompletions = {TabCompleteType.PLAYER, TabCompleteType.SILENT},
+			description = "enables god mode on the target players (silently)",
+			permissions = {"god.others"})
+	public static boolean enableGodMode(CommandSender sender, String targetPlayer, String silent) throws EssentialsCommandException {
 		// get a list of all target players
 		ArrayList<Player> targetPlayers = PlayerSelector.selectPlayers(targetPlayer);
 		
@@ -204,11 +225,13 @@ public class PlayerMode implements Listener {
 			
 			// only if they don't already have god mode enabled
 			if(hasGodMode(target)) {
-				if(sender.getName().equals(target.getName())) {
-					ColourHandler.sendMessage(target, "&6You already have god mode enabled!");
-				}
-				else {
-					ColourHandler.sendMessage(sender, "&6" + target.getName() + " already had god mode enabled!");
+				if(!silent.equalsIgnoreCase("s") && !silent.equalsIgnoreCase("silent")) {
+					if(sender.getName().equals(target.getName())) {
+						ColourHandler.sendMessage(target, "&6You already have god mode enabled!");
+					}
+					else {
+						ColourHandler.sendMessage(sender, "&6" + target.getName() + " already had god mode enabled!");
+					}
 				}
 				continue;
 			}
@@ -217,12 +240,14 @@ public class PlayerMode implements Listener {
 			target.setMetadata("godMode", new FixedMetadataValue(MCNSAEssentials.getInstance(), true));
 			
 			// alert them
-			if(sender.getName().equals(target.getName())) {
-				ColourHandler.sendMessage(target, "&6God mode has been activated!");
-			}
-			else {
-				ColourHandler.sendMessage(target, "&6Your god mode has been activated by " + sender.getName());
-				ColourHandler.sendMessage(sender, "&6" + target.getName() + "'s god mode has been activated!");
+			if(!silent.equalsIgnoreCase("s") && !silent.equalsIgnoreCase("silent")) {
+				if(sender.getName().equals(target.getName())) {
+					ColourHandler.sendMessage(target, "&6God mode has been activated!");
+				}
+				else {
+					ColourHandler.sendMessage(target, "&6Your god mode has been activated by " + sender.getName());
+					ColourHandler.sendMessage(sender, "&6" + target.getName() + "'s god mode has been activated!");
+				}
 			}
 		}
 		
@@ -243,6 +268,15 @@ public class PlayerMode implements Listener {
 			description = "disables god mode on the target players",
 			permissions = {"god.others"})
 	public static boolean disableGodMode(CommandSender sender, String targetPlayer) throws EssentialsCommandException {
+		return disableGodMode(sender, targetPlayer, "");
+	}
+	
+	@Command(command = "ungod",
+			arguments = {"target player[s]", "silent"},
+			tabCompletions = {TabCompleteType.PLAYER, TabCompleteType.SILENT},
+			description = "disables god mode on the target players (silently)",
+			permissions = {"god.others"})
+	public static boolean disableGodMode(CommandSender sender, String targetPlayer, String silent) throws EssentialsCommandException {
 		// get a list of all target players
 		ArrayList<Player> targetPlayers = PlayerSelector.selectPlayers(targetPlayer);
 		
@@ -258,11 +292,13 @@ public class PlayerMode implements Listener {
 			
 			// only if they already have god mode enabled
 			if(!hasGodMode(target)) {
-				if(sender.getName().equals(target.getName())) {
-					ColourHandler.sendMessage(target, "&6You didn't have god mode enabled anyway!");
-				}
-				else {
-					ColourHandler.sendMessage(sender, "&6" + target.getName() + " didn't have god mode enabled!");
+				if(!silent.equalsIgnoreCase("s") && !silent.equalsIgnoreCase("silent")) {
+					if(sender.getName().equals(target.getName())) {
+						ColourHandler.sendMessage(target, "&6You didn't have god mode enabled anyway!");
+					}
+					else {
+						ColourHandler.sendMessage(sender, "&6" + target.getName() + " didn't have god mode enabled!");
+					}
 				}
 				continue;
 			}
@@ -274,12 +310,14 @@ public class PlayerMode implements Listener {
 			target.setVelocity(new Vector(0, 0, 0));
 			
 			// alert them
-			if(sender.getName().equals(target.getName())) {
-				ColourHandler.sendMessage(target, "&6God mode has been deactivated!");
-			}
-			else {
-				ColourHandler.sendMessage(target, "&6Your god mode has been deactivated by " + sender.getName());
-				ColourHandler.sendMessage(sender, "&6" + target.getName() + "'s god mode has been deactivated!");
+			if(!silent.equalsIgnoreCase("s") && !silent.equalsIgnoreCase("silent")) {
+				if(sender.getName().equals(target.getName())) {
+					ColourHandler.sendMessage(target, "&6God mode has been deactivated!");
+				}
+				else {
+					ColourHandler.sendMessage(target, "&6Your god mode has been deactivated by " + sender.getName());
+					ColourHandler.sendMessage(sender, "&6" + target.getName() + "'s god mode has been deactivated!");
+				}
 			}
 		}
 		
