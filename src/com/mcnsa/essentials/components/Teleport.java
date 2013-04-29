@@ -321,7 +321,9 @@ public class Teleport implements Listener {
 			if(!destination.getName().equals(sender.getName())) {
 				ColourHandler.sendMessage(destination, "&6" + target.getName() + " has been teleported to you by " + sender.getName());
 			}
-			ColourHandler.sendMessage(sender, "&6" + target.getName() + " has been teleported to " + destination.getName());
+			if(!target.getName().equals(sender.getName())) {
+				ColourHandler.sendMessage(sender, "&6" + target.getName() + " has been teleported to " + destination.getName());
+			}
 		}
 		
 		return true;
@@ -390,7 +392,9 @@ public class Teleport implements Listener {
 			
 			// alert everyone
 			ColourHandler.sendMessage(target, "&6You have been teleported to (" + destination.getBlockX() + ", " + destination.getBlockY() + ", " + destination.getBlockZ() + ") in world: " + destination.getWorld().getName() + " by " + sender.getName());
-			ColourHandler.sendMessage(target, "&6" + target.getName() + " has been teleported to (" + destination.getBlockX() + ", " + destination.getBlockY() + ", " + destination.getBlockZ() + ") in world: " + destination.getWorld().getName());
+			if(!target.getName().equals(sender.getName())) {
+				ColourHandler.sendMessage(target, "&6" + target.getName() + " has been teleported to (" + destination.getBlockX() + ", " + destination.getBlockY() + ", " + destination.getBlockZ() + ") in world: " + destination.getWorld().getName());
+			}
 		}
 		
 		return true;
