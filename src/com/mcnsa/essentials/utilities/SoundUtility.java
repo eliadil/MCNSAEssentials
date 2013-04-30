@@ -50,7 +50,9 @@ public class SoundUtility {
 	}
 	
 	public static void playSound(CommandSender sender, Sound sound, boolean broadcast) {
-		// console can't make sounds!
+		// Issue #52
+		
+		/*// console can't make sounds!
 		if(!(sender instanceof Player)) {
 			return;
 		}
@@ -66,6 +68,6 @@ public class SoundUtility {
 		
 		for(Player online: targets) {
 			online.playSound(online.getLocation(), sound, 1.0f, 1.0f);
-		}
+		}*/
 	}
 }
