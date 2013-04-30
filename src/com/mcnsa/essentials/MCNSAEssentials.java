@@ -24,7 +24,7 @@ public class MCNSAEssentials extends JavaPlugin {
 	// our managers
 	PermissionsManager permissionsManager = null;
 	static ComponentManager componentManager = null;
-	ConfigurationManager configurationManager = null;
+	static ConfigurationManager configurationManager = null;
 	TranslationManager translationManager = null;
 	CommandsManager commandsManager = null;
 	ConversationManager conversationManager = null;
