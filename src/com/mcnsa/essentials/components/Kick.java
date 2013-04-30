@@ -18,6 +18,7 @@ import com.mcnsa.essentials.managers.DatabaseManager;
 import com.mcnsa.essentials.utilities.ColourHandler;
 import com.mcnsa.essentials.utilities.Logger;
 import com.mcnsa.essentials.utilities.PlayerSelector;
+import com.mcnsa.essentials.utilities.StringUtils;
 
 @ComponentInfo(friendlyName = "Kick",
 				description = "Commands to kick players",
@@ -63,6 +64,30 @@ public class Kick implements MultilineChatHandler {
 		// call our multiline chat handler
 		ConversationManager.startConversation(sender, instance, targetPlayers);
 		
+		return true;
+	}
+	
+	@Command(command = "kick",
+			arguments = {"target player[s]", "reason"},
+			tabCompletions = {TabCompleteType.PLAYER, TabCompleteType.STRING},
+			description = "kicks the target player[s] for the given reason",
+			permissions = {"kick"})
+	public static boolean kick(CommandSender sender, String targetPlayer, String[] reasonWords) throws EssentialsCommandException {
+		// get a list of all target players
+		ArrayList<Player> targetPlayers = PlayerSelector.selectPlayers(targetPlayer);
+		
+		// make sure we have at least one target player
+		if(targetPlayers.size() == 0) {
+			throw new EssentialsCommandException("I couldn't find / parse target player[s] '%s' to kick!", targetPlayer);
+		}
+		
+		// parse our reason
+		String reason = StringUtils.implode(" ", reasonWords);
+		
+		// call our chat handle directly with the given reason
+		onChatComplete(sender, reason, new Object[]{targetPlayers});
+		
+		// all done!
 		return true;
 	}
 
