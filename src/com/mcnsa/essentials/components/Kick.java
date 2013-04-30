@@ -85,7 +85,7 @@ public class Kick implements MultilineChatHandler {
 		String reason = StringUtils.implode(" ", reasonWords);
 		
 		// call our chat handle directly with the given reason
-		onChatComplete(sender, reason, new Object[]{targetPlayers});
+		instance.onChatComplete(sender, reason, new Object[]{targetPlayers});
 		
 		// all done!
 		return true;
