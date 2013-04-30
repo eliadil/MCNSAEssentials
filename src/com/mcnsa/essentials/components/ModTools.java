@@ -59,6 +59,10 @@ public class ModTools {
 			description = "causes another player to execute a command",
 			permissions = {"sudo.call"})
 	public static boolean sudo(CommandSender sender, String targetPlayer, String[] commandParts) throws EssentialsCommandException {
+		if(targetPlayer.equalsIgnoreCase("console")) {
+			return sudoAsConsole(sender, commandParts);
+		}
+		
 		// get a list of all target players
 		ArrayList<Player> targetPlayers = PlayerSelector.selectPlayers(targetPlayer);
 		
@@ -96,6 +100,25 @@ public class ModTools {
 			else {
 				ColourHandler.sendMessage(sender, hasRunCommand.replaceAll("%player%", player.getName()));
 			}
+		}
+		
+		return true;
+	}
+	
+	public static boolean sudoAsConsole(CommandSender sender, String[] commandParts) throws EssentialsCommandException {
+		// build our command
+		String command = StringUtils.implode(" ", commandParts);
+		if(command.startsWith("/")) {
+			command = command.substring(1);
+		}
+		
+		boolean result = Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), command);
+		
+		if(!result) {
+			throw new EssentialsCommandException(notValidCommand.replaceAll("%command%", command));
+		}
+		else {
+			ColourHandler.sendMessage(sender, hasRunCommand.replaceAll("%player%", "console"));
 		}
 		
 		return true;
