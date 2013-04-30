@@ -2,6 +2,7 @@ package com.mcnsa.essentials.components;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Creeper;
 import org.bukkit.entity.EntityType;
@@ -219,11 +220,13 @@ public class Mobs {
 		// get our location
 		Location location = ((Player)sender).getLocation();
 		
-		Player owningPlayer = null;
+		OfflinePlayer owningPlayer = null;
 		if(!owner.equals("")) {
 			owningPlayer = Bukkit.getServer().getPlayer(owner);
 			if(owningPlayer == null) {
-				throw new EssentialsCommandException("Couldn't find player '%s' to make the owner!", owner);
+				//throw new EssentialsCommandException("Couldn't find player '%s' to make the owner!", owner);
+				owningPlayer = Bukkit.getServer().getOfflinePlayer(owner);
+				ColourHandler.sendMessage(sender, "&eWarning - player '%s' is offline and may not exist!", owningPlayer.getName());
 			}
 		}
 		
