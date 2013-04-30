@@ -113,4 +113,8 @@ public class MCNSAEssentials extends JavaPlugin {
 	public static ComponentManager getComponentManager() {
 		return componentManager;
 	}
+
+	public static ConfigurationManager getConfigurationManager() {
+		return configurationManager;
+	}
 }
