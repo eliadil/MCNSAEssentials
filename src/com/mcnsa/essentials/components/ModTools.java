@@ -130,9 +130,11 @@ public class ModTools {
 	public static boolean openInventory(CommandSender sender) throws EssentialsCommandException {		
 		ColourHandler.sendMessage(sender, "&3Reloading MCNSAEssentials configuration...");
 		
+		MCNSAEssentials.getInstance();
+		MCNSAEssentials.getInstance();
 		// now load all our class's settings
-		MCNSAEssentials.getInstance().getConfigurationManager.loadSettings(MCNSAEssentials.getInstance().getComponentManager());
-		MCNSAEssentials.saveConfig();	
+		MCNSAEssentials.getConfigurationManager().loadSettings(MCNSAEssentials.getComponentManager());
+		MCNSAEssentials.getInstance().saveConfig();	
 		
 		ColourHandler.sendMessage(sender, "&MCNSAEssentials configuration reloaded!");
 		
