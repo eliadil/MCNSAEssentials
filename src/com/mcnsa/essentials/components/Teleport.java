@@ -82,7 +82,9 @@ public class Teleport implements Listener {
 				history = (LinkedList<Location>)player.getMetadata("tpHistory").get(0).value();
 			}
 			else {
-				throw new EssentialsCommandException("Error: something went horribly wrong! " + player.getMetadata("tpHistory").get(0).value().getClass().getName());
+				return;
+				// shut up the errors
+				//throw new EssentialsCommandException("Error: something went horribly wrong! " + player.getMetadata("tpHistory").get(0).value().getClass().getName());
 			}
 		}
 		else {
