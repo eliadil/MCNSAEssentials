@@ -1,6 +1,7 @@
 package com.mcnsa.essentials.components;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 
 import org.bukkit.Bukkit;
@@ -15,6 +16,8 @@ import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
 import com.mcnsa.essentials.MCNSAEssentials;
@@ -26,12 +29,27 @@ import com.mcnsa.essentials.utilities.ColourHandler;
 import com.mcnsa.essentials.utilities.PlayerSelector;
 
 @ComponentInfo(friendlyName = "PlayerMode",
-				description = "Enables changing player modes (and enabling god mode)",
+				description = "Enables changing player modes",
 				permsSettingsPrefix = "playermode")
 public class PlayerMode implements Listener {
+	static HashMap<String, PotionEffectType> potionEffectTypes = new HashMap<String, PotionEffectType>();
+	static {
+	}
+	
 	public PlayerMode() {
 		// register our events
 		Bukkit.getServer().getPluginManager().registerEvents(this, MCNSAEssentials.getInstance());
+		
+		// build our effects list
+		potionEffectTypes.clear();
+		PotionEffectType[] types = PotionEffectType.values();
+		for(PotionEffectType type: types) {
+			if(type == null) {
+				continue;
+			}
+			String key = type.getName().replaceAll("\\s+", "").replaceAll("_", "").toLowerCase();
+			potionEffectTypes.put(key,  type);
+		}
 	}
 	
 	// utility function to determine if someone has godmode or not
@@ -320,6 +338,123 @@ public class PlayerMode implements Listener {
 				}
 			}
 		}
+		
+		return true;
+	}
+	
+	@Command(command = "effect",
+			arguments = "effect",
+			tabCompletions = {TabCompleteType.EFFECT},
+			description = "gives yourself a potion effect",
+			permissions = "effect.self",
+			playerOnly = true)
+	public static boolean effect(CommandSender sender, String effect) throws EssentialsCommandException {
+		return effect(sender, sender.getName(), effect, 30, 1);
+	}
+	
+	@Command(command = "effect",
+			arguments = {"effect", "duration"},
+			tabCompletions = {TabCompleteType.EFFECT, TabCompleteType.NUMBER},
+			description = "gives yourself a potion effect",
+			permissions = "effect.self",
+			playerOnly = true)
+	public static boolean effect(CommandSender sender, String effect, int duration) throws EssentialsCommandException {
+		return effect(sender, sender.getName(), effect, duration, 1);
+	}
+	
+	@Command(command = "effect",
+			arguments = {"effect", "duration", "amplifier"},
+			tabCompletions = {TabCompleteType.EFFECT, TabCompleteType.NUMBER, TabCompleteType.NUMBER},
+			description = "gives yourself a potion effect",
+			permissions = "effect.self",
+			playerOnly = true)
+	public static boolean effect(CommandSender sender, String effect, int duration, int amplifier) throws EssentialsCommandException {
+		return effect(sender, sender.getName(), effect, duration, amplifier);
+	}
+	
+	@Command(command = "effect",
+			arguments = {"target player[s]", "effect"},
+			tabCompletions = {TabCompleteType.PLAYER, TabCompleteType.EFFECT},
+			description = "gives yourself a potion effect",
+			permissions = "effect.self",
+			playerOnly = true)
+	public static boolean effect(CommandSender sender, String targetPlayer, String effect) throws EssentialsCommandException {
+		return effect(sender, targetPlayer, effect, 30, 1);
+	}
+	
+	@Command(command = "effect",
+			arguments = {"target player[s]", "effect", "duration"},
+			tabCompletions = {TabCompleteType.PLAYER, TabCompleteType.EFFECT, TabCompleteType.NUMBER},
+			description = "gives yourself a potion effect",
+			permissions = "effect.self",
+			playerOnly = true)
+	public static boolean effect(CommandSender sender, String targetPlayer, String effect, int duration) throws EssentialsCommandException {
+		return effect(sender, targetPlayer, effect, duration, 1);
+	}
+	
+	@Command(command = "effect",
+			arguments = {"target player[s]", "effect", "duration", "amplifier"},
+			tabCompletions = {TabCompleteType.PLAYER, TabCompleteType.EFFECT, TabCompleteType.NUMBER, TabCompleteType.NUMBER},
+			description = "gives the target players a potion effect",
+			permissions = "effect.others")
+	public static boolean effect(CommandSender sender, String targetPlayer, String effect, int duration, int amplifier) throws EssentialsCommandException {
+		// get a list of all target players
+		ArrayList<Player> targetPlayers = PlayerSelector.selectPlayers(targetPlayer);
+		
+		// make sure we have at least one target player
+		if(targetPlayers.size() == 0) {
+			throw new EssentialsCommandException("I couldn't find / parse target player[s] '%s' to apply the effect to!", targetPlayer);
+		}
+		
+		// try to find our effect type
+		if(!potionEffectTypes.containsKey(effect.toLowerCase())) {
+			throw new EssentialsCommandException("I don't understand the effect type '%s'!", effect);
+		}
+		
+		// adjust our amplifier
+		amplifier--;
+		if(amplifier < 0) {
+			amplifier = 0;
+		}
+		
+		// create a potion effect from our parameters
+		PotionEffect potionEffect = new PotionEffect(potionEffectTypes.get(effect.toLowerCase()), duration * 20, amplifier);
+		
+		// loop through all target players
+		for(Player target: targetPlayers) {
+			target.addPotionEffect(potionEffect, true);
+			
+			if(target.getName() != sender.getName()) {
+				ColourHandler.sendMessage(target,
+						"&3%s gave you %s%s for %ds!",
+						sender.getName(),
+						effect.substring(0, 1).toUpperCase() + effect.substring(1).toLowerCase(),
+						amplifier == 0 ? "" : " " + String.valueOf(amplifier + 1),
+						duration);
+			}
+			ColourHandler.sendMessage(sender,
+					"&3%s%s applied to %s for %ds!",
+					effect.substring(0, 1).toUpperCase() + effect.substring(1).toLowerCase(),
+					amplifier == 0 ? "" : " " + String.valueOf(amplifier + 1),
+					target.getName(),
+					duration);
+		}
+		
+		return true;
+	}
+	
+	@Command(command = "effects",
+			description = "lists all possible potion effects",
+			permissions = "effect.list")
+	public static boolean effects(CommandSender sender) throws EssentialsCommandException {
+		StringBuilder sb = new StringBuilder();
+		for(String effect: potionEffectTypes.keySet()) {
+			if(sb.length() != 0) {
+				sb.append("&3, ");
+			}
+			sb.append("&f").append(effect.substring(0, 1).toUpperCase()).append(effect.substring(1));
+		}
+		ColourHandler.sendMessage(sender, "&3Effect types: " + sb.toString());
 		
 		return true;
 	}
