@@ -675,6 +675,17 @@ public class CommandsManager implements TabExecutor {
 					}
 					possibleArguments.addAll(onlineNames);
 					break;
+				case "player":
+					// a list of players
+					LinkedList<String> onlineNames = new LinkedList<String>();
+					Player[] onlinePlayers = Bukkit.getServer().getOnlinePlayers();
+					for(Player online: onlinePlayers) {
+						if(online.getName().startsWith(args[argumentCount - 1])) {
+							onlineNames.add(online.getName());
+						}
+					}
+					possibleArguments.addAll(onlineNames);
+					break;
 					
 				case WORLD:
 					// a list of worlds
