@@ -69,10 +69,14 @@ public class Information implements Listener {
 	
 	@EventHandler(ignoreCancelled = true)
 	public void onServerListPing(ServerListPingEvent event) {
-		Random random = new Random();
-		int ndx = random.nextInt(serverListMotd.length);
-		//MCNSAEssentials.debug("ping (%d): %s", ndx, serverListMotd[ndx]);
-		event.setMotd(ColourHandler.processColours(serverListMotd[ndx]));
+		if(serverListMotd.length == 0) {
+			event.setMotd("");
+		}
+		else {
+			Random random = new Random();
+			int ndx = random.nextInt(serverListMotd.length);
+			event.setMotd(ColourHandler.processColours(serverListMotd[ndx]));
+		}
 	}
 	
 	// our commands
