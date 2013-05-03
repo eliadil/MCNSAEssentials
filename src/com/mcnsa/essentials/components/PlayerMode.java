@@ -14,6 +14,7 @@ import org.bukkit.event.entity.EntityCombustEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.potion.PotionEffect;
@@ -25,6 +26,7 @@ import com.mcnsa.essentials.annotations.Command;
 import com.mcnsa.essentials.annotations.ComponentInfo;
 import com.mcnsa.essentials.enums.TabCompleteType;
 import com.mcnsa.essentials.exceptions.EssentialsCommandException;
+import com.mcnsa.essentials.managers.PermissionsManager;
 import com.mcnsa.essentials.utilities.ColourHandler;
 import com.mcnsa.essentials.utilities.PlayerSelector;
 
@@ -33,8 +35,6 @@ import com.mcnsa.essentials.utilities.PlayerSelector;
 				permsSettingsPrefix = "playermode")
 public class PlayerMode implements Listener {
 	static HashMap<String, PotionEffectType> potionEffectTypes = new HashMap<String, PotionEffectType>();
-	static {
-	}
 	
 	public PlayerMode() {
 		// register our events
@@ -64,6 +64,14 @@ public class PlayerMode implements Listener {
 		
 		// guess not!
 		return false;
+	}
+	
+	// enable mods to fly
+	@EventHandler(ignoreCancelled = true)
+	public void onPlayerJoin(PlayerJoinEvent event) {
+		if(PermissionsManager.playerHasPermission(event.getPlayer(), "playermode.allowfly")) {
+			event.getPlayer().setAllowFlight(true);
+		}
 	}
 	
 	// handle all bukkit events relating to taking damage
