@@ -675,17 +675,6 @@ public class CommandsManager implements TabExecutor {
 					}
 					possibleArguments.addAll(onlineNames);
 					break;
-				case "player":
-					// a list of players
-					LinkedList<String> onlineNames = new LinkedList<String>();
-					Player[] onlinePlayers = Bukkit.getServer().getOnlinePlayers();
-					for(Player online: onlinePlayers) {
-						if(online.getName().startsWith(args[argumentCount - 1])) {
-							onlineNames.add(online.getName());
-						}
-					}
-					possibleArguments.addAll(onlineNames);
-					break;
 					
 				case WORLD:
 					// a list of worlds
@@ -727,6 +716,11 @@ public class CommandsManager implements TabExecutor {
 			}
 			else {
 				// add it
+				Logger.debug("PLEASE ALERT DEVS: Added non-specified value: %s for command %s with %d args (argument count = %d).",
+						registeredCommands.get(registrationToken).command.arguments()[argumentCount - 1].replaceAll("\\s+", "_"),
+						registeredCommands.get(registrationToken).command.command(),
+						registeredCommands.get(registrationToken).command.arguments().length,
+						argumentCount);
 				possibleArguments.add("<" + registeredCommands.get(registrationToken).command.arguments()[argumentCount - 1].replaceAll("\\s+", "_") + ">");
 			}
 		}

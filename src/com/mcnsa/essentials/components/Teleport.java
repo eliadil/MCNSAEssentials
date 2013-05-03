@@ -258,6 +258,7 @@ public class Teleport implements Listener {
 	@Command(command = "tp",
 			aliases = {"teleport"},
 			arguments = {"player"},
+			tabCompletions = {TabCompleteType.PLAYER},
 			description = "teleports you to <player>",
 			permissions = { "self" },
 			playerOnly = true)

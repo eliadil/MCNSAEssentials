@@ -1,9 +1,7 @@
 package com.mcnsa.essentials.utilities;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 public class SoundUtility {
 	public enum SoundType {CONFIRM, CANCEL, ERROR, NOTIFICATION};
