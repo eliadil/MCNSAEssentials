@@ -74,6 +74,17 @@ public class ConversationManager implements ConversationAbandonedListener {
 				@SuppressWarnings("unchecked")
 				LinkedList<String> textInputs = (LinkedList<String>)event.getContext().getSessionData("textInputs");
 				
+				// get our sender
+				CommandSender sender = (CommandSender)event.getContext().getForWhom();
+				
+				// make sure we got something
+				if(textInputs == null || textInputs.size() == 0) {
+					chatData.handler.onChatComplete(sender,
+							"no reason",
+							chatData.args);
+					return;
+				}
+				
 				// compose our string
 				StringBuilder lines = new StringBuilder();
 				for(String line: textInputs) {
@@ -81,7 +92,6 @@ public class ConversationManager implements ConversationAbandonedListener {
 				}
 					
 				// call the event handler
-				CommandSender sender = (CommandSender)event.getContext().getForWhom();
 				chatData.handler.onChatComplete(sender,
 						lines.toString().trim(),
 						chatData.args);

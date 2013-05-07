@@ -16,7 +16,6 @@ import com.mcnsa.essentials.exceptions.EssentialsCommandException;
 import com.mcnsa.essentials.managers.InformationManager;
 import com.mcnsa.essentials.runnables.TPSTimerTask;
 import com.mcnsa.essentials.utilities.ColourHandler;
-import com.mcnsa.essentials.utilities.SoundUtils;
 
 @ComponentInfo(friendlyName = "Debug",
 				description = "Various server debugging utilities",
@@ -38,7 +37,6 @@ public class Debug {
 	public static boolean Ping(CommandSender sender) {
 		ColourHandler.sendMessage(sender, "&e" + pingReplies[(new Random()).nextInt(pingReplies.length)]
 				.replaceAll("%player%", sender.getName()));
-		SoundUtils.confirmSound(sender);
 		return true;
 	}
 	

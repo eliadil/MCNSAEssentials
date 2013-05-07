@@ -28,7 +28,6 @@ import com.mcnsa.essentials.managers.ComponentManager.Component;
 import com.mcnsa.essentials.utilities.ColourHandler;
 import com.mcnsa.essentials.utilities.DateUtils;
 import com.mcnsa.essentials.utilities.Logger;
-import com.mcnsa.essentials.utilities.SoundUtils;
 
 public class CommandsManager implements TabExecutor {
 	// keep track of all known aliases we're using
@@ -509,12 +508,10 @@ public class CommandsManager implements TabExecutor {
 				catch(Exception e) {					
 					if(e.getCause() instanceof EssentialsCommandException) {
 						ColourHandler.sendMessage(sender, "&c" + e.getCause().getMessage());
-						SoundUtils.errorSound(sender);
 						return true;
 					}
 					else {
 						ColourHandler.sendMessage(sender, "&cSomething went wrong! Alert an administrator!");
-						SoundUtils.errorSound(sender);
 						Logger.error("failed to execute command: " + label + " (" + e.getMessage() + ")");
 						e.printStackTrace();
 						return false;
@@ -537,7 +534,6 @@ public class CommandsManager implements TabExecutor {
 			// inform them
 			if(!usage.equals("")) {
 				ColourHandler.sendMessage(sender, "&cInvalid command usage! Proper usage:");
-				SoundUtils.notifySound(sender);
 				ColourHandler.sendMessage(sender, usage);
 			}
 			else {
@@ -547,7 +543,6 @@ public class CommandsManager implements TabExecutor {
 				if(!possibleUsage.equals("")) {
 					// found something maybe?
 					ColourHandler.sendMessage(sender, "&cInvalid command! Did you mean one of the following?");
-					SoundUtils.notifySound(sender);
 					ColourHandler.sendMessage(sender, possibleUsage);
 				}
 				else {
@@ -561,13 +556,11 @@ public class CommandsManager implements TabExecutor {
 					else {
 						ColourHandler.sendMessage(sender, "&cInvalid command!");
 					}
-					SoundUtils.errorSound(sender);
 				}
 			}
 		}
 		else {
 			ColourHandler.sendMessage(sender, lastFailMessage);
-			SoundUtils.errorSound(sender);
 		}
 		return false;
 	}

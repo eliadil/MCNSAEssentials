@@ -32,8 +32,6 @@ import com.mcnsa.essentials.exceptions.EssentialsCommandException;
 import com.mcnsa.essentials.managers.PermissionsManager;
 import com.mcnsa.essentials.utilities.ColourHandler;
 import com.mcnsa.essentials.utilities.PlayerSelector;
-import com.mcnsa.essentials.utilities.SoundUtils;
-import com.mcnsa.essentials.utilities.SoundUtils.SoundType;
 
 @ComponentInfo(friendlyName = "Vanish",
 				description = "Allows players to vanish from sight",
@@ -98,9 +96,6 @@ public class Vanish implements Listener {
 				player.getWorld().playEffect(player.getLocation(), Effect.SMOKE, random.nextInt(9));
 			}
 		}
-		
-		// play a sound
-		SoundUtils.playSound(player, SoundType.CONFIRM);
 	}
 	
 	// bukkit listeners to hide us even better

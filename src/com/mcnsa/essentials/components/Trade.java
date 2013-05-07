@@ -29,7 +29,6 @@ import com.mcnsa.essentials.enums.TabCompleteType;
 import com.mcnsa.essentials.exceptions.EssentialsCommandException;
 import com.mcnsa.essentials.interfaces.DisableHandler;
 import com.mcnsa.essentials.utilities.ColourHandler;
-import com.mcnsa.essentials.utilities.SoundUtils;
 
 @SuppressWarnings("deprecation")
 @ComponentInfo(friendlyName = "Trade",
@@ -270,10 +269,6 @@ public class Trade implements Listener, DisableHandler {
 			// send messages
 			ColourHandler.sendMessage(playerA, "&cYou completed the trade with %s!", playerB.getName());
 			ColourHandler.sendMessage(playerB, "&cYou completed the trade with %s!", playerA.getName());
-			
-			// play sounds
-			SoundUtils.confirmSound(playerA);
-			SoundUtils.confirmSound(playerB);
 		}
 		
 		public void setAccepted(Player target, boolean accepted) {
@@ -331,10 +326,6 @@ public class Trade implements Listener, DisableHandler {
 				ColourHandler.sendMessage(playerB, "&cYou cancelled the trade with %s!", playerA.getName());
 				ColourHandler.sendMessage(playerA, "&c%s cancelled the trade with you!", playerB.getName());
 			}
-			
-			// play cancel sounds
-			SoundUtils.cancelSound(playerA);
-			SoundUtils.cancelSound(playerB);
 		}
 		
 		public void shutdown() {
@@ -358,10 +349,6 @@ public class Trade implements Listener, DisableHandler {
 			// send messages
 			ColourHandler.sendMessage(playerA, "&cThe trade was interrupted!");
 			ColourHandler.sendMessage(playerB, "&cThe trade was interrupted!");
-			
-			// play cancel sounds
-			SoundUtils.cancelSound(playerA);
-			SoundUtils.cancelSound(playerB);
 		}
 		
 		public boolean canPlaceItem(Player target, int slotID) {
@@ -470,7 +457,6 @@ public class Trade implements Listener, DisableHandler {
 		if(!exchange.canPlaceItem(player, slotID)) {
 			cancelInventoryClick(event);
 			if(event.getCursor() != null) {
-				SoundUtils.errorSound(player);
 				ColourHandler.sendMessage(player, "&cYou can't place items over there!");
 			}
 			return;
@@ -581,10 +567,6 @@ public class Trade implements Listener, DisableHandler {
 		// send some alerts
 		ColourHandler.sendMessage(playerA, "&aYou are now trading with %s!", playerB.getName());
 		ColourHandler.sendMessage(playerB, "&aYou are now trading with %s!", playerA.getName());
-		
-		// play some sounds
-		SoundUtils.notifySound(playerA);
-		SoundUtils.notifySound(playerB);
 	}
 	
 	public static boolean isRequestingTradeFrom(Player target, Player from) {
@@ -652,10 +634,6 @@ public class Trade implements Listener, DisableHandler {
 		// inform the players
 		ColourHandler.sendMessage(player, "&aYour trade request has been sent to %s!", target.getName());
 		ColourHandler.sendMessage(target, "&3You have recieved a trade request from %s! Use /tradeaccept to accept their request!", player.getName());
-		
-		// play some sounds
-		SoundUtils.confirmSound(player);
-		SoundUtils.notifySound(target);
 	}
 	
 	@Command(command = "tradeaccept",
@@ -785,8 +763,6 @@ public class Trade implements Listener, DisableHandler {
 			player.removeMetadata("ignoreTradeRequests", MCNSAEssentials.getInstance());
 			ColourHandler.sendMessage(sender, "&aYou are now &laccepting &r&atrade requests");
 		}
-		
-		SoundUtils.confirmSound(sender);
 		
 		return true;
 	}

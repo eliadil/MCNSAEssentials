@@ -6,7 +6,6 @@ import java.util.Random;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Sound;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Ocelot;
@@ -23,7 +22,6 @@ import com.mcnsa.essentials.enums.TabCompleteType;
 import com.mcnsa.essentials.exceptions.EssentialsCommandException;
 import com.mcnsa.essentials.utilities.ColourHandler;
 import com.mcnsa.essentials.utilities.PlayerSelector;
-import com.mcnsa.essentials.utilities.SoundUtils;
 
 @ComponentInfo(friendlyName = "Fun",
 				description = "Some fun commands",
@@ -106,9 +104,6 @@ public class Fun {
 				ColourHandler.sendMessage(target, slappedBy.replaceAll("%slapper%", sender.getName()));
 			}
 			
-			// play a sound
-			SoundUtils.playSound(target, Sound.FALL_SMALL, broadcast);
-			
 			// broadcast?
 			if(broadcast && count < broadcastLimit) {
 				Player[] onlinePlayers = Bukkit.getServer().getOnlinePlayers();
@@ -166,9 +161,6 @@ public class Fun {
 				ColourHandler.sendMessage(target, rocketedBy.replaceAll("%rocketer%", sender.getName()));
 			}
 			
-			// play a sound
-			SoundUtils.playSound(target, Sound.EXPLODE, broadcast);
-			
 			// broadcast?
 			if(broadcast && count < broadcastLimit) {
 				Player[] onlinePlayers = Bukkit.getServer().getOnlinePlayers();
@@ -225,9 +217,6 @@ public class Fun {
 			else {
 				ColourHandler.sendMessage(target, immolatedBy.replaceAll("%immolator%", sender.getName()));
 			}
-			
-			// play a sound
-			SoundUtils.playSound(target, Sound.FIRE, broadcast);
 			
 			// broadcast?
 			if(broadcast && count < broadcastLimit) {

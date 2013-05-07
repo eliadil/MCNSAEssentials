@@ -54,7 +54,6 @@ import com.mcnsa.essentials.enums.TabCompleteType;
 import com.mcnsa.essentials.exceptions.EssentialsCommandException;
 import com.mcnsa.essentials.utilities.ColourHandler;
 import com.mcnsa.essentials.utilities.PlayerSelector;
-import com.mcnsa.essentials.utilities.SoundUtils;
 
 @ComponentInfo(friendlyName = "Freeze",
 				description = "Allows mods to freeze players in their tracks",
@@ -319,9 +318,6 @@ public class Freeze implements Listener {
 			// enable the frozen metadata on them
 			target.setMetadata("frozen", new FixedMetadataValue(MCNSAEssentials.getInstance(), true));
 			
-			// play a sound
-			SoundUtils.errorSound(target);
-			
 			// alert them
 			ColourHandler.sendMessage(target, wereFrozen.replaceAll("%freezer%", sender.getName()));
 			ColourHandler.sendMessage(sender, hasBeenFrozen.replaceAll("%player%", target.getName()));
@@ -360,9 +356,6 @@ public class Freeze implements Listener {
 			
 			// remove the metadata
 			target.removeMetadata("frozen", MCNSAEssentials.getInstance());
-			
-			// play a sound
-			SoundUtils.confirmSound(target);
 			
 			// alert them
 			ColourHandler.sendMessage(target, unfrozenBy.replaceAll("%player%", sender.getName()));

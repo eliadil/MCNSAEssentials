@@ -67,6 +67,7 @@ public class ConfigurationManager {
 			// and register their settings
 			try {
 				if(clazz.getPackage() != null) {
+					Logger.debug("Registering settings for class: " + clazz.getSimpleName());
 					registerSettings(clazz, componentManager);
 				}
 			}
