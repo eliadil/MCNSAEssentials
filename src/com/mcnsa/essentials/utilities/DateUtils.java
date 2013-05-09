@@ -184,7 +184,7 @@ public class DateUtils {
 				}
 			}
 			SimpleDateFormat form = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			dateFrom = new Timestamp(cal.getTime());
+			dateFrom = new Timestamp(cal.getTimeInMillis());
 		}
 
 		// return our from date
@@ -224,7 +224,7 @@ public class DateUtils {
 			try {
 				dateParser.applyPattern(format);
 				Date date = dateParser.parse(stringTime);
-				return new Timestamp(date.getTimeInMillis());
+				return new Timestamp(date.getTime());
 			}
 			catch(ParseException ignored) { }
 		}
