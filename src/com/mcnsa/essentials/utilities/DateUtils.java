@@ -117,6 +117,11 @@ public class DateUtils {
 	
 	// atempt to parse a real-world date string
 	public static Timestamp parseTimestamp(String stringTime) throws EssentialsCommandException {
+		// make sure our string isn't empty
+		if(stringTime.equals("")) {
+			return new Timestamp(System.currentTimeMillis());
+		}
+		
 		// try some shortcuts first
 		if(stringTime.equalsIgnoreCase("tomorrow")) {
 			return new Timestamp(System.currentTimeMillis() + (24 * 60 * 60 * 1000));
@@ -141,6 +146,48 @@ public class DateUtils {
 		}
 		else if(stringTime.equalsIgnoreCase("saturday")) {
 			return new Timestamp(nextWeekDay(Calendar.SATURDAY));
+		}
+
+		// try to parse history
+		Timestamp dateFrom = null;
+
+		Pattern p = Pattern.compile("([0-9]+)(s|h|m|d|w)");
+		Calendar cal = Calendar.getInstance();
+
+		String[] matches = preg_match_all(p, datetime);
+		if(matches.length > 0){
+			for(String match : matches){
+				Matcher m = p.matcher( match );
+				if(m.matches()) {
+					if(m.groupCount() == 2){
+						int tfValue = Integer.parseInt(m.group(1));
+						String tfFormat = m.group(2);
+
+						if(tfFormat.equals("w")){
+							cal.add(Calendar.WEEK_OF_YEAR, -1 * tfValue);
+						}
+						else if(tfFormat.equals("d")){
+							cal.add(Calendar.DAY_OF_MONTH, -1 * tfValue);
+						}
+						else if(tfFormat.equals("h")){
+							cal.add(Calendar.HOUR, -1 * tfValue);
+						}
+						else if(tfFormat.equals("m")){
+							cal.add(Calendar.MINUTE, -1 * tfValue);
+						}
+						else if(tfFormat.equals("s")){
+							cal.add(Calendar.SECOND, -1 * tfValue);
+						}
+					}
+				}
+			}
+			SimpleDateFormat form = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			dateFrom = new Timestamp(cal.getTime());
+		}
+
+		// return our from date
+		if(dateFrom != null) {
+			return dateFrom;
 		}
 		
 		// go through a list of different formats
@@ -190,5 +237,23 @@ public class DateUtils {
 		
 		SimpleDateFormat format = new SimpleDateFormat(basic ? "yyyy-MM-dd" : "EEE, MMM dd, yyyy hh:mm a");
 		return format.format(new Date(timestamp.getTime()));
+	}
+
+	/**
+	 * Java implementation of preg_match_all by https://github.com/raimonbosch
+	 * @param p
+	 * @param subject
+	 * @return
+	 */
+	public static String[] preg_match_all(Pattern p, String subject) {
+		Matcher m = p.matcher(subject);
+		StringBuilder out = new StringBuilder();
+		boolean split = false;
+		while (m.find()) {
+			out.append(m.group());
+			out.append("~");
+			split = true;
+		}
+		return (split) ? out.toString().split("~") : new String[0];
 	}
 }
