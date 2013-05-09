@@ -156,7 +156,7 @@ public class DateUtils {
 		Pattern p = Pattern.compile("([0-9]+)(s|h|m|d|w)");
 		Calendar cal = Calendar.getInstance();
 
-		String[] matches = preg_match_all(p, datetime);
+		String[] matches = preg_match_all(p, stringTime);
 		if(matches.length > 0){
 			for(String match : matches){
 				Matcher m = p.matcher( match );
@@ -224,7 +224,7 @@ public class DateUtils {
 			try {
 				dateParser.applyPattern(format);
 				Date date = dateParser.parse(stringTime);
-				return new Timestamp(date.getTime());
+				return new Timestamp(date.getTimeInMillis());
 			}
 			catch(ParseException ignored) { }
 		}
