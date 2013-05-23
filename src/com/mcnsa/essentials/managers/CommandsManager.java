@@ -662,7 +662,7 @@ public class CommandsManager implements TabExecutor {
 					LinkedList<String> onlineNames = new LinkedList<String>();
 					Player[] onlinePlayers = Bukkit.getServer().getOnlinePlayers();
 					for(Player online: onlinePlayers) {
-						if(online.getName().startsWith(args[argumentCount - 1])) {
+						if(online.getName().toLowerCase().startsWith(args[argumentCount - 1].toLowerCase())) {
 							onlineNames.add(online.getName());
 						}
 					}

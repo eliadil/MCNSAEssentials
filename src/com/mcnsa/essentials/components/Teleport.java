@@ -357,7 +357,7 @@ public class Teleport implements Listener {
 	@Command(command = "tp",
 			aliases = {"teleport"},
 			arguments = {"target player[s]", "world name", "x", "y", "z"},
-					tabCompletions = {TabCompleteType.PLAYER, TabCompleteType.WORLD, TabCompleteType.NUMBER, TabCompleteType.NUMBER, TabCompleteType.NUMBER},
+			tabCompletions = {TabCompleteType.PLAYER, TabCompleteType.WORLD, TabCompleteType.NUMBER, TabCompleteType.NUMBER, TabCompleteType.NUMBER},
 			description = "teleports <player[s]> to the given coordinates in the given world",
 			permissions = { "othercoords" })
 	public static boolean teleport(CommandSender sender, String targetPlayer, String worldName, float x, float y, float z) throws EssentialsCommandException {

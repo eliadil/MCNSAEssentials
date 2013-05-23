@@ -52,10 +52,22 @@ public class PlayerSelector {
 		else {
 			String[] playerTargets = target.split(",");
 			// now add online players
+			
 			for(int i = 0; i < playerTargets.length; i++) {
-				Player player = Bukkit.getServer().getPlayer(playerTargets[i]);
-				if(player != null) {
-					matchedPlayers.add(player);
+				ArrayList<Player> players = getOnlinePlayersWithNameLike(playerTargets[i]);
+				if(players.size() == 1)
+				{
+					matchedPlayers.add(players.get(0));
+				}
+				else if(players.size() > 1)
+				{
+					ArrayList<String> listOfNames = new ArrayList<String>();
+					for(Player p : players)
+					{
+						listOfNames.add(p.getName());
+					}
+					String implodedNames = StringUtils.implode(",", listOfNames.toArray(new String[listOfNames.size()]));
+					throw new EssentialsCommandException("There is more than one player with name like '%s'!\n '%s'", playerTargets[i], implodedNames);
 				}
 			}
 		}
@@ -65,5 +77,18 @@ public class PlayerSelector {
 		}*/
 		
 		return matchedPlayers;
+	}
+	
+	
+	private static ArrayList<Player> getOnlinePlayersWithNameLike(String name)
+	{
+		ArrayList<Player> playerList = new ArrayList<Player>();
+		Player[] onlinePlayers = Bukkit.getServer().getOnlinePlayers();
+		for(Player player: onlinePlayers) {
+			if(player.getName().toLowerCase().startsWith(name.toLowerCase())) {
+				playerList.add(player);
+			}
+		}
+		return playerList;
 	}
 }

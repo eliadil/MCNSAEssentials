@@ -27,11 +27,18 @@ public class Calculator {
 			description = "evaluates the expression and returns the result",
 			permissions = {"calc"})
 	public static boolean calculate(CommandSender sender, String... expressions) throws EssentialsCommandException {
+		
 		String expression = StringUtils.implode(" ", expressions);
+		MathEval math = new MathEval();
+		double result = 0;
 		
 		// evaluate it!
-		MathEval math = new MathEval();
-		double result = math.evaluate(expression);
+		try {
+			result = math.evaluate(expression);
+		} catch (ArithmeticException | NumberFormatException e) {
+			throw new EssentialsCommandException("Incorrect expression.");
+		}
+		
 		ColourHandler.sendMessage(sender, resultFormat.replaceAll("%result%", String.valueOf(result)));
 		
 		return true;
